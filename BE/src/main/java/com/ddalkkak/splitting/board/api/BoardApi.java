@@ -3,6 +3,7 @@ package com.ddalkkak.splitting.board.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.service.BoardService;
+import com.ddalkkak.splitting.swagger.api.BoardApiDocs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/board")
 @RestController
 @RequiredArgsConstructor
-public class BoardApi {
+public class BoardApi implements BoardApiDocs {
     private final BoardService boardService;
 
     @GetMapping("/")
