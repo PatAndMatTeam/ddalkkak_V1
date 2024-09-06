@@ -4,7 +4,6 @@ import lombok.Builder;
 
 import java.util.List;
 
-@Builder
 public record BoardDetailedResponse(
         Long id,
         String title,

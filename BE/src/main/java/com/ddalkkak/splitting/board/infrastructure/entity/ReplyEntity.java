@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class ReplyEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
     private Long subIdx;

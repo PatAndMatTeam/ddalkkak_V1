@@ -1,16 +1,28 @@
 package com.ddalkkak.splitting.board.api;
 
-import com.ddalkkak.splitting.board.api.request.BoardPatchRequest;
+import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.service.BoardService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequestMapping("/api/board")
 @RestController
+@RequiredArgsConstructor
 public class BoardApi {
-
+    private final BoardService boardService;
 
     @GetMapping("/")
     public void getBoard(){
 
+    }
+
+    @PostMapping("/")
+    public void createBoard(@RequestBody BoardCreateRequest boardCreateRequest){
+        log.info(boardCreateRequest.title());
+        boardService.create(boardCreateRequest);
     }
 
     @GetMapping("/{nums}")
@@ -18,9 +30,11 @@ public class BoardApi {
 
     }
 
+
+
     @PatchMapping("/{num}")
     public void updateBoard(@PathVariable("num") long num,
-                    @RequestBody BoardPatchRequest boardPatchRequest){
+                    @RequestBody BoardUpdateRequest boardUpdateRequest){
 
     }
 
