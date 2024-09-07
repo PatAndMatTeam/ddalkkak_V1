@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name="BOARD")
 @Entity
-public class BoardEntity {
+public class BoardEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +27,11 @@ public class BoardEntity {
 
     private String content;
 
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     private String writer;
 
-    @LastModifiedDate
-    private LocalDateTime modifyDate;
 
     public static BoardEntity from(BoardCreateDto dto){
         return BoardEntity.builder()
@@ -41,6 +40,14 @@ public class BoardEntity {
                 .writer(dto.writer())
                 .category(Category.valueOf(dto.category()))
                 .build();
+    }
+
+    public void changeTitle(String title){
+        this.title = title;
+    }
+
+    public void changeContent(String content){
+        this.content = content;
     }
 
 

@@ -1,10 +1,7 @@
 package com.ddalkkak.splitting.board.dto;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 
 @Builder
