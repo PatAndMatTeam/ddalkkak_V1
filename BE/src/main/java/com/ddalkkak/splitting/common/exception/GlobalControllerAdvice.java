@@ -4,6 +4,7 @@ package com.ddalkkak.splitting.common.exception;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,16 @@ public class GlobalControllerAdvice {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
+
+        final ErrorCode<?> errorCode = new ErrorCode<>(CommonErrorCode.REQUEST_VALID_ERROR_CODE.getCode(), errorMessage);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorCode);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorCode> handleConstraintViolationException(ConstraintViolationException e) {
+        String errorMessage = e.getMessage();
 
         final ErrorCode<?> errorCode = new ErrorCode<>(CommonErrorCode.REQUEST_VALID_ERROR_CODE.getCode(), errorMessage);
         return ResponseEntity

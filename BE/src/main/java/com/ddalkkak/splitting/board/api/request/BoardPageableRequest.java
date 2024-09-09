@@ -10,11 +10,11 @@ import lombok.Builder;
 public record BoardPageableRequest(
         @Schema(description = "시작번호", example = "1")
         @Min(0)
-        @NotBlank(message = "값을 입력해주세요")
-        int start,
+        @NotNull(message = "값을 입력해주세요")
+        Integer start,
         @Schema(description = "종료번호", example = "10")
         @Min(0)
-        @NotBlank(message = "값을 입력해주세요")
-        int end
+        @NotNull(message = "값을 입력해주세요")
+        Integer end
 ) {
 }

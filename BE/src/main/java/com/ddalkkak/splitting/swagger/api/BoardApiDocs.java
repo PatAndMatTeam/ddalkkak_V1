@@ -14,9 +14,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -41,7 +46,17 @@ public interface BoardApiDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "글 생성 성공"),
     })
-    public ResponseEntity<Void> createBoard(@RequestBody BoardCreateRequest boardCreateRequest);
+    public ResponseEntity<Void> createBoard(@Valid @RequestBody BoardCreateRequest boardCreateRequest);
+
+//    @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
+//    @Parameter(name = "start", description = "시작 번호", example = "1")
+//    @Parameter(name = "end", description = "종료 번호", example = "2")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "201", description = "글 생성 성공",
+//                    content = @Content(schema = @Schema(implementation = BoardAllQueryResponse.class))),
+//    })
+//    public ResponseEntity<BoardAllQueryResponse> getBoards( @RequestBody @Valid BoardPageableRequest pageableRequest);
+
 
     @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
     @Parameter(name = "start", description = "시작 번호", example = "1")
@@ -50,7 +65,9 @@ public interface BoardApiDocs {
             @ApiResponse(responseCode = "201", description = "글 생성 성공",
                     content = @Content(schema = @Schema(implementation = BoardAllQueryResponse.class))),
     })
-    public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestBody BoardPageableRequest pageableRequest);
+    public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
+                                                           @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end);
+
 
     @Operation(summary = "글 수정", description = "글 수정 합니다.")
     @Parameter(name = "title", description = "제목", example = "나 이제 사업 할란다~")
