@@ -40,3 +40,7 @@ springdoc:
     disable-swagger-default: true
     display-query-params-without-oauth2: true
     doc-expansion: none
+
+logging:
+  level:
+    root: info
