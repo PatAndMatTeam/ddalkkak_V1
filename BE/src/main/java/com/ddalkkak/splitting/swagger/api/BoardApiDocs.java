@@ -3,6 +3,7 @@ package com.ddalkkak.splitting.swagger.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardPageableRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.exception.BoardErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,20 +45,18 @@ public interface BoardApiDocs {
 
     @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
     @Parameter(name = "start", description = "시작 번호", example = "1")
-    @RequestPa
     @Parameter(name = "end", description = "종료 번호", example = "2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "글 생성 성공",
-                    content = @Content(schema = @Schema(implementation = BoardDetailedResponse.class))),
+                    content = @Content(schema = @Schema(implementation = BoardAllQueryResponse.class))),
     })
-    public ResponseEntity<List<BoardDetailedResponse>> getBoards(@RequestBody BoardPageableRequest pageableRequest);
+    public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestBody BoardPageableRequest pageableRequest);
 
     @Operation(summary = "글 수정", description = "글 수정 합니다.")
     @Parameter(name = "title", description = "제목", example = "나 이제 사업 할란다~")
     @Parameter(name = "content", description = "내용", example = "사업 아이템 추천좀")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", description = "글 수정 성공",
-                    content = @Content(schema = @Schema(implementation = BoardDetailedResponse.class))),
+            @ApiResponse(responseCode = "202", description = "글 수정 성공"),
     })
     public ResponseEntity<Void> updateBoard(@PathVariable("id") long id,
                             @RequestBody BoardUpdateRequest boardUpdateRequest);
@@ -65,8 +64,7 @@ public interface BoardApiDocs {
 
     @Operation(summary = "글 삭제", description = "글 삭제 합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", description = "글 삭제 성공",
-                    content = @Content(schema = @Schema(implementation = BoardDetailedResponse.class))),
+            @ApiResponse(responseCode = "202", description = "글 삭제 성공"),
     })
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id);
 

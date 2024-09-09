@@ -32,8 +32,11 @@ public record BoardDetailedResponse(
                 .build();
     }
      record Reply (
+         @Schema(description = "작성자", example = "임정환")
         String writer,
+         @Schema(description = "내용", example = "100개 안에 성공한다.")
         String content,
+        @Schema(description = "수정시간", example = "2024-09-07T14:58:02.714+00:00")
         String modifyDate
     ) {}
 }

@@ -3,6 +3,7 @@ package com.ddalkkak.splitting.board.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardPageableRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.service.BoardManager;
 import com.ddalkkak.splitting.swagger.api.BoardApiDocs;
@@ -31,13 +32,16 @@ public class BoardApi implements BoardApiDocs {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BoardDetailedResponse>> getBoards(@RequestBody @Valid BoardPageableRequest pageableRequest) {
+    public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestBody @Valid BoardPageableRequest pageableRequest) {
 
-        List<BoardDetailedResponse> result = boardManager.readAll(pageableRequest).stream()
-                .map(BoardDetailedResponse::from)
+        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardManager.readAll(pageableRequest).stream()
+                .map(BoardAllQueryResponse.BoardQueryResponse::from)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(result, HttpStatus.FOUND);
+        BoardAllQueryResponse response = BoardAllQueryResponse.builder()
+                .infos(changeInfos)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
     @PostMapping("/")
