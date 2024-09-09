@@ -36,15 +36,6 @@ public class BoardManager {
                 .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id)));
     }
 
-//    public List<BoardDto> readAll(BoardPageableRequest pageableRequest){
-//
-//        Pageable pageable = PageRequest.of(pageableRequest.start(), pageableRequest.end());
-//        return boardRepository.findAll(pageable).getContent()
-//                .stream()
-//                .map(BoardDto::from)
-//                .collect(Collectors.toList());
-//    }
-
     public List<BoardDto> readAll(int start, int end){
 
         Pageable pageable = PageRequest.of(start, end);

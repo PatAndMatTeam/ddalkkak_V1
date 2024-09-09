@@ -36,19 +36,6 @@ public class BoardApi implements BoardApiDocs {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
-//    @GetMapping("/all")
-//    public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestBody @Valid BoardPageableRequest pageableRequest) {
-//
-//        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardManager.readAll(pageableRequest).stream()
-//                .map(BoardAllQueryResponse.BoardQueryResponse::from)
-//                .collect(Collectors.toList());
-//
-//        BoardAllQueryResponse response = BoardAllQueryResponse.builder()
-//                .infos(changeInfos)
-//                .build();
-//        return new ResponseEntity<>(response, HttpStatus.FOUND);
-//    }
-
     @GetMapping("/all")
     public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
                                                              @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end) {

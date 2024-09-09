@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
+import com.ddalkkak.splitting.reply.instrastructure.entitiy.ReplyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -32,6 +35,13 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String writer;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "board_id")  // Reply 테이블의 외래 키
+    private List<ReplyEntity> replies = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "file_id")
+    private FileEntity file;
 
     public static BoardEntity from(BoardCreateDto dto){
         return BoardEntity.builder()
@@ -50,5 +60,13 @@ public class BoardEntity extends BaseTimeEntity {
         this.content = content;
     }
 
+    // Helper methods to manage replies
+    public void addReply(ReplyEntity reply) {
+        replies.add(reply);
+    }
+
+    public void removeReply(ReplyEntity reply) {
+        replies.remove(reply);
+    }
 
 }

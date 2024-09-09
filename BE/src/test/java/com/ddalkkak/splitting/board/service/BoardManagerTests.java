@@ -112,13 +112,11 @@ public class BoardManagerTests {
 
 
         //given
-        BoardPageableRequest request = BoardPageableRequest.builder()
-                .start(0)
-                .end(10)
-                .build();
+        int start = 0;
+        int end = 10;
 
         //when
-        List<BoardDto> result = boardManager.readAll(request);
+        List<BoardDto> result = boardManager.readAll(start,end);
 
         //then
         result.forEach(x -> {

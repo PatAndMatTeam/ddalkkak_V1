@@ -22,7 +22,8 @@ public class ReplyEntity extends BaseTimeEntity {
 
     private String pw;
 
-    @ManyToOne
+
+    @ManyToOne()
     @JoinColumn(name = "board_id")
     private BoardEntity board;
 
