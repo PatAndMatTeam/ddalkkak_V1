@@ -3,11 +3,16 @@ package com.ddalkkak.splitting.board.service;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.UploadFileRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -20,8 +25,6 @@ public class FileManagerTests {
 
     @Autowired
     private UploadFileRepository uploadFileRepository;
-
-
 
     @DisplayName("파일을 생성할 수 있다.")
     @Test

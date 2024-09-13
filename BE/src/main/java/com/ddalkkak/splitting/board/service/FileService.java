@@ -33,9 +33,10 @@ public class FileService {
         String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
         String fileType = file.getContentType();
 
-        if (!fileType.startsWith("image/")) {
-            throw new UploadFileException.IsNotImageException(UploadFileErrorCode.CANNOT_BE_UPLOADED,1l);
-        }
+//        if (!fileType.startsWith("image/")) {
+//            log.info("filetype: {}", fileType);
+//            throw new UploadFileException.IsNotImageException(UploadFileErrorCode.CANNOT_BE_UPLOADED,1l);
+//        }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {

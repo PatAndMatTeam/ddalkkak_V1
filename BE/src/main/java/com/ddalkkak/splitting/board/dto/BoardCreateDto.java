@@ -24,7 +24,6 @@ public class BoardCreateDto{
 
 
     public static BoardCreateDto from(BoardCreateRequest createRequest){
-        System.out.println("createRequest = " + createRequest);
         return BoardCreateDto.builder()
                 .category(createRequest.category())
                 .title(createRequest.title())
@@ -40,6 +39,7 @@ public class BoardCreateDto{
                 .title(this.title)
                 .content(this.content)
                 .writer(this.writer)
+                .files(List.of(this.files.toEntity()))
                 .build();
     }
 

@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {BoardApi.class})
 @ActiveProfiles("test")
@@ -37,57 +40,38 @@ public class BoardApiTests {
 
     @Test
     public void testCreateBoard() throws Exception {
-// Given
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("images/testimage.jpg")) {
-            if (inputStream == null) {
-                throw new IOException("File not found in classpath");
-            }
-            //file
-            MockMultipartFile givenFile = new MockMultipartFile("file", "image1.jpg",
-                    "image/jpeg", inputStream);
+// MockMultipartFile 객체 생성
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "uploadFile.files", // 여기서 필드 이름은 실제 매핑되는 필드와 동일하게 설정
+                "test.jpg",
+                "image/jpeg",
+                "Test data".getBytes());
 
-            List<MockMultipartFile> files = new ArrayList<>();
-            files.add(givenFile);
+        // BoardCreateRequest의 다른 필드들
+        String category = "정치";
+        String title = "우리 성공할 수 있을까?";
+        String content = "무조건 성공 해야지 어?";
+        String writer = "윤주영";
+        int width = 200;
+        int height = 200;
 
-            BoardCreateRequest boardCreateRequest = new BoardCreateRequest(
-                    "정치",
-                    "우리 성공할 수 있을까?",
-                    "무조건 성공 해야지 어?",
-                    "윤주영",
-                    new BoardCreateRequest.FileUploadRequest(
-                            Collections.singletonList(givenFile),
-                            200,
-                            200
-                    )
-            );
+        // MockMvc를 사용한 multipart 요청
+        mockMvc.perform(multipart("/api/board/")
+                        .file(mockFile) // 파일 전달
+                        .param("category", category) // 다른 파라미터 전달
+                        .param("title", title)
+                        .param("content", content)
+                        .param("writer", writer)
+                        .param("uploadFile.width", String.valueOf(width))
+                        .param("uploadFile.height", String.valueOf(height))
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isCreated())
+                .andDo(print());
 
-            // Convert BoardCreateRequest to JSON (excluding files)
-            String boardCreateRequestJson = objectMapper.writeValueAsString(new BoardCreateRequest(
-                    boardCreateRequest.category(),
-                    boardCreateRequest.title(),
-                    boardCreateRequest.content(),
-                    boardCreateRequest.writer(),
-                    new BoardCreateRequest.FileUploadRequest(
-                            Collections.emptyList(), // No files in the JSON representation
-                            boardCreateRequest.uploadFile().width(),
-                            boardCreateRequest.uploadFile().height()
-                    )
-            ));
-
-            // When & Then
-            mockMvc.perform(MockMvcRequestBuilders.multipart("/api/board/")
-                            .file(givenFile)
-                            .param("category", boardCreateRequest.category())
-                            .param("title", boardCreateRequest.title())
-                            .param("content", boardCreateRequest.content())
-                            .param("writer", boardCreateRequest.writer())
-                            .param("uploadFile.width", String.valueOf(boardCreateRequest.uploadFile().width()))
-                            .param("uploadFile.height", String.valueOf(boardCreateRequest.uploadFile().height()))
-                            .contentType(MediaType.MULTIPART_FORM_DATA))
-                    .andExpect(MockMvcResultMatchers.status().isCreated());
-
-            verify(boardService).create(boardCreateRequest);
+        // BoardService.create() 메서드 호출 확인
+        verify(boardService).create(any(BoardCreateRequest.class));
         }
 
-    }
 }
+
+

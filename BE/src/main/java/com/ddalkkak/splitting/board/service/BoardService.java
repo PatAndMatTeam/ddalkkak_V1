@@ -27,9 +27,7 @@ public class BoardService {
             //1. 변환
             BoardCreateDto board = BoardCreateDto
                     .from(createRequest);
-            log.info("변환 {}", board);
             UploadFileCreateDto file = fileService.make(createRequest.uploadFile());
-            log.info("변환 {}", file);
             board.addFiles(file);
 
             return boardManager.create(board);

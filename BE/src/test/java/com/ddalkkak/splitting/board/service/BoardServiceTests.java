@@ -45,6 +45,7 @@ public class BoardServiceTests {
             MockMultipartFile givenFile = new MockMultipartFile("file", "image1.jpg",
                     "image/jpeg", inputStream );
 
+
             List<MockMultipartFile> files = new ArrayList<>();
             files.add(givenFile);
 

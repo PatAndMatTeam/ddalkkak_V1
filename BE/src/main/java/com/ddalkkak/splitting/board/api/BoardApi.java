@@ -53,8 +53,7 @@ public class BoardApi implements BoardApiDocs {
 
     @PostMapping(path = "/" , consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Void> createBoard(@Valid @ModelAttribute BoardCreateRequest boardCreateRequest){
-        log.info(boardCreateRequest.title());
-        log.info("{}",boardCreateRequest.uploadFile());
+
         boardService.create(boardCreateRequest);
 
         return ResponseEntity

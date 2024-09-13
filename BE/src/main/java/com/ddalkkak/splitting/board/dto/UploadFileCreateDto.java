@@ -2,10 +2,12 @@ package com.ddalkkak.splitting.board.dto;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@NoArgsConstructor
 public class UploadFileCreateDto{
                                         Long boardId;
                                         String fileName;
