@@ -13,8 +13,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    generate-ddl: true
+
 
   h2:
     console:

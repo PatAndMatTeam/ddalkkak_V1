@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
+import com.ddalkkak.splitting.board.domain.UploadFile;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.reply.instrastructure.entitiy.ReplyEntity;
 import jakarta.persistence.*;
@@ -23,8 +24,8 @@ import java.util.List;
 public class BoardEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private String title;
 
@@ -35,22 +36,12 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String writer;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "board_id")  // Reply 테이블의 외래 키
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReplyEntity> replies = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_id")
-    private FileEntity file;
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UploadFileEntity> files = new ArrayList<>();
 
-    public static BoardEntity from(BoardCreateDto dto){
-        return BoardEntity.builder()
-                .title(dto.title())
-                .content(dto.content())
-                .writer(dto.writer())
-                .category(Category.valueOf(dto.category()))
-                .build();
-    }
 
     public void changeTitle(String title){
         this.title = title;
@@ -62,11 +53,21 @@ public class BoardEntity extends BaseTimeEntity {
 
     // Helper methods to manage replies
     public void addReply(ReplyEntity reply) {
-        replies.add(reply);
+        this.replies.add(reply);
     }
 
     public void removeReply(ReplyEntity reply) {
         replies.remove(reply);
+    }
+
+    public void addFile(UploadFileEntity file) {
+        getFiles().add(file);
+
+        file.addBoard(this);
+    }
+
+    public void removeFile(UploadFileEntity file) {
+        files.remove(file);
     }
 
 }

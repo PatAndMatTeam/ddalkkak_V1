@@ -1,17 +1,13 @@
 package com.ddalkkak.splitting.board.service;
 
-import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardPageableRequest;
+import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.exception.BoardException;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -31,7 +27,7 @@ public class BoardManagerTests {
     @Test
     void createBoard(){
         //given
-        BoardCreateRequest givenRequest = BoardCreateRequest.builder()
+        BoardCreateDto boardCreatDto = BoardCreateDto.builder()
                 .title("갈라치기 해보자")
                 .content("어떻게 하면 잘 만들수 있을까?")
                 .category(Category.정치.name())
@@ -39,49 +35,49 @@ public class BoardManagerTests {
                 .build();
 
         //when
-        boardManager.create(givenRequest);
+        Long createdId = boardManager.create(boardCreatDto);
 
         //then
         //...
-        BoardDto result = boardManager.read(1L);
+        BoardDto result = boardManager.read(createdId);
 
-        assertEquals(givenRequest.title(), result.title());
-        assertEquals(givenRequest.content(), result.content());
-        assertEquals(givenRequest.category(), result.category());
-        assertEquals(givenRequest.writer(), result.writer());
+        assertEquals(createdId, result.id());
+        assertEquals(boardCreatDto.getTitle(), result.title());
+        assertEquals(boardCreatDto.getContent(), result.content());
+        assertEquals(boardCreatDto.getCategory(), result.category());
+        assertEquals(boardCreatDto.getWriter(), result.writer());
     }
 
     @DisplayName("번호로 글을 찾을 수 있다.")
     @Test
     void findBoardSucceed(){
-        BoardCreateRequest givenRequest = BoardCreateRequest.builder()
+        //given
+        BoardCreateDto boardCreatDto = BoardCreateDto.builder()
                 .title("갈라치기 해보자")
                 .content("어떻게 하면 잘 만들수 있을까?")
                 .category(Category.정치.name())
                 .writer("윤주영")
                 .build();
 
-        boardManager.create(givenRequest);
+        Long createdId = boardManager.create(boardCreatDto);
 
-        //given
-        Long id = 1L;
 
         //when
-        BoardDto result = boardManager.read(id);
+        BoardDto result = boardManager.read(createdId);
 
         //then
-        assertEquals(id, result.id());
-        assertEquals(givenRequest.title(), result.title());
-        assertEquals(givenRequest.content(), result.content());
-        assertEquals(givenRequest.category(), result.category());
-        assertEquals(givenRequest.writer(), result.writer());
+        assertEquals(createdId, result.id());
+        assertEquals(boardCreatDto.getTitle(), result.title());
+        assertEquals(boardCreatDto.getContent(), result.content());
+        assertEquals(boardCreatDto.getCategory(), result.category());
+        assertEquals(boardCreatDto.getWriter(), result.writer());
     }
 
     @DisplayName("없는 번호로 글을 찾을 수 없다.")
     @Test
     void findBoardFailed(){
         //given
-        Long id = 1L;
+        Long id = 0L;
 
         //when
         //then
@@ -93,22 +89,22 @@ public class BoardManagerTests {
     @DisplayName("글 리스트를 조회할 수 있다.")
     @Test
     void findBoards(){
-        BoardCreateRequest givenRequest1 = BoardCreateRequest.builder()
+        BoardCreateDto boardCreatDto1 = BoardCreateDto.builder()
                 .title("갈라치기 해보자")
                 .content("어떻게 하면 잘 만들수 있을까?")
                 .category(Category.정치.name())
                 .writer("윤주영")
                 .build();
 
-        boardManager.create(givenRequest1);
+        boardManager.create(boardCreatDto1);
 
-        BoardCreateRequest givenRequest2 = BoardCreateRequest.builder()
+        BoardCreateDto boardCreatDto2 = BoardCreateDto.builder()
                 .title("갈라치기 해보자")
                 .content("어떻게 하면 잘 만들수 있을까?")
                 .category(Category.정치.name())
                 .writer("윤주영")
                 .build();
-        boardManager.create(givenRequest1);
+        boardManager.create(boardCreatDto2);
 
 
         //given
@@ -119,8 +115,36 @@ public class BoardManagerTests {
         List<BoardDto> result = boardManager.readAll(start,end);
 
         //then
-        result.forEach(x -> {
-            System.out.println(x);
+        assertEquals(boardCreatDto1.getTitle(), result.get(0).title());
+        assertEquals(boardCreatDto1.getContent(), result.get(0).content());
+        assertEquals(boardCreatDto1.getCategory(), result.get(0).category());
+        assertEquals(boardCreatDto1.getWriter(), result.get(0).writer());
+
+        assertEquals(boardCreatDto2.getTitle(), result.get(1).title());
+        assertEquals(boardCreatDto2.getContent(), result.get(1).content());
+        assertEquals(boardCreatDto2.getCategory(), result.get(1).category());
+        assertEquals(boardCreatDto2.getWriter(), result.get(1).writer());
+    }
+
+    @DisplayName("글을 삭제할 수 있다.")
+    @Test
+    void deleteBoard(){
+        //given
+        BoardCreateDto boardCreatDto = BoardCreateDto.builder()
+                .title("갈라치기 해보자")
+                .content("어떻게 하면 잘 만들수 있을까?")
+                .category(Category.정치.name())
+                .writer("윤주영")
+                .build();
+
+        Long createdId = boardManager.create(boardCreatDto);
+
+        //when
+        boardManager.delete(createdId);
+
+        //then
+        assertThrows(BoardException.BoardNotFoundException.class, () -> {
+            boardManager.read(createdId);
         });
 
     }

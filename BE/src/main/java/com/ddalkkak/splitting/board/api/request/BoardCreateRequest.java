@@ -3,6 +3,9 @@ package com.ddalkkak.splitting.board.api.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Builder
 public record BoardCreateRequest(
@@ -20,6 +23,22 @@ public record BoardCreateRequest(
 
         @Schema(description = "작성자", example = "윤주영")
         @NotBlank(message = "작성자를 입력해주세요")
-         String writer
-) { }
+        String writer,
+
+        FileUploadRequest uploadFile
+
+
+) {
+
+    @Builder
+    public record FileUploadRequest (
+        @Schema(description = "업로드 대상 사진 파일", example = "jpg|jpeg|png")
+        List<MultipartFile> files,
+        @Schema(description = "사진 가로 길이", example = "200")
+        int width,
+        @Schema(description = "사진 세로 길이", example = "200")
+        int height
+    ) {}
+    
+}
 

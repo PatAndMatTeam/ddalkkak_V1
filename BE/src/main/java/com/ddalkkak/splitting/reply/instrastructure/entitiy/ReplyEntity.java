@@ -10,21 +10,19 @@ public class ReplyEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
-
-    private Long subIdx;
+    private Long id;
 
     private String content;
 
     private String ip;
 
-    private String id;
+    private String userId;
 
-    private String pw;
+    private String userPw;
 
 
-    @ManyToOne()
-    @JoinColumn(name = "board_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id") // 연관 관계의 주인 역할을 수행
     private BoardEntity board;
 
 }

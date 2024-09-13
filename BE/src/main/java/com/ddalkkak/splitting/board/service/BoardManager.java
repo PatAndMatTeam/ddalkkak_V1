@@ -1,7 +1,6 @@
 package com.ddalkkak.splitting.board.service;
 
-import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardPageableRequest;
+
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
@@ -11,6 +10,7 @@ import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,19 +18,24 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
-public class BoardManager {
+class BoardManager {
 
     private final BoardRepository boardRepository;
+    private final FileManager fileManager;
 
+    @Transactional
+    public Long create(BoardCreateDto boardCreatDto){
 
-    public void create(BoardCreateRequest createRequest){
-        boardRepository.save(
-                BoardEntity.from(BoardCreateDto
-                        .from(createRequest)));
+        BoardEntity boardEntity = boardCreatDto.toEntity();
+        boardEntity.getFiles().stream().forEach(x -> x.addBoard(boardEntity));
+
+        return boardRepository.save(boardEntity).getId();
     }
 
+    @Transactional
     public BoardDto read(Long id){
         return BoardDto.from(boardRepository.findById(id)
                 .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id)));
