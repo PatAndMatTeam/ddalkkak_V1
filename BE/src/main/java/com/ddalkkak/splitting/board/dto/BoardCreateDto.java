@@ -57,7 +57,7 @@ public class BoardCreateDto{
 
 
     private static boolean isInFile(BoardCreateRequest createRequest){
-        if (createRequest.uploadFile().files()==null){
+        if (createRequest.files()==null){
             return false;
         }
         return true;

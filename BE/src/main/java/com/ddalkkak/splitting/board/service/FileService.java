@@ -43,6 +43,11 @@ public class FileService {
             String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
             String fileType = file.getContentType();
 
+            if (!fileType.startsWith("image")){
+                throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,1l);
+            }
+
+            log.info(fileType);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 Thumbnails.of(file.getInputStream())

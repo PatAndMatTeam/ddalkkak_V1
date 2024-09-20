@@ -39,9 +39,9 @@ public class FileManager {
 
     }
 
-    public void create(BoardCreateRequest.FileUploadRequest fileUploadRequest)  {
-
-    }
+//    public void create(BoardCreateRequest.FileUploadRequest fileUploadRequest)  {
+//
+//    }
 
 
 }

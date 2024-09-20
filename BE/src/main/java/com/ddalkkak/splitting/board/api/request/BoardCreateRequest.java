@@ -25,22 +25,16 @@ public record BoardCreateRequest(
         @NotBlank(message = "작성자를 입력해주세요")
         String writer,
 
-        FileUploadRequest uploadFile
-
-
-        ) {
-
-    @Builder
-    public record FileUploadRequest (
-        @Schema(description = "업로드 대상 사진 파일", example = "jpg|jpeg|png")
+        @Schema(description = "업로드 대상 사진 파일", type = "string", format = "binary", example = "sample.jpg")
         List<MultipartFile> files,
+
         @Schema(description = "사진 가로 길이", example = "200")
         int width,
         @Schema(description = "사진 세로 길이", example = "200")
         int height
-    ) {}
+) {}
 
-}
+
 
 //@Builder
 //public class BoardCreateRequest {

@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileUploadRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.service.BoardService;
@@ -51,10 +52,11 @@ public class BoardApi implements BoardApiDocs {
 
 
 
-    @PostMapping(path = "/" , consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(path = "/" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
+                                produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createBoard(@Valid @ModelAttribute BoardCreateRequest boardCreateRequest){
 
-        boardService.create(boardCreateRequest);
+        boardService.createV1(boardCreateRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

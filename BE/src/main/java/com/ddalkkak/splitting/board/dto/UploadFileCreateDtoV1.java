@@ -14,12 +14,12 @@ import java.util.List;
         int width,
         int height) {
 
-    public static UploadFileCreateDtoV1 from(BoardCreateRequest.FileUploadRequest fileUploadRequest){
-        return UploadFileCreateDtoV1.builder()
-                .files(fileUploadRequest.files())
-                .width(fileUploadRequest.width())
-                .height(fileUploadRequest.height())
-                .build();
-    }
+//    public static UploadFileCreateDtoV1 from(BoardCreateRequest.FileUploadRequest fileUploadRequest){
+//        return UploadFileCreateDtoV1.builder()
+//                .files(fileUploadRequest.files())
+//                .width(fileUploadRequest.width())
+//                .height(fileUploadRequest.height())
+//                .build();
+//    }
 
 }

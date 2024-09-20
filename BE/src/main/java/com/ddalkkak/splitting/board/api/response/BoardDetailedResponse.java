@@ -20,9 +20,9 @@ public record BoardDetailedResponse(
         String content,
         @Schema(description = "작성자", example = "2024-09-07T14:58:02.714+00:00")
         String createDate,
-
+        @Schema(description = "댓글")
         List<Reply> replys,
-
+        @Schema(description = "업로드 파일")
         List<UploadFileResponse> files
 
 ) {
@@ -48,7 +48,9 @@ public record BoardDetailedResponse(
 
     @Builder
     record UploadFileResponse(
+            @Schema(description = "파일이름", example = "test.jpg")
             String fileName,
+            @Schema(description = "파일 데이터(바이트)", example = "...")
             byte[] data
     ){
         public static UploadFileResponse from(UploadFileDto uploadFileDto){

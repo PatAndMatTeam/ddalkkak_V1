@@ -30,7 +30,7 @@ public interface BoardApiDocs {
 
 
     @Operation(summary = "글 상세확인", description = "글 번호로 글 상세확인.")
-    @Parameter(name = "id", description = "글의 번호")
+    @Parameter(name = "id", description = "글의 번호(기본값: 1)", example = "1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "302", description = "글 상세확인 성공",
                     content = @Content(schema = @Schema(implementation = BoardDetailedResponse.class)))
@@ -39,27 +39,16 @@ public interface BoardApiDocs {
 
 
     @Operation(summary = "글 생성", description = "글을 생성합니다.")
-    @Parameter(name = "category", description = "글의 카테고리", example = "정치|축구|롤|애니")
-    @Parameter(name = "title", description = "글 제목", example = "이직 vs 사업 뭐가 맞냐?")
-    @Parameter(name = "content", description = "글 내용", example = "인생 힘들다")
-    @Parameter(name = "writer", description = "글 작성자", example = "윤주영")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "글 생성 성공"),
+            @ApiResponse(responseCode = "403", description = "글 생성 실패")
     })
     public ResponseEntity<Void> createBoard(@Valid @RequestBody BoardCreateRequest boardCreateRequest);
 
-//    @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
-//    @Parameter(name = "start", description = "시작 번호", example = "1")
-//    @Parameter(name = "end", description = "종료 번호", example = "2")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "201", description = "글 생성 성공",
-//                    content = @Content(schema = @Schema(implementation = BoardAllQueryResponse.class))),
-//    })
-//    public ResponseEntity<BoardAllQueryResponse> getBoards( @RequestBody @Valid BoardPageableRequest pageableRequest);
 
 
     @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
-    @Parameter(name = "start", description = "시작 번호", example = "1")
+    @Parameter(name = "start", description = "시작 번호(0 부터)", example = "0")
     @Parameter(name = "end", description = "종료 번호", example = "2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "글 생성 성공",
@@ -70,8 +59,6 @@ public interface BoardApiDocs {
 
 
     @Operation(summary = "글 수정", description = "글 수정 합니다.")
-    @Parameter(name = "title", description = "제목", example = "나 이제 사업 할란다~")
-    @Parameter(name = "content", description = "내용", example = "사업 아이템 추천좀")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "글 수정 성공"),
     })
