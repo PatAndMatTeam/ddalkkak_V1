@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
+import com.ddalkkak.splitting.board.dto.UploadFileDto;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,9 @@ public class FileManager {
         return uploadFileRepository.findByBoardId(id).get(0);
     }
 
-    public UploadFileEntity create(UploadFileCreateDto uploadFileCreateDto) {
-        return uploadFileRepository.save(uploadFileCreateDto.toEntity());
+    public UploadFileDto create(UploadFileCreateDto uploadFileCreateDto) {
+        return UploadFileDto.from(uploadFileRepository
+                .save(uploadFileCreateDto.toEntity()));
     }
 
     public void update(){

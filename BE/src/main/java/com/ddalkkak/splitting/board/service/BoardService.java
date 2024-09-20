@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -22,20 +24,23 @@ public class BoardService {
     private final BoardManager boardManager;
     private final FileService fileService;
 
-    public Long create(BoardCreateRequest createRequest) {
-        try {
-            //1. 변환
-            BoardCreateDto board = BoardCreateDto
-                    .from(createRequest);
-            UploadFileCreateDto file = fileService.make(createRequest.uploadFile());
-            board.addFiles(file);
+    public Long create(final BoardCreateRequest createRequest) {
+        final List<MultipartFile> test = createRequest.uploadFile().files();
+        final int width = createRequest.uploadFile().width();
+        final int height = createRequest.uploadFile().height();
 
-            return boardManager.create(board);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        return 0L;
+        List<UploadFileCreateDto> uploadFiles = Optional.ofNullable(test)
+                .filter(files -> !files.isEmpty()) // 파일이 비어 있지 않을 때만 처리
+                .map(file -> fileService.make(file, width, height))
+                .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
+
+        //1. 변환
+        BoardCreateDto board = BoardCreateDto
+                .from(createRequest);
+
+        board.addFiles(uploadFiles);
+
+        return boardManager.create(board);
     }
 
     public BoardDto read(Long id){

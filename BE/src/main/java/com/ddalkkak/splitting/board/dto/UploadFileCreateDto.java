@@ -52,4 +52,6 @@ public class UploadFileCreateDto{
              throw new RuntimeException("파일 변환 중 오류가 발생했습니다.", e);
          }
      }
+
+
 }
