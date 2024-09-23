@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -20,16 +21,24 @@ public class BoardCreateDto{
          String content;
          String writer;
 
-    UploadFileCreateDto files;
+    List<UploadFileCreateDto> files;
 
 
     public static BoardCreateDto from(BoardCreateRequest createRequest){
+        if (isInFile(createRequest)){
+            return BoardCreateDto.builder()
+                    .category(createRequest.category())
+                    .title(createRequest.title())
+                    .content(createRequest.content())
+                    .writer(createRequest.writer())
+                    .build();
+        }
+
         return BoardCreateDto.builder()
                 .category(createRequest.category())
                 .title(createRequest.title())
                 .content(createRequest.content())
                 .writer(createRequest.writer())
-                .files(UploadFileCreateDto.fromMultipartFile(createRequest.uploadFile().files().get(0)))
                 .build();
     }
 
@@ -39,11 +48,18 @@ public class BoardCreateDto{
                 .title(this.title)
                 .content(this.content)
                 .writer(this.writer)
-                .files(List.of(this.files.toEntity()))
                 .build();
     }
 
-    public void addFiles(UploadFileCreateDto files){
+    public void addFiles(List<UploadFileCreateDto> files){
         this.files = files;
+    }
+
+
+    private static boolean isInFile(BoardCreateRequest createRequest){
+        if (createRequest.files()==null){
+            return false;
+        }
+        return true;
     }
 }

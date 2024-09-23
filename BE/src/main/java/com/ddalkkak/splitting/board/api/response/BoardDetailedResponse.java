@@ -1,10 +1,12 @@
 package com.ddalkkak.splitting.board.api.response;
 
 import com.ddalkkak.splitting.board.dto.BoardDto;
+import com.ddalkkak.splitting.board.dto.UploadFileDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public record BoardDetailedResponse(
@@ -18,8 +20,11 @@ public record BoardDetailedResponse(
         String content,
         @Schema(description = "작성자", example = "2024-09-07T14:58:02.714+00:00")
         String createDate,
+        @Schema(description = "댓글")
+        List<Reply> replys,
+        @Schema(description = "업로드 파일")
+        List<UploadFileResponse> files
 
-        List<Reply> replys
 ) {
 
     public static BoardDetailedResponse from(BoardDto boardDto){
@@ -29,6 +34,7 @@ public record BoardDetailedResponse(
                 .writer(boardDto.writer())
                 .content(boardDto.content())
                 .createDate(boardDto.createDate())
+                .files(boardDto.files().stream().map(UploadFileResponse::from).collect(Collectors.toList()))
                 .build();
     }
      record Reply (
@@ -39,4 +45,20 @@ public record BoardDetailedResponse(
         @Schema(description = "수정시간", example = "2024-09-07T14:58:02.714+00:00")
         String modifyDate
     ) {}
+
+    @Builder
+    record UploadFileResponse(
+            @Schema(description = "파일이름", example = "test.jpg")
+            String fileName,
+            @Schema(description = "파일 데이터(바이트)", example = "...")
+            byte[] data
+    ){
+        public static UploadFileResponse from(UploadFileDto uploadFileDto){
+            return UploadFileResponse.builder()
+                    .fileName(uploadFileDto.fileName())
+                    .data(uploadFileDto.data())
+                    .build();
+        }
+
+    }
 }

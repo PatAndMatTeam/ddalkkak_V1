@@ -36,9 +36,11 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String writer;
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReplyEntity> replies = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UploadFileEntity> files = new ArrayList<>();
 

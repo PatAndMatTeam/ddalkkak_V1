@@ -4,6 +4,7 @@ package com.ddalkkak.splitting.board.service;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
+import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.exception.BoardErrorCode;
 import com.ddalkkak.splitting.board.exception.BoardException;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
@@ -30,7 +31,14 @@ class BoardManager {
     public Long create(BoardCreateDto boardCreatDto){
 
         BoardEntity boardEntity = boardCreatDto.toEntity();
-        boardEntity.getFiles().stream().forEach(x -> x.addBoard(boardEntity));
+
+        List<UploadFileCreateDto> createDtos= boardCreatDto.getFiles();
+        createDtos.stream()
+                .forEach(x -> {
+                    boardEntity.addFile(x.toEntity());
+                });
+
+        //boardEntity.getFiles().stream().forEach(x -> x.addBoard(boardEntity));
 
         return boardRepository.save(boardEntity).getId();
     }
