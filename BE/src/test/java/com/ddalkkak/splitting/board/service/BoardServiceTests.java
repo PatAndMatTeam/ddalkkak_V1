@@ -2,11 +2,10 @@ package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 
+import com.ddalkkak.splitting.board.api.request.FileUploadRequest;
 import com.ddalkkak.splitting.board.dto.BoardDto;
-import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 
-import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class BoardServiceTests {
             List<MockMultipartFile> files = new ArrayList<>();
             files.add(givenFile);
 
-            BoardCreateRequest.FileUploadRequest fileUploadRequest = BoardCreateRequest.FileUploadRequest.builder()
+            FileUploadRequest fileUploadRequest = FileUploadRequest.builder()
                     .files(List.of(givenFile))
                     .width(100)
                     .height(100)
@@ -61,7 +60,9 @@ public class BoardServiceTests {
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name())
                     .writer("윤주영")
-                    .uploadFile(fileUploadRequest)
+                    .files(List.of(givenFile))
+                    .width(1)
+                    .height(1)
                     .build();
 
             //when
@@ -73,9 +74,9 @@ public class BoardServiceTests {
             assertEquals(givenRequest.category(), result.category());
             assertEquals(givenRequest.content(), result.content());
             assertEquals(givenRequest.writer(), result.writer());
-            assertEquals(givenRequest.uploadFile().files().get(0).getContentType(),
+            assertEquals(givenRequest.files().get(0).getContentType(),
                     result.files().get(0).fileType());
-            assertEquals(givenRequest.uploadFile().files().get(0).getOriginalFilename(),
+            assertEquals(givenRequest.files().get(0).getOriginalFilename(),
                     result.files().get(0).fileName());
         }
 

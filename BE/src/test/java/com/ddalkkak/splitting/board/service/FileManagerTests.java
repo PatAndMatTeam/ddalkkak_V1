@@ -1,22 +1,18 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
-import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
+import com.ddalkkak.splitting.board.dto.UploadFileDto;
 import com.ddalkkak.splitting.board.infrastructure.repository.UploadFileRepository;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 @SpringBootTest
 public class FileManagerTests {
 
@@ -37,12 +33,12 @@ public class FileManagerTests {
                 .build();
 
         //when
-        UploadFileEntity actual = fileManager.create(expected);
+        UploadFileDto actual = fileManager.create(expected);
 
         //then
-//        assertEquals(expected.fileName(), actual.getFileName());
-//        assertEquals(expected.fileType(), actual.getFileType());
-//        assertEquals(expected.data().length, actual.getData().length);
+        assertEquals(expected.getFileName(), actual.fileName());
+        assertEquals(expected.getFileType(), actual.fileType());
+        assertEquals(expected.getData().length, actual.data().length);
 
     }
 }

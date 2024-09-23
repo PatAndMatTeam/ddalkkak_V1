@@ -2,8 +2,6 @@ package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
-import com.ddalkkak.splitting.board.dto.UploadFileCreateDtoV1;
-import com.ddalkkak.splitting.board.dto.UploadFileDto;
 import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
 import com.ddalkkak.splitting.board.exception.UploadFileException;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,8 +28,20 @@ public class FileService {
 
     }
 
+    public List<UploadFileCreateDto> make(final BoardCreateRequest createRequest){
+        final List<MultipartFile> files = createRequest.files();
+        final int width = createRequest.width();
+        final int height = createRequest.height();
 
-    public List<UploadFileCreateDto> make(List<MultipartFile> files, int width, int height){
+        List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(files)
+                .filter(f -> !f.isEmpty()) // 파일이 비어 있지 않을 때만 처리
+                .map(file -> make(file, width, height))
+                .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
+
+        return fileCreateDtos;
+    }
+
+    private List<UploadFileCreateDto> make(List<MultipartFile> files, int width, int height){
         // 파일 리스트가 null이거나 비어 있는 경우 빈 리스트 반환
         if (files == null || files.isEmpty()) {
             return Collections.emptyList();

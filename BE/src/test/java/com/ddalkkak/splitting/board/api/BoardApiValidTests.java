@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,16 +38,23 @@ public class BoardApiValidTests {
     void isValidWhenCreateBoard() throws Exception {
         //given
         BoardCreateRequest createRequest = BoardCreateRequest.builder()
-                .category("test")
+                .category("롤")
                 .title("")
                 .content("test")
                 .writer("test")
+                .width(1)
+                .height(1)
                 .build();
 
-        ResultActions resultActions =mockMvc.perform(post("/api/board/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createRequest)
-                ));
+        ResultActions resultActions =mockMvc.perform(multipart("/api/board/")
+                .param("title", createRequest.title())
+                .param("content", createRequest.content())
+                .param("category", createRequest.category())
+                .param("writer", createRequest.writer())
+                .param("width", String.valueOf(createRequest.width()))
+                .param("height", String.valueOf(createRequest.height()))
+                .characterEncoding("utf-8")
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
 
         resultActions
                 .andDo(print())

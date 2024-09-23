@@ -56,7 +56,7 @@ public class BoardApi implements BoardApiDocs {
                                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createBoard(@Valid @ModelAttribute BoardCreateRequest boardCreateRequest){
 
-        boardService.createV1(boardCreateRequest);
+        boardService.create(boardCreateRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

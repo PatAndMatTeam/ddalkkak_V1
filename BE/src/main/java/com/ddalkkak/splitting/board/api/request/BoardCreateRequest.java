@@ -25,7 +25,7 @@ public record BoardCreateRequest(
         @NotBlank(message = "작성자를 입력해주세요")
         String writer,
 
-        @Schema(description = "업로드 대상 사진 파일", type = "string", format = "binary", example = "sample.jpg")
+        @Schema(description = "업로드 대상 사진 파일")
         List<MultipartFile> files,
 
         @Schema(description = "사진 가로 길이", example = "200")

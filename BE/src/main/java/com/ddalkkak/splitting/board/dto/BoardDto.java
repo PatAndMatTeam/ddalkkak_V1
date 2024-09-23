@@ -4,10 +4,10 @@ import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import lombok.Builder;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Builder
 public record BoardDto(
@@ -39,5 +39,7 @@ public record BoardDto(
                 )
                 .build();
     }
+
+
 
 }

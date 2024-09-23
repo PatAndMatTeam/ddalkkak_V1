@@ -11,14 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,7 +35,7 @@ public class BoardApiTests {
     public void testCreateBoard() throws Exception {
 // MockMultipartFile 객체 생성
         MockMultipartFile mockFile = new MockMultipartFile(
-                "uploadFile.files", // 여기서 필드 이름은 실제 매핑되는 필드와 동일하게 설정
+                "files", // 여기서 필드 이름은 실제 매핑되는 필드와 동일하게 설정
                 "test.jpg",
                 "image/jpeg",
                 "Test data".getBytes());
@@ -62,8 +55,8 @@ public class BoardApiTests {
                         .param("title", title)
                         .param("content", content)
                         .param("writer", writer)
-                        .param("uploadFile.width", String.valueOf(width))
-                        .param("uploadFile.height", String.valueOf(height))
+                        .param("width", String.valueOf(width))
+                        .param("height", String.valueOf(height))
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
                 .andDo(print());
