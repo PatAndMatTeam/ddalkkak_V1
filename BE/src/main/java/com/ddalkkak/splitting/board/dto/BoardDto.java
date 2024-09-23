@@ -3,6 +3,8 @@ package com.ddalkkak.splitting.board.dto;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
+import com.ddalkkak.splitting.comment.dto.CommentDto;
+import com.ddalkkak.splitting.comment.dto.CommentView;
 import lombok.Builder;
 import lombok.ToString;
 
@@ -17,8 +19,11 @@ public record BoardDto(
         String category,
         String createDate,
         String writer,
-        List<UploadFileDto> files
+        List<UploadFileDto> files,
+        List<CommentView> comments
 ){
+
+
     public static BoardDto from(BoardUpdateRequest updateRequest){
         return BoardDto.builder()
                 .title(updateRequest.title())
@@ -36,6 +41,9 @@ public record BoardDto(
                 .writer(entity.getWriter())
                 .files(entity.getFiles().stream()
                         .map(UploadFileDto::from).collect(Collectors.toList())
+                )
+                .comments(entity.getComments().stream()
+                        .map(CommentView::from).collect(Collectors.toList())
                 )
                 .build();
     }

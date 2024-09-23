@@ -32,6 +32,7 @@ public record BoardCreateRequest(
         int width,
         @Schema(description = "사진 세로 길이", example = "200")
         int height
+
 ) {}
 
 

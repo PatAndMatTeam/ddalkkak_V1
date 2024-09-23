@@ -1,17 +1,12 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
-import com.ddalkkak.splitting.board.domain.UploadFile;
-import com.ddalkkak.splitting.board.dto.BoardCreateDto;
-import com.ddalkkak.splitting.reply.instrastructure.entitiy.ReplyEntity;
+import com.ddalkkak.splitting.comment.instrastructure.entitiy.CommentEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +33,7 @@ public class BoardEntity extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReplyEntity> replies = new ArrayList<>();
+    private List<CommentEntity> comments = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,12 +49,12 @@ public class BoardEntity extends BaseTimeEntity {
     }
 
     // Helper methods to manage replies
-    public void addReply(ReplyEntity reply) {
-        this.replies.add(reply);
+    public void addReply(CommentEntity reply) {
+        this.comments.add(reply);
     }
 
-    public void removeReply(ReplyEntity reply) {
-        replies.remove(reply);
+    public void removeReply(CommentEntity reply) {
+        comments.remove(reply);
     }
 
     public void addFile(UploadFileEntity file) {

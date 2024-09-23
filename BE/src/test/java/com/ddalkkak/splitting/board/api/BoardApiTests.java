@@ -3,6 +3,7 @@ package com.ddalkkak.splitting.board.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,22 +32,25 @@ public class BoardApiTests {
     @MockBean
     private BoardService boardService;
 
+    @DisplayName("글을 작성할 수 있다.")
     @Test
     public void testCreateBoard() throws Exception {
-// MockMultipartFile 객체 생성
+        //given
+
+        //파일
         MockMultipartFile mockFile = new MockMultipartFile(
                 "files", // 여기서 필드 이름은 실제 매핑되는 필드와 동일하게 설정
                 "test.jpg",
                 "image/jpeg",
                 "Test data".getBytes());
+        int width = 200;
+        int height = 200;
 
-        // BoardCreateRequest의 다른 필드들
+        //글
         String category = "정치";
         String title = "우리 성공할 수 있을까?";
         String content = "무조건 성공 해야지 어?";
         String writer = "윤주영";
-        int width = 200;
-        int height = 200;
 
         // MockMvc를 사용한 multipart 요청
         mockMvc.perform(multipart("/api/board/")

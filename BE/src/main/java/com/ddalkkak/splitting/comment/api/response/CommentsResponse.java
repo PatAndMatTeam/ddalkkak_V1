@@ -1,11 +1,11 @@
-package com.ddalkkak.splitting.reply.api.response;
+package com.ddalkkak.splitting.comment.api.response;
 
 import lombok.Builder;
 
 import java.util.List;
 
 @Builder
-public record ReplyAllQueryResponse(
+public record CommentsResponse(
 
         List<ReplyQuery> replys
 ) {

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Tag(name = "Board API", description = "Board 관련 API 입니다.")
+@Tag(name = "글 API", description = "글 관련 API 입니다.")
 public interface BoardApiDocs {
 
 

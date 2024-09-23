@@ -1,7 +1,8 @@
-package com.ddalkkak.splitting.board.api;
+package com.ddalkkak.splitting.comment.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.service.BoardService;
+import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
+import com.ddalkkak.splitting.comment.service.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,15 +15,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@WebMvcTest(controllers = {BoardApi.class})
+@WebMvcTest(controllers = {CommentApi.class})
 @ActiveProfiles("test")
-public class BoardApiValidTests {
+public class CommentApiValidTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,36 +30,29 @@ public class BoardApiValidTests {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private BoardService boardService;
+    private CommentService commentService;
 
-    @DisplayName("글 생성시 카테고리, 제목, 내용, 작성자는 빈칸, null, 공백을 제외하고 작성되야 합니다.")
+    @DisplayName("댓글 생성시 작성자, 비밀번호, 내용은 기입되어야 합니다.")
     @Test
-    void isValidWhenCreateBoard() throws Exception {
+    void registCommentApi() throws Exception {
         //given
-        BoardCreateRequest createRequest = BoardCreateRequest.builder()
-                .category("롤")
-                .title("")
-                .content("test")
-                .writer("test")
-                .width(1)
-                .height(1)
+        CommentCreateRequest createRequest = CommentCreateRequest.builder()
+                .writer("yjy")
+                .password("")
+                .content("ㅋㅋㅋㅋ")
+                .parentId(0L)
                 .build();
 
-        ResultActions resultActions = mockMvc.perform(multipart("/api/board/")
-                .param("title", createRequest.title())
-                .param("content", createRequest.content())
-                .param("category", createRequest.category())
-                .param("writer", createRequest.writer())
-                .param("width", String.valueOf(createRequest.width()))
-                .param("height", String.valueOf(createRequest.height()))
+        ResultActions resultActions = mockMvc.perform(multipart("/api/board/1/comment")
+                .content(objectMapper.writeValueAsString(createRequest))
                 .characterEncoding("utf-8")
-                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         resultActions
                 .andDo(print())
                 .andExpect(status().isBadRequest())  // 400 Bad Request
                 .andExpect(jsonPath("$.message").exists())  // 응답에 errors 필드가 있어야 함
-                .andExpect(jsonPath("$.message").value("title: 제목을 입력해주세요"));  // title 필드에서 에러 발생
+                .andExpect(jsonPath("$.message").value("password: 비밀번호를 입력해주세요"));  // title 필드에서 에러 발생
     }
 
 }
