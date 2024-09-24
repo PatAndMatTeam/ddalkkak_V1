@@ -41,7 +41,6 @@ public record BoardDto(
                 .build();
     }
 
-
     public static BoardDto from(BoardEntity entity){
         return BoardDto.builder()
                 .id(entity.getId())

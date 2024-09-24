@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public record BoardAllQueryResponse(
@@ -19,7 +20,12 @@ public record BoardAllQueryResponse(
             @Schema(description = "작성자", example = "윤주영")
             String writer,
             @Schema(description = "수정 시간", example = "2024-09-07T14:58:02.714+00:00")
-            String modifyDate){
+            String modifyDate,
+            @Schema(description = "업로드 파일")
+            List<BoardDetailedResponse.UploadFileResponse> files
+    )
+
+    {
 
         public static BoardQueryResponse from(BoardDto boardDto){
             return BoardQueryResponse.builder()
@@ -27,6 +33,9 @@ public record BoardAllQueryResponse(
                     .title(boardDto.title())
                     .writer(boardDto.writer())
                     .modifyDate(boardDto.createDate())
+                    .files(boardDto.files().stream()
+                            .map(BoardDetailedResponse.UploadFileResponse::from)
+                            .collect(Collectors.toList()))
                     .build();
         }
     }
