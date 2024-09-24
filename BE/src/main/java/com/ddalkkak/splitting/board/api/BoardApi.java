@@ -1,10 +1,12 @@
 package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileUploadRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
+import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.swagger.api.BoardApiDocs;
 import jakarta.validation.Valid;
@@ -30,14 +32,14 @@ import java.util.stream.Collectors;
 public class BoardApi implements BoardApiDocs {
     private final BoardService boardService;
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardDetailedResponse> getBoard(@PathVariable("id") long id){
         BoardDetailedResponse response = BoardDetailedResponse.from(boardService.read(id));
 
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
-    @GetMapping("/all")
+    @GetMapping(path ="/all", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
                                                              @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end) {
         List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardService.readAll(start, end).stream()
@@ -52,11 +54,11 @@ public class BoardApi implements BoardApiDocs {
 
 
 
-    @PostMapping(path = "/" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
-                                produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createBoard(@Valid @ModelAttribute BoardCreateRequest boardCreateRequest){
+    @PostMapping(path = "/" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> createBoard(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
+                                            @RequestPart(value = "files", required = false) List<MultipartFile> fileCreateRequest){
 
-        boardService.create(boardCreateRequest);
+        boardService.create(boardCreateRequest, fileCreateRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -64,7 +66,7 @@ public class BoardApi implements BoardApiDocs {
     }
 
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updateBoard(@PathVariable("id") long id,
                     @RequestBody BoardUpdateRequest boardUpdateRequest){
         boardService.update(id, boardUpdateRequest);
@@ -74,6 +76,7 @@ public class BoardApi implements BoardApiDocs {
                 .build();
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id){
 
@@ -81,5 +84,16 @@ public class BoardApi implements BoardApiDocs {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .build();
+    }
+
+
+    @PatchMapping(path="/{id}/recommend", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
+                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+        BoardRecommendResponse response =
+                BoardRecommendResponse.from(boardService.update(id, boardRecommendUpdateRequest)) ;
+
+
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }

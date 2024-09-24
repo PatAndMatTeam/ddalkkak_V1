@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.service;
 
+import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
@@ -170,6 +171,33 @@ public class BoardManagerTests {
         assertThrows(BoardException.BoardNotFoundException.class, () -> {
             boardManager.read(createdId);
         });
+    }
+
+    @DisplayName("글을 변경할 수 있다.")
+    @Test
+    void updateBoard(){
+        //given
+        BoardCreateDto boardCreatDto = BoardCreateDto.builder()
+                .title("갈라치기 해보자")
+                .content("어떻게 하면 잘 만들수 있을까?")
+                .category(Category.정치.name())
+                .writer("윤주영")
+                .build();
+
+        Long createdId = boardManager.create(boardCreatDto);
+
+        BoardUpdateRequest boardUpdateRequest = BoardUpdateRequest.builder()
+                .title("제목을 변경했어요")
+                .content("내용도 변경했어요")
+                .build();
+        //when
+        boardManager.update(createdId, boardUpdateRequest);
+
+        //then
+        BoardDto actual = boardManager.read(createdId);
+
+        assertEquals(boardUpdateRequest.title(), actual.title());
+        assertEquals(boardUpdateRequest.content(), actual.content());
 
     }
 

@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.dto;
 
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
@@ -19,6 +20,8 @@ public record BoardDto(
         String category,
         String createDate,
         String writer,
+        Long leftCnt,
+        Long rightCnt,
         List<UploadFileDto> files,
         List<CommentView> comments
 ){
@@ -31,6 +34,14 @@ public record BoardDto(
                 .build();
     }
 
+    public static BoardDto from(BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+        return BoardDto.builder()
+                .leftCnt(boardRecommendUpdateRequest.leftRecommend())
+                .rightCnt(boardRecommendUpdateRequest.rightRecommend())
+                .build();
+    }
+
+
     public static BoardDto from(BoardEntity entity){
         return BoardDto.builder()
                 .id(entity.getId())
@@ -38,6 +49,8 @@ public record BoardDto(
                 .content(entity.getContent())
                 .category(entity.getCategory().name())
                 .createDate(entity.getCreateDate().toString())
+                .leftCnt(entity.getLeftCnt())
+                .rightCnt(entity.getRightCnt())
                 .writer(entity.getWriter())
                 .files(entity.getFiles().stream()
                         .map(UploadFileDto::from).collect(Collectors.toList())

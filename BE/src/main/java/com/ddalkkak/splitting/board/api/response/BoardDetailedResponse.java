@@ -21,6 +21,13 @@ public record BoardDetailedResponse(
         String content,
         @Schema(description = "작성자", example = "2024-09-07T14:58:02.714+00:00")
         String createDate,
+        @Schema(description = "글 카테고리", example = "롤|정치|축구")
+        String category,
+        @Schema(description = "왼쪽 추천 수", example = "315")
+        Long leftRecommend,
+        @Schema(description = "오른쪽 추천 수", example = "200")
+        Long rightRecommend,
+
         @Schema(description = "댓글")
         List<CommentResponse> comments,
         @Schema(description = "업로드 파일")
@@ -34,7 +41,10 @@ public record BoardDetailedResponse(
                 .title(boardDto.title())
                 .writer(boardDto.writer())
                 .content(boardDto.content())
+                .category(boardDto.category())
                 .createDate(boardDto.createDate())
+                .leftRecommend(boardDto.leftCnt())
+                .rightRecommend(boardDto.rightCnt())
                 .comments(boardDto.comments().stream()
                         .map(CommentResponse::from)
                         .collect(Collectors.toList()))
@@ -43,6 +53,11 @@ public record BoardDetailedResponse(
     }
     @Builder
      record CommentResponse (
+
+        @Schema(description = "댓글 ID", example = "1")
+        Long id,
+        @Schema(description = "부모 댓글 ID", example = "0")
+        Long parentId,
          @Schema(description = "작성자", example = "임정환")
         String writer,
          @Schema(description = "내용", example = "100개 안에 성공한다.")
@@ -52,6 +67,7 @@ public record BoardDetailedResponse(
     ) {
         public static CommentResponse from(CommentView commentView){
             return CommentResponse.builder()
+                    .id(commentView.id())
                     .writer(commentView.writer())
                     .content(commentView.content())
                     .modifyDate(commentView.createdAt())

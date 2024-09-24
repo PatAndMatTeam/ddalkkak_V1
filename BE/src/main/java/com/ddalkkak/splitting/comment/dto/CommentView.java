@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CommentView(
+        Long id,
         String writer,
         String content,
         String createdAt
@@ -12,6 +13,7 @@ public record CommentView(
 
     public static CommentView from(CommentEntity entity){
         return CommentView.builder()
+                .id(entity.getId())
                 .writer(entity.getUserId())
                 .content(entity.getContent())
                 .createdAt(entity.getCreateDate().toString())

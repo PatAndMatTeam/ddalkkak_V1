@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
 import com.ddalkkak.splitting.board.exception.UploadFileException;
@@ -28,12 +29,11 @@ public class FileService {
 
     }
 
-    public List<UploadFileCreateDto> make(final BoardCreateRequest createRequest){
-        final List<MultipartFile> files = createRequest.files();
-        final int width = createRequest.width();
-        final int height = createRequest.height();
+    public List<UploadFileCreateDto> make(final List<MultipartFile> multipartFiles){
+        final int width = 200;
+        final int height = 200;
 
-        List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(files)
+        List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(multipartFiles)
                 .filter(f -> !f.isEmpty()) // 파일이 비어 있지 않을 때만 처리
                 .map(file -> make(file, width, height))
                 .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
@@ -54,7 +54,8 @@ public class FileService {
             String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
             String fileType = file.getContentType();
 
-            if (!fileType.startsWith("image")){
+            if (!fileType.contains("image")){
+                log.info(fileType);
                 throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,1l);
             }
 

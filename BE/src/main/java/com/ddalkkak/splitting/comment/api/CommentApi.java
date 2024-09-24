@@ -33,7 +33,7 @@ public class CommentApi implements CommentApiDocs {
     }
 
 
-    @DeleteMapping("/{boardId}/reply/{commentId}")
+    @DeleteMapping(value = "/{boardId}/comment/{commentId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void>  delete(@PathVariable("commentId") Long replyId,
                                         @RequestBody CommentDeleteRequest commentDeleteRequest){
         commentService.delete(replyId, commentDeleteRequest);

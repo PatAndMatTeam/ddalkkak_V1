@@ -1,5 +1,7 @@
 package com.ddalkkak.splitting.comment.service;
 
+import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
 import com.ddalkkak.splitting.comment.exception.CommentErrorCode;
@@ -19,11 +21,20 @@ public class CommentServiceTests {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private BoardService boardService;
+
     @DisplayName("댓글을 작성할 수 있다.")
     @Test
     void registComment(){
         //given
-        Long boardId = 1L;
+        BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+                .category("축구")
+                .title("손흥민 화이팅")
+                .content("월드컵 우승하자")
+                .writer("윤주영")
+                .build();
+        Long boardId = boardService.create(boardCreateRequest, null);
 
         CommentCreateRequest commentCreateRequest = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -43,8 +54,13 @@ public class CommentServiceTests {
     @DisplayName("비밀번호가 같은 댓글 삭제시 성공한다.")
     @Test
     void deleteCommentMatchPassword(){
-
-        Long boardId = 1L;
+        BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+                .category("축구")
+                .title("손흥민 화이팅")
+                .content("월드컵 우승하자")
+                .writer("윤주영")
+                .build();
+        Long boardId = boardService.create(boardCreateRequest, null);
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -68,7 +84,13 @@ public class CommentServiceTests {
     @DisplayName("비밀번호가 다른 댓글 삭제시 실패한다.")
     @Test
     void deleteCommentNotMatchPassword(){
-        Long boardId = 1L;
+        BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+                .category("축구")
+                .title("손흥민 화이팅")
+                .content("월드컵 우승하자")
+                .writer("윤주영")
+                .build();
+        Long boardId = boardService.create(boardCreateRequest, null);
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")

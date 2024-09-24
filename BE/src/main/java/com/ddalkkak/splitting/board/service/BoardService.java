@@ -1,7 +1,9 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 
@@ -24,14 +26,17 @@ public class BoardService {
     private final BoardManager boardManager;
     private final FileService fileService;
 
-    public Long create(final BoardCreateRequest createRequest) {
-        List<UploadFileCreateDto> fileCreateDtos = fileService.make(createRequest);
-
+    public Long create(final BoardCreateRequest createRequest,
+                       final List<MultipartFile> multipartFiles) {
         //1. 변환
         BoardCreateDto board = BoardCreateDto
                 .from(createRequest);
 
-        board.addFiles(fileCreateDtos);
+        if (multipartFiles!=null){
+            List<UploadFileCreateDto> fileCreateDtos = fileService.make(multipartFiles);
+
+            board.addFiles(fileCreateDtos);
+        }
 
         return boardManager.create(board);
     }
@@ -49,6 +54,12 @@ public class BoardService {
 
     public void update(Long id, BoardUpdateRequest updateRequest){
        boardManager.update(id, updateRequest);
+    }
+
+    public BoardDto update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+        boardManager.update(id, boardRecommendUpdateRequest);
+
+        return boardManager.read(id);
     }
 
     public void delete(Long id){

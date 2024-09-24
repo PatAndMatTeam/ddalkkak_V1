@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -42,19 +43,14 @@ public class BoardApiValidTests {
                 .title("")
                 .content("test")
                 .writer("test")
-                .width(1)
-                .height(1)
                 .build();
 
+        MockMultipartFile boardPart = new MockMultipartFile(
+                "board", "board", "application/json", objectMapper.writeValueAsString(createRequest).getBytes());
+
         ResultActions resultActions = mockMvc.perform(multipart("/api/board/")
-                .param("title", createRequest.title())
-                .param("content", createRequest.content())
-                .param("category", createRequest.category())
-                .param("writer", createRequest.writer())
-                .param("width", String.valueOf(createRequest.width()))
-                .param("height", String.valueOf(createRequest.height()))
-                .characterEncoding("utf-8")
-                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE));
+                        .file(boardPart)
+                        .contentType(MediaType.MULTIPART_FORM_DATA));
 
         resultActions
                 .andDo(print())

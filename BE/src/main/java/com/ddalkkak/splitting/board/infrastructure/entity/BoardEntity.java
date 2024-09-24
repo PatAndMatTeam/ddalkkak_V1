@@ -26,6 +26,10 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String content;
 
+    private Long leftCnt;
+
+    private Long rightCnt;
+
     @Enumerated(EnumType.STRING)
     private Category category;
 
@@ -46,6 +50,14 @@ public class BoardEntity extends BaseTimeEntity {
 
     public void changeContent(String content){
         this.content = content;
+    }
+
+    public void changeLeftCnt(long leftCnt){
+        this.leftCnt = leftCnt;
+    }
+
+    public void changeRightCnt(long rightCnt){
+        this.rightCnt = rightCnt;
     }
 
     // Helper methods to manage replies
