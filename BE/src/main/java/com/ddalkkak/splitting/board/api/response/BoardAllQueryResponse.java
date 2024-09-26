@@ -19,13 +19,18 @@ public record BoardAllQueryResponse(
             @Schema(description = "작성자", example = "윤주영")
             String writer,
             @Schema(description = "수정 시간", example = "2024-09-07T14:58:02.714+00:00")
-            String modifyDate){
+            String modifyDate,
+            @Schema(description = "카테고리", example = "롤|정치|축구")
+            String category
+
+    ){
 
         public static BoardQueryResponse from(BoardDto boardDto){
             return BoardQueryResponse.builder()
                     .id(boardDto.id())
                     .title(boardDto.title())
                     .writer(boardDto.writer())
+                    .category(boardDto.category())
                     .modifyDate(boardDto.createDate())
                     .build();
         }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,10 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String content;
 
+    @ColumnDefault("0")
     private Long leftCnt;
 
+    @ColumnDefault("0")
     private Long rightCnt;
 
     @Enumerated(EnumType.STRING)
