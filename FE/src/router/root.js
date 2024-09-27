@@ -1,11 +1,11 @@
 import { Suspense, lazy } from "react";
-import boardRouter from "./boardRouter";
 const { createBrowserRouter } = require("react-router-dom");
 
 const Loading = <div>Loading....</div>
 const Main = lazy(() => import("../pages/MainPage"))
-const About = lazy(() => import("../pages/AboutPage"))
-const BoardIndex = lazy(()=> import("../pages/board/IndexPage"))
+const BoardList = lazy(()=> import("../pages/board/ListPage"))
+const BoardRead = lazy(()=> import("../pages/board/ReadPage"))
+const BoardAdd = lazy(()=> import("../pages/board/AddPage"))
 
 const root = createBrowserRouter([
     {
@@ -13,13 +13,16 @@ const root = createBrowserRouter([
         element: <Suspense fallback={Loading}><Main/></Suspense>
     },
     {
-        path: "about",
-        element: <Suspense fallback={Loading}><About/></Suspense>
+        path: ":category", // 경로 변수 추가
+        element : <Suspense fallback={Loading}><BoardList/></Suspense>
     },
     {
-        path: "board",
-        element: <Suspense fallback={Loading}><BoardIndex/></Suspense>,
-        children: boardRouter()
+        path:':category/read/:tno',
+        element:<Suspense fallback={Loading}><BoardRead/></Suspense>
+    },
+    {
+        path:':category/add',
+        element:<Suspense fallback={Loading}><BoardAdd/></Suspense>
     }
 ])
 export default root;

@@ -15,9 +15,9 @@ const initState = {
     current: 0
 };
 
-function ListComponent(props) {
+function ListComponent({category}) {
     const [serverData, setServerData] = useState(initState);
-    const { page, size, refresh, moveToList, moveToRead } = useCustomMove();
+    const { page, size, refresh, moveToRead } = useCustomMove();
 
     useEffect(() => {
         getList({ page, size }).then(data => {
@@ -33,7 +33,7 @@ function ListComponent(props) {
                         <div
                             key={index}
                             className="flex flex-col items-center w-[18%] min-w-[180px] p-4 bg-gray-100 shadow-md rounded hover:bg-gray-200 cursor-pointer"
-                            onClick={() => moveToRead(item.id)}
+                            onClick={() => moveToRead(category,item.id)}
                         >
                             <img
                                 src={item.thumbnail || "/placeholder.jpg"} // 썸네일이 없을 경우 placeholder 이미지 사용

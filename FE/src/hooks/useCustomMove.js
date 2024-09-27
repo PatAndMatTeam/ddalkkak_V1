@@ -26,8 +26,8 @@ const useCustomMove = () =>{
 
     const page = getNum(queryParams.get('page'),1)  //페이값 없으면 1 있으면 page값
     const size = getNum(queryParams.get('size'),10)  // 없으면 10 size있으면 size값
-    console.log('page:', page); // 콘솔 로그 추가
-    console.log('size:', size); // 콘솔 로그 추가
+/*    console.log('page:', page); // 콘솔 로그 추가
+    console.log('size:', size); // 콘솔 로그 추가*/
 
     //page=3&size=10
     const queryDefault = createSearchParams({page,size}).toString() //page=3&size=10 이런식으로 만들어준다.
@@ -49,6 +49,11 @@ const useCustomMove = () =>{
         navigate({pathname:'../list',search:queryStr})
     }
 
+   /* 메뉴bar에서 카테고리 이동 */
+    const moveToCategory = (category) => {
+        navigate({pathname:`../${category}`})
+    }
+
 
     const moveToModify = (num) => {
         console.log('Navigating to modify with number:', num); // 콘솔 로그 추가
@@ -57,14 +62,21 @@ const useCustomMove = () =>{
     }
 
 
-    //tno로 안받고 num으로 받는이유 다음에 어떤 게시판을 만들때
-    //다 같이 쓸수있게
-    const moveToRead = (num) => {
-        navigate({pathname:`../read/${num}`,
-            search:queryDefault})
+
+    const moveToRead = (category,num) => {
+        navigate({pathname:`../${category}/read/${num}`})
     }
 
+    const moveToAdd = (category) => {
+        navigate({pathname:`../${category}/add`})
+    }
 
+    //tno로 안받고 num으로 받는이유 다음에 어떤 게시판을 만들때
+    //다 같이 쓸수있게
+    const moveToAnlyRead = (num) => {
+        navigate({pathname:`../read/anly/${num}`,
+            search:queryDefault})
+    }
 
 
 
@@ -73,7 +85,7 @@ const useCustomMove = () =>{
 // 즉, 이 코드는 { moveTolist: moveTolist }와 같습니다.
     //만약 useCustomMove에서 다른 함수나 값을 함께 반환하고 싶다면 객체를 반환하는 것이 더 적합합니다.
     // 단순히 하나의 함수만 반환하고 사용할 계획이라면 함수 자체를 반환하는 것이 더 간단하고 직관적입니다.
-    return {moveToList,moveToModify,moveToRead,page,size , refresh}
+    return {moveToList,moveToModify,moveToRead,moveToAnlyRead,page,size , refresh ,moveToCategory ,moveToAdd}
 }
 
 

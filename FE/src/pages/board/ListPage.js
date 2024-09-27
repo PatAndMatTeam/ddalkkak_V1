@@ -1,24 +1,33 @@
 import React from 'react';
-import {useSearchParams} from "react-router-dom";
 import ListComponent from "../../components/board/ListComponent";
+import { useParams } from "react-router-dom";
+import ListLayout from "../../layouts/ListLayout";
+import useCustomMove from "../../hooks/useCustomMove";
+const ListPage = () => {
 
-function ListPage(props) {
-/*
-    const [queryParams] = useSearchParams() //url 검색창에 따라오는 & ? 검색에 캐치하는 함수
-
-    //url 매개변수내용 가져오기
-    const page = queryParams.get('page') ? parseInt(queryParams.get('page')) : 1
-    const size = queryParams.get('size') ? parseInt(queryParams.get('page')) : 10*/
-
+    const {category} = useParams()
+    const { moveToAdd } = useCustomMove();
 
     return (
-        <div className="p-4 w-full bg-white ">
-            <div className="text-3xl font-extrabold">
-                 List Page Component
+        <ListLayout>
+            <div className="p-6 max-w-7xl mx-auto bg-gray-50 shadow-lg rounded-lg">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-4xl font-bold text-gray-800">
+                        {category}
+                    </h1>
+                    <button
+                        className="bg-green-500 hover:bg-green-600 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition duration-300"
+                        onClick={() => moveToAdd(category)}>
+                        글쓰기
+                    </button>
+                </div>
+                <div className="border-t-2 border-gray-200 pt-6">
+                    <ListComponent category={category}/>
+                </div>
             </div>
+        </ListLayout>
 
-            <ListComponent/>
-        </div>
+
     );
 }
 export default ListPage;
