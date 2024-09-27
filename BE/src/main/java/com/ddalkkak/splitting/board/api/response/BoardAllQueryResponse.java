@@ -21,17 +21,19 @@ public record BoardAllQueryResponse(
             String writer,
             @Schema(description = "수정 시간", example = "2024-09-07T14:58:02.714+00:00")
             String modifyDate,
+            @Schema(description = "카테고리", example = "롤|정치|축구")
+            String category,
             @Schema(description = "업로드 파일")
             List<BoardDetailedResponse.UploadFileResponse> files
-    )
 
-    {
+    ){
 
         public static BoardQueryResponse from(BoardDto boardDto){
             return BoardQueryResponse.builder()
                     .id(boardDto.id())
                     .title(boardDto.title())
                     .writer(boardDto.writer())
+                    .category(boardDto.category())
                     .modifyDate(boardDto.createDate())
                     .files(boardDto.files().stream()
                             .map(BoardDetailedResponse.UploadFileResponse::from)
