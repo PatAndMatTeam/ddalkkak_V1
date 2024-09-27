@@ -1,10 +1,9 @@
 package com.ddalkkak.splitting.swagger.api;
 
-import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardPageableRequest;
-import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.*;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
+import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
 import com.ddalkkak.splitting.board.exception.BoardErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,13 +18,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "Board API", description = "Board 관련 API 입니다.")
+@Tag(name = "글 API", description = "글 관련 API 입니다.")
 public interface BoardApiDocs {
 
 
@@ -38,15 +36,6 @@ public interface BoardApiDocs {
     public ResponseEntity<BoardDetailedResponse> getBoard(@PathVariable("id") long id);
 
 
-    @Operation(summary = "글 생성", description = "글을 생성합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "글 생성 성공"),
-            @ApiResponse(responseCode = "403", description = "글 생성 실패")
-    })
-    public ResponseEntity<Void> createBoard(@Valid @RequestBody BoardCreateRequest boardCreateRequest);
-
-
-
     @Operation(summary = "글 리스트 조회", description = "글 리스트를 조회합니다.")
     @Parameter(name = "start", description = "시작 번호(0 부터)", example = "0")
     @Parameter(name = "end", description = "종료 번호", example = "2")
@@ -56,6 +45,16 @@ public interface BoardApiDocs {
     })
     public ResponseEntity<BoardAllQueryResponse> getBoards(@RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
                                                            @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end);
+
+
+
+    @Operation(summary = "글 생성", description = "글을 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "글 생성 성공"),
+            @ApiResponse(responseCode = "403", description = "글 생성 실패")
+    })
+    public ResponseEntity<Void> createBoard(@Valid @RequestPart("board") BoardCreateRequest boardCreateRequest,
+                                            @RequestPart("files") List<MultipartFile> fileCreateRequest);
 
 
     @Operation(summary = "글 수정", description = "글 수정 합니다.")
@@ -71,6 +70,14 @@ public interface BoardApiDocs {
             @ApiResponse(responseCode = "202", description = "글 삭제 성공"),
     })
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id);
+
+    @Operation(summary = "글 추천", description = "글 추천기능.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "글 수정 성공"),
+    })
+    @PatchMapping("/{id}/recommend")
+    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
+                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest);
 
 
 }

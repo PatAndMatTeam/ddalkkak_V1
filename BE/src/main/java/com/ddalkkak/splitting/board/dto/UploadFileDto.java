@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.board.dto;
 
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 public record UploadFileDto(

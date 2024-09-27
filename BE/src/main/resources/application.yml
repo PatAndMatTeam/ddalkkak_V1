@@ -15,12 +15,18 @@ spring:
     hibernate:
       ddl-auto: create
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
 
   h2:
     console:
       enabled: true
       path: /h2-console
 
+### upload file limit
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
 #### SWAGGER
 
 #swagger-ui ??

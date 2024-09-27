@@ -1,7 +1,9 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 
@@ -23,49 +25,27 @@ public class BoardService {
 
     private final BoardManager boardManager;
     private final FileService fileService;
-//
-//    public Long create(final BoardCreateRequest createRequest) {
-//        final List<MultipartFile> test = createRequest.uploadFile().files();
-//        final int width = createRequest.uploadFile().width();
-//        final int height = createRequest.uploadFile().height();
-//
-//        List<UploadFileCreateDto> uploadFiles = Optional.ofNullable(test)
-//                .filter(files -> !files.isEmpty()) // 파일이 비어 있지 않을 때만 처리
-//                .map(file -> fileService.make(file, width, height))
-//                .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
-//
-//        //1. 변환
-//        BoardCreateDto board = BoardCreateDto
-//                .from(createRequest);
-//
-//        board.addFiles(uploadFiles);
-//
-//        return boardManager.create(board);
-//    }
 
-    public Long createV1(final BoardCreateRequest createRequest) {
-        final List<MultipartFile> test = createRequest.files();
-        final int width = createRequest.width();
-        final int height = createRequest.height();
-
-        List<UploadFileCreateDto> uploadFiles = Optional.ofNullable(test)
-                .filter(files -> !files.isEmpty()) // 파일이 비어 있지 않을 때만 처리
-                .map(file -> fileService.make(file, width, height))
-                .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
-
+    public Long create(final BoardCreateRequest createRequest,
+                       final List<MultipartFile> multipartFiles) {
         //1. 변환
         BoardCreateDto board = BoardCreateDto
                 .from(createRequest);
 
-        board.addFiles(uploadFiles);
+        if (multipartFiles!=null){
+            List<UploadFileCreateDto> fileCreateDtos = fileService.make(multipartFiles);
+
+            board.addFiles(fileCreateDtos);
+        }
 
         return boardManager.create(board);
     }
 
     public BoardDto read(Long id){
-        BoardDto entity = boardManager.read(id);
+        BoardDto board = boardManager.read(id);
         //lazi loading
-        return entity;
+        log.info("{}:::", board);
+        return board;
     }
 
     public List<BoardDto> readAll(int start, int end){
@@ -74,6 +54,12 @@ public class BoardService {
 
     public void update(Long id, BoardUpdateRequest updateRequest){
        boardManager.update(id, updateRequest);
+    }
+
+    public BoardDto update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+        boardManager.update(id, boardRecommendUpdateRequest);
+
+        return boardManager.read(id);
     }
 
     public void delete(Long id){

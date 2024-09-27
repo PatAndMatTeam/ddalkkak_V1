@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.board.service;
 
 
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
@@ -32,14 +33,16 @@ class BoardManager {
 
         BoardEntity boardEntity = boardCreatDto.toEntity();
 
-        List<UploadFileCreateDto> createDtos= boardCreatDto.getFiles();
-        createDtos.stream()
-                .forEach(x -> {
-                    boardEntity.addFile(x.toEntity());
-                });
+        try{
+            List<UploadFileCreateDto> createDtos= boardCreatDto.getFiles();
 
-        //boardEntity.getFiles().stream().forEach(x -> x.addBoard(boardEntity));
-
+            createDtos.stream()
+                    .forEach(x -> {
+                        boardEntity.addFile(x.toEntity());
+                    });
+        }catch (NullPointerException npe){
+            log.info("파일이 없으므로 파일 등록은 제외합니다.");
+        }
         return boardRepository.save(boardEntity).getId();
     }
 
@@ -71,5 +74,14 @@ class BoardManager {
 
         entity.changeTitle(dto.title());
         entity.changeContent(dto.content());
+    }
+
+    @Transactional
+    public void update(Long id, BoardRecommendUpdateRequest updateRequest){
+        BoardEntity entity = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
+
+        entity.changeLeftCnt(updateRequest.leftRecommend());
+        entity.changeRightCnt(updateRequest.rightRecommend());
     }
 }

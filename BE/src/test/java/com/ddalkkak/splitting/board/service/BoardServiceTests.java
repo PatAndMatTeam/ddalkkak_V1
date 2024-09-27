@@ -1,18 +1,17 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-
 import com.ddalkkak.splitting.board.dto.BoardDto;
-import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 
-import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//@Transactional
+@Transactional
 @ActiveProfiles("test")
 @SpringBootTest
 public class BoardServiceTests {
@@ -49,33 +48,28 @@ public class BoardServiceTests {
             List<MockMultipartFile> files = new ArrayList<>();
             files.add(givenFile);
 
-            BoardCreateRequest.FileUploadRequest fileUploadRequest = BoardCreateRequest.FileUploadRequest.builder()
-                    .files(List.of(givenFile))
-                    .width(100)
-                    .height(100)
-                    .build();
+            List<MultipartFile> fileCreateRequest = List.of(givenFile);
 
             //board
-            BoardCreateRequest givenRequest = BoardCreateRequest.builder()
+            BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name())
                     .writer("윤주영")
-                    .uploadFile(fileUploadRequest)
                     .build();
 
             //when
-            Long createdId = boardService.create(givenRequest);
+            Long createdId = boardService.create(boardCreateRequest, List.of(givenFile));
             //then
             BoardDto result = boardService.read(createdId);
 
-            assertEquals(givenRequest.title(), result.title());
-            assertEquals(givenRequest.category(), result.category());
-            assertEquals(givenRequest.content(), result.content());
-            assertEquals(givenRequest.writer(), result.writer());
-            assertEquals(givenRequest.uploadFile().files().get(0).getContentType(),
+            assertEquals(boardCreateRequest.getTitle(), result.title());
+            assertEquals(boardCreateRequest.getCategory(), result.category());
+            assertEquals(boardCreateRequest.getContent(), result.content());
+            assertEquals(boardCreateRequest.getWriter(), result.writer());
+            assertEquals(fileCreateRequest.get(0).getContentType(),
                     result.files().get(0).fileType());
-            assertEquals(givenRequest.uploadFile().files().get(0).getOriginalFilename(),
+            assertEquals(fileCreateRequest.get(0).getOriginalFilename(),
                     result.files().get(0).fileName());
         }
 

@@ -12,25 +12,25 @@ import java.lang.reflect.Type;
  * swagger에서 테스트시에는 각 json 항목별로 타입지정을 할 수 없기 때문에
  *
  * */
-//@Component
-//public class MultipartJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
-//
-//    public MultipartJackson2HttpMessageConverter(ObjectMapper objectMapper) {
-//        super(objectMapper, MediaType.APPLICATION_OCTET_STREAM);
-//    }
-//
-//    @Override
-//    public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean canWrite(MediaType mediaType) {
-//        return false;
-//    }
-//}
+@Component
+public class MultipartJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
+
+    public MultipartJackson2HttpMessageConverter(ObjectMapper objectMapper) {
+        super(objectMapper, MediaType.APPLICATION_OCTET_STREAM);
+    }
+
+    @Override
+    public boolean canWrite(Class<?> clazz, MediaType mediaType) {
+        return false;
+    }
+
+    @Override
+    public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
+        return false;
+    }
+
+    @Override
+    public boolean canWrite(MediaType mediaType) {
+        return false;
+    }
+}

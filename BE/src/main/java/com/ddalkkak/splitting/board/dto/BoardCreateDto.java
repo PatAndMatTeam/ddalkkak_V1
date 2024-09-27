@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.board.dto;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import lombok.AllArgsConstructor;
@@ -25,20 +26,11 @@ public class BoardCreateDto{
 
 
     public static BoardCreateDto from(BoardCreateRequest createRequest){
-        if (isInFile(createRequest)){
-            return BoardCreateDto.builder()
-                    .category(createRequest.category())
-                    .title(createRequest.title())
-                    .content(createRequest.content())
-                    .writer(createRequest.writer())
-                    .build();
-        }
-
         return BoardCreateDto.builder()
-                .category(createRequest.category())
-                .title(createRequest.title())
-                .content(createRequest.content())
-                .writer(createRequest.writer())
+                .category(createRequest.getCategory())
+                .title(createRequest.getTitle())
+                .content(createRequest.getContent())
+                .writer(createRequest.getWriter())
                 .build();
     }
 
@@ -56,8 +48,8 @@ public class BoardCreateDto{
     }
 
 
-    private static boolean isInFile(BoardCreateRequest createRequest){
-        if (createRequest.files()==null){
+    private static boolean isInFile(FileCreateRequest fileCreateRequest){
+        if (fileCreateRequest.getFiles()==null){
             return false;
         }
         return true;

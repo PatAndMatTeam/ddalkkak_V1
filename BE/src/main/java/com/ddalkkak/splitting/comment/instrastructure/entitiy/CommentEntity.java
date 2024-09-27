@@ -1,16 +1,23 @@
-package com.ddalkkak.splitting.reply.instrastructure.entitiy;
+package com.ddalkkak.splitting.comment.instrastructure.entitiy;
 
 import com.ddalkkak.splitting.board.infrastructure.entity.BaseTimeEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
-@Table(name="REPLY")
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Table(name="Comment")
 @Entity
-public class ReplyEntity extends BaseTimeEntity {
+public class CommentEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long parentId;
 
     private String content;
 

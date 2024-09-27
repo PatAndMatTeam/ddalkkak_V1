@@ -5,7 +5,10 @@ plugins {
 }
 
 group = 'com.ddalkkak'
-version = '0.0.1-SNAPSHOT'
+version = getDate()
+def getDate() {
+    new Date().format('yyyyMMdd')
+}
 
 java {
     toolchain {
@@ -38,6 +41,12 @@ dependencies {
 
     //spring doc
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+
+//    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//    // 또는
+//    implementation 'org.springdoc:springdoc-openapi-ui:1.5.9'
+
 
     //valid
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.1'
