@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,13 +50,15 @@ public interface BoardApiDocs {
 
 
 
-    @Operation(summary = "글 생성", description = "글을 생성합니다.")
+    @Operation(summary = "글 생성 V1", description = "글을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "글 생성 성공"),
             @ApiResponse(responseCode = "403", description = "글 생성 실패")
     })
-    public ResponseEntity<Void> createBoard(@Valid @RequestPart("board") BoardCreateRequest boardCreateRequest,
-                                            @RequestPart("files") List<MultipartFile> fileCreateRequest);
+    public ResponseEntity<Void> createBoard(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
+                                            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                            @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest);
+
 
 
     @Operation(summary = "글 수정", description = "글 수정 합니다.")

@@ -78,6 +78,8 @@ public record BoardDetailedResponse(
 
     @Builder
     record UploadFileResponse(
+            @Schema(description = "게시글에 표시될 파일 제목", example = "나루토")
+            String fileTitle,
             @Schema(description = "파일이름", example = "test.jpg")
             String fileName,
             @Schema(description = "파일 데이터(바이트)", example = "...")
@@ -85,6 +87,7 @@ public record BoardDetailedResponse(
     ){
         public static UploadFileResponse from(UploadFileDto uploadFileDto){
             return UploadFileResponse.builder()
+                    .fileTitle(uploadFileDto.fileTitle())
                     .fileName(uploadFileDto.fileName())
                     .data(uploadFileDto.data())
                     .build();

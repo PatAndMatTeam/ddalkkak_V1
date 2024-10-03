@@ -15,6 +15,8 @@ public class UploadFileEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String fileTile;
+
     private String fileName;
 
     private String fileType;
