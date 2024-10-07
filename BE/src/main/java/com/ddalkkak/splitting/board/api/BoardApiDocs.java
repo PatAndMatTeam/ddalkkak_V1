@@ -84,4 +84,20 @@ public interface BoardApiDocs {
                                                             @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest);
 
 
+    @Operation(summary = "조회수 증가", description = "조회수 증가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "조회수 증가 성공"),
+    })
+    @PatchMapping(path="/{id}/visit")
+    public ResponseEntity<BoardRecommendResponse> visit(@PathVariable("id") long id);
+
+    @Operation(summary = "카테고리 별 글 리스트 조회", description = "카테고리 별 글 리스트 조회.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "글 리스트 조회 성공"),
+    })
+    @GetMapping(path ="/{category}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<BoardAllQueryResponse> getBoards(@PathVariable("category") String category,
+                                                           @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
+                                                           @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end);
+
 }
