@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.comment.instrastructure.entitiy.CommentEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -80,6 +81,28 @@ public class BoardEntity extends BaseTimeEntity {
 
     public void removeFile(UploadFileEntity file) {
         files.remove(file);
+    }
+
+
+    public static BoardEntity fromModel(Board board){
+        return BoardEntity.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .category(Category.valueOf(board.getCategory()))
+                .writer(board.getWriter())
+                .build();
+    }
+
+    public Board toModel(){
+        return Board.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .leftCnt(this.leftCnt)
+                .rightCnt(this.rightCnt)
+                .category(this.category.name())
+                .writer(this.writer)
+                .build();
     }
 
 }

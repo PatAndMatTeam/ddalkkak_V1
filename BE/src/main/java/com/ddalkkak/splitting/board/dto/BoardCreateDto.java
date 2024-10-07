@@ -47,11 +47,4 @@ public class BoardCreateDto{
         this.files = files;
     }
 
-
-    private static boolean isInFile(FileCreateRequest fileCreateRequest){
-        if (fileCreateRequest.getFiles()==null){
-            return false;
-        }
-        return true;
-    }
 }

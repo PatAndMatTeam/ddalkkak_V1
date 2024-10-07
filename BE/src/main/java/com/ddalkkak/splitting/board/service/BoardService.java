@@ -4,6 +4,7 @@ import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 
@@ -27,13 +28,32 @@ public class BoardService {
     private final FileService fileService;
 
     public Long create(final BoardCreateRequest createRequest,
-                       final List<MultipartFile> multipartFiles) {
+                       final List<MultipartFile> multipartFiles,
+                         final List<FileCreateRequest> fileInfoRequest) {
         //1. 변환
         BoardCreateDto board = BoardCreateDto
                 .from(createRequest);
 
         if (multipartFiles!=null){
-            List<UploadFileCreateDto> fileCreateDtos = fileService.make(multipartFiles);
+            List<UploadFileCreateDto> fileCreateDtos = fileService.make(multipartFiles, fileInfoRequest);
+
+            board.addFiles(fileCreateDtos);
+        }
+
+        return boardManager.create(board);
+    }
+
+    public Long createV1(final BoardCreateRequest createRequest,
+                       final List<MultipartFile> multipartFiles,
+                       final List<FileCreateRequest> fileInfoRequest) {
+        //1. 변환
+//        Board board = Board.from(createRequest, )
+
+        BoardCreateDto board = BoardCreateDto
+                .from(createRequest);
+
+        if (multipartFiles!=null){
+            List<UploadFileCreateDto> fileCreateDtos = fileService.make(multipartFiles, fileInfoRequest);
 
             board.addFiles(fileCreateDtos);
         }

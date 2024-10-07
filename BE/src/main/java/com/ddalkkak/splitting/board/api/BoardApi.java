@@ -8,6 +8,7 @@ import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
 import com.ddalkkak.splitting.board.service.BoardService;
+import com.ddalkkak.splitting.board.service.BoardServiceV1;
 import com.ddalkkak.splitting.swagger.api.BoardApiDocs;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @Validated
 public class BoardApi implements BoardApiDocs {
     private final BoardService boardService;
+    private final BoardServiceV1 boardServiceV1;
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardDetailedResponse> getBoard(@PathVariable("id") long id){
@@ -56,9 +58,11 @@ public class BoardApi implements BoardApiDocs {
 
     @PostMapping(path = "/" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createBoard(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
-                                            @RequestPart(value = "files", required = false) List<MultipartFile> fileCreateRequest){
+                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
 
-        boardService.create(boardCreateRequest, fileCreateRequest);
+        log.info("{}", fileInfoRequest);
+        boardService.create(boardCreateRequest, files, fileInfoRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -70,6 +74,18 @@ public class BoardApi implements BoardApiDocs {
     public ResponseEntity<Void> updateBoard(@PathVariable("id") long id,
                     @RequestBody BoardUpdateRequest boardUpdateRequest){
         boardService.update(id, boardUpdateRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .build();
+    }
+
+    @PatchMapping(value = "/V1/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
+                                            @RequestBody BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
+        boardServiceV1.update(id, boardUpdateRequest, files, fileInfoRequest);
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)

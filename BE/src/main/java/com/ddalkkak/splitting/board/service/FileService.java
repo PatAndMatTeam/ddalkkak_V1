@@ -29,19 +29,20 @@ public class FileService {
 
     }
 
-    public List<UploadFileCreateDto> make(final List<MultipartFile> multipartFiles){
-        final int width = 200;
-        final int height = 200;
 
+    public List<UploadFileCreateDto> make(final List<MultipartFile> multipartFiles,
+                                            final List<FileCreateRequest> fileInfoRequest){
         List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(multipartFiles)
                 .filter(f -> !f.isEmpty()) // 파일이 비어 있지 않을 때만 처리
-                .map(file -> make(file, width, height))
+                .map(file -> createFile(file, fileInfoRequest))
                 .orElse(List.of()); // 파일이 없으면 빈 리스트 반환
 
         return fileCreateDtos;
     }
 
-    private List<UploadFileCreateDto> make(List<MultipartFile> files, int width, int height){
+
+    private List<UploadFileCreateDto> createFile(List<MultipartFile> files,
+                                             List<FileCreateRequest> fileInfoRequest){
         // 파일 리스트가 null이거나 비어 있는 경우 빈 리스트 반환
         if (files == null || files.isEmpty()) {
             return Collections.emptyList();
@@ -49,10 +50,12 @@ public class FileService {
 
         List<UploadFileCreateDto> result = new ArrayList<>();
 
-        for (MultipartFile file : files){
-            String orginalName = file.getOriginalFilename();
+        for (int i=0; i<files.size(); i++){
+            String orginalName = files.get(i).getOriginalFilename();
             String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
-            String fileType = file.getContentType();
+            String fileType = files.get(i).getContentType();
+
+            String fileTitle = fileInfoRequest.get(i).getFileTitle();
 
             if (!fileType.contains("image")){
                 log.info(fileType);
@@ -62,8 +65,9 @@ public class FileService {
             log.info(fileType);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
-                Thumbnails.of(file.getInputStream())
-                        .size(width, height)
+                Thumbnails.of(files.get(i).getInputStream())
+                        .size(fileInfoRequest.get(i).getWidth(),
+                                fileInfoRequest.get(i).getHeight())
                         .toOutputStream(baos);
             }catch (IOException io){
                 throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.CANNOT_BE_UPLOADED,1l);
@@ -71,10 +75,11 @@ public class FileService {
 
             byte[] bytes  = baos.toByteArray();
 
-            UploadFileCreateDto uploadFileCreateDto =  UploadFileCreateDto.of(fileName, fileType, bytes);
+            UploadFileCreateDto uploadFileCreateDto =  UploadFileCreateDto.of(fileTitle,fileName, fileType, bytes);
             result.add(uploadFileCreateDto);
         }
-            return result;
+
+        return result;
     }
 
 

@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="350e8177-b526-4f65-bf27-02193467010a" name="변경" comment="" />
+    <list default="true" id="350e8177-b526-4f65-bf27-02193467010a" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/todoApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/todoApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/AddComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/AddComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/ListComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ListComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/ReadComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ReadComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useCustomMove.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useCustomMove.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/layouts/BasicLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/BasicLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/layouts/ListLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/ListLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/MainPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/MainPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/AddPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/AddPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/ListPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ListPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/ReadPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ReadPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/boardRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/boardRouter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/root.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/root.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,6 +49,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -45,29 +64,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/sucess/ddalkkak_V1/FE",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "모듈",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/sucess/ddalkkak_V1/FE&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\gala\avsb\src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\sucess\ddalkkak_V1\FE\upload" />
     </key>
   </component>
   <component name="RunManager" selected="npm.npm start">
@@ -110,6 +133,14 @@
       <workItem from="1725935098128" duration="60000" />
       <workItem from="1725935170665" duration="22000" />
       <workItem from="1725935257900" duration="8615000" />
+      <workItem from="1726015446281" duration="10697000" />
+      <workItem from="1726115671183" duration="13108000" />
+      <workItem from="1727065025568" duration="607000" />
+      <workItem from="1727069242438" duration="7706000" />
+      <workItem from="1727135600001" duration="23386000" />
+      <workItem from="1727168705270" duration="182000" />
+      <workItem from="1727268386125" duration="7070000" />
+      <workItem from="1727358936744" duration="2484000" />
     </task>
     <servers />
   </component>

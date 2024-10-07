@@ -3,8 +3,10 @@ package com.ddalkkak.splitting.board.api.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import lombok.Getter;
 
 
+@Getter
 
 @Builder
 public record BoardUpdateRequest(

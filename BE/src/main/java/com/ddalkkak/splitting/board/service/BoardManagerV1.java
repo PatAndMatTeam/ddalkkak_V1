@@ -10,6 +10,7 @@ import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.exception.BoardErrorCode;
 import com.ddalkkak.splitting.board.exception.BoardException;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
+import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,43 +25,41 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-class BoardManager {
+class BoardManagerV1 {
 
     private final BoardRepository boardRepository;
     private final FileManager fileManager;
 
-    @Transactional
-    public Long create(BoardCreateDto boardCreatDto){
 
-        BoardEntity boardEntity = boardCreatDto.toEntity();
+
+    @Transactional
+    public Long create(Board board){
+        BoardEntity entity = BoardEntity.fromModel(board);
 
         try{
-            List<UploadFileCreateDto> createDtos= boardCreatDto.getFiles();
-
-            createDtos.stream()
-                    .forEach(x -> {
-                        boardEntity.addFile(x.toEntity());
+            entity.getFiles().stream()
+                    .forEach(file -> {
+                        entity.addFile(file);
                     });
         }catch (NullPointerException npe){
             log.info("파일이 없으므로 파일 등록은 제외합니다.");
         }
-        return boardRepository.save(boardEntity).getId();
+        return boardRepository.save(entity).getId();
     }
 
 
     @Transactional
-    public BoardDto read(Long id){
-        return BoardDto.from(boardRepository.findById(id)
-                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id)));
+    public Board read(Long id){
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id))
+                .toModel();
     }
 
-
-    public List<BoardDto> readAll(int start, int end){
-
+    public List<Board> readAll(int start, int end){
         Pageable pageable = PageRequest.of(start, end);
         return boardRepository.findAll(pageable).getContent()
                 .stream()
-                .map(BoardDto::from)
+                .map(BoardEntity::toModel)
                 .collect(Collectors.toList());
     }
 
@@ -74,6 +73,11 @@ class BoardManager {
         BoardDto dto = BoardDto.from(updateRequest);
         BoardEntity entity = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
+
+        entity.getFiles().stream()
+                        .forEach(file -> {
+                            entity.removeFile(file);
+                        });
 
         entity.changeTitle(dto.title());
         entity.changeContent(dto.content());

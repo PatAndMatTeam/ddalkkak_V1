@@ -1,15 +1,10 @@
 import axios from "axios";
 
-export  const API_SERVER_HOST = 'http://192.168.51.57:8082'
+export  const API_SERVER_HOST = 'http://10.102.0.1:8082'
 const prefix = `${API_SERVER_HOST}/api/board`   // 이 상수는 API 서버의 기본 경로를 나타냅니다
 
 export  const getOne = async (tno) => {
-    //axios.get을 사용하여 HTTP GET 요청을 보냅니다.
-    //요청 URL은 prefix와 tno(todo 번호)를 결합하여 http://localhost:8080/api/todo/{tno}가 됩니다.
-    //이 요청은 비동기적으로 처리되며, 응답이 res 변수에 저장됩니다.
     const res = await axios.get(`${prefix}/${tno}`)
-
-    //res.data는 서버로부터 받은 응답 데이터를 반환합니다. 이 데이터는 일반적으로 Todo 항목의 세부 정보가 됩니다.
     return res.data
 }
 
@@ -39,34 +34,67 @@ export  const getOne = async (tno) => {
     }
 
 };*/
+
 export const getList = async (pageParam) => {
         const {page, size} = pageParam;
         const start = 0;  // pageParam.page를 start로 사용
         const end = size;    // pageParam.size를 end로 사용
-  //  params: {start, end}
         const res = await axios.get(`${prefix}/all`,  {params: {start, end},
             validateStatus: function (status) {
-
                 return true;
             }
         });
         if (res.status === 302) {
-            // GET YOUR RESPONSE HERE
             console.log(res.data);
         }
-    console.log("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-    console.log(res.data);
         return res.data;
 };
 
-export const postAdd = async (todoObj) => {
+export const postAdd = async (board, files) => {
+    const formData = new FormData();
 
-    //옛날에 제이슨 했으면 JSON.stringify(obj) 이런거 써야했는데
-    //axios라이브러리 사용시 그냥 쓰면된다.
-    const res = await axios.post(`${prefix}/`,todoObj)
+    // 게시글 정보 추가
+    formData.append('category', board.category);
+    formData.append('title', board.title);
+    formData.append('content', board.content);
+    formData.append('writer', board.writer);
+    formData.append(`width`, 1);  // 파일의 너비 추가
+    formData.append(`height`, 1);  // 파일의 높이 추가
+    // 이미지 파일과 그에 따른 메타 데이터 추가
+    files.forEach((fileObj, index) => {
+        console.log("AAAAAAAAA" + index);
+        console.log(fileObj.file);
+        formData.append(`files`, fileObj.file);  // 파일 자체 추가
+        /*formData.append(`width`, fileObj.width);  // 파일의 너비 추가
+        formData.append(`height`, fileObj.height);  // 파일의 높이 추가*/
+    });
 
-    return res.data
-}
+    for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+    };
+
+    try {
+        const response = await axios.post(`${prefix}/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',  // 파일 업로드를 위한 헤더 설정
+            }
+        });
+        return response.data;
+    } catch (error) {
+        // Axios 에러 로그 추가
+        if (error.response) {
+            console.log('Response data:', error.response.data);
+            console.log('Response status:', error.response.status);
+            console.log('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.log('Request data:', error.request);
+        } else {
+            console.log('Error message:', error.message);
+        }
+        console.error("Error adding post", error);
+        throw error;
+    }
+};
 
 export const deleteOne = async(tno) => {
 

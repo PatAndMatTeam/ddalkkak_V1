@@ -12,14 +12,17 @@ import java.io.IOException;
 @NoArgsConstructor
 public class UploadFileCreateDto{
                                         Long boardId;
+                                        String fileTitle;
                                         String fileName;
                                          String fileType;
                                          byte[] data;
     @Builder
     public UploadFileCreateDto( Long boardId,
+                                String fileTitle,
                                 String fileName,
                                 String fileType,
                                 byte[] data){
+        this.fileTitle = fileTitle;
         this.boardId = boardId;
         this.fileName = fileName;
         this.fileType = fileType;
@@ -27,8 +30,9 @@ public class UploadFileCreateDto{
     }
 
 
-    public static UploadFileCreateDto of(String fileName, String fileType, byte[] bytes){
+    public static UploadFileCreateDto of(String fileTitle, String fileName, String fileType, byte[] bytes){
         return UploadFileCreateDto.builder()
+                .fileTitle(fileTitle)
                 .fileName(fileName)
                 .fileType(fileType)
                 .data(bytes)
@@ -37,23 +41,11 @@ public class UploadFileCreateDto{
 
     public UploadFileEntity toEntity(){
         return UploadFileEntity.builder()
+                .fileTile(this.fileTitle)
                 .fileName(this.fileName)
                 .fileType(this.fileType)
                 .data(this.data)
                 .build();
     }
-
-     public static UploadFileCreateDto fromMultipartFile(MultipartFile file) {
-         try {
-             return UploadFileCreateDto.builder()
-                     .fileName(file.getOriginalFilename())
-                     .fileType(file.getContentType())
-                     .data(file.getBytes())  // 파일 데이터를 byte 배열로 변환
-                     .build();
-         } catch (IOException e) {
-             throw new RuntimeException("파일 변환 중 오류가 발생했습니다.", e);
-         }
-     }
-
 
 }
