@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
+import com.ddalkkak.splitting.board.domain.UploadFile;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +31,26 @@ public class UploadFileEntity extends BaseTimeEntity {
 
     public void addBoard(BoardEntity board){
         this.board = board;
+    }
+
+
+
+    public UploadFile toModel(){
+        return UploadFile.builder()
+                .id(this.id)
+                .fileName(this.fileName)
+                .fileTile(this.fileTile)
+                .fileType(this.fileType)
+                .data(this.data)
+                .build();
+    }
+
+    public static UploadFileEntity fromModel(UploadFile uploadFile){
+        return UploadFileEntity.builder()
+                .fileName(uploadFile.getFileName())
+                .fileTile(uploadFile.getFileTile())
+                .fileType(uploadFile.getFileType())
+                .data(uploadFile.getData())
+                .build();
     }
 }

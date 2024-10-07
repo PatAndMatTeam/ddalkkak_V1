@@ -14,7 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public boolean verifyPassword(UserPasswordVerifyRequest passwordVerifyRequest){
-        String userPw = userRepository.findByUserId(passwordVerifyRequest.userId()).getUserPw();
+        String userPw = userRepository.findByUserId(passwordVerifyRequest.userId()).get().getUserPw();
         if (!passwordVerifyRequest.password().equals(userPw)){
             return false;
         }

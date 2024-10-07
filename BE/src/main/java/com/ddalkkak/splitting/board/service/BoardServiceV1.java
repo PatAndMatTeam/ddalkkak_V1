@@ -10,10 +10,14 @@ import com.ddalkkak.splitting.board.dto.BoardCreateDto;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
+import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.BoardRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -30,8 +34,6 @@ import java.util.stream.IntStream;
 @Service
 public class BoardServiceV1 {
 
-    private final BoardManagerV1 boardManager;
-    private final FileService fileService;
     private final BoardRepository boardRepository;
 
     public Long create(final BoardCreateRequest createRequest,
@@ -47,32 +49,37 @@ public class BoardServiceV1 {
         }
         Board board = Board.from(createRequest, files);
 
-        return boardManager.create(board);
+        return boardRepository.save(BoardEntity.fromModel(board)).getId();
     }
 
-
     public Board read(Long id){
-        Board board = boardManager.read(id);
-        //lazi loading
-        log.info("{}:::", board);
-        return board;
+        return boardRepository.findById(id).get().toModel();
     }
 
     public List<Board> readAll(int start, int end){
-        return boardManager.readAll(start, end);
+        Pageable pageable = PageRequest.of(start, end);
+        return boardRepository.findAll(pageable).getContent()
+                .stream()
+                .map(BoardEntity::toModel)
+                .collect(Collectors.toList());
     }
 
+    public List<Board> readAll(String category, int start, int end){
+        Pageable pageable = PageRequest.of(start, end);
+        return boardRepository.findByCategory(category, pageable).getContent()
+                .stream()
+                .map(BoardEntity::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public void update(Long id, BoardUpdateRequest updateRequest, List<MultipartFile> files, List<FileCreateRequest> fileInfoRequest){
         BoardEntity board = boardRepository.findById(id).get();
-
-
 
         List<UploadFile> uploadFiles = IntStream.range(0, files.size())
                 .mapToObj(cnt -> UploadFile.from(files.get(cnt),
                         fileInfoRequest.get(cnt)))
                 .collect(Collectors.toList());
-
-        //Board update = board.update(updateRequest, uploadFiles);
 
         // 1. 기존 파일 중 새로운 리스트에 없는 파일들은 삭제
         board.getFiles().stream()
@@ -80,21 +87,33 @@ public class BoardServiceV1 {
 
         // 2. 새로운 파일 중 기존 리스트에 없는 파일들은 추가
         uploadFiles.stream()
-                .forEach(board::addFile); // DB에 파일 추가
+                .forEach(file -> {
+                    board.addFile(UploadFileEntity.fromModel(file));
+                });
 
-
-//       boardManager.update(update);
+        boardRepository.save(board);
     }
 
 
-    public Board update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
-        boardManager.update(id, boardRecommendUpdateRequest);
+    @Transactional
+    public Long update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+        BoardEntity board = boardRepository.findById(id).get();
 
-        return boardManager.read(id);
+        board.changeLeftCnt(boardRecommendUpdateRequest.leftRecommend());
+        board.changeRightCnt(boardRecommendUpdateRequest.rightRecommend());
+        return boardRepository.save(board).getId();
     }
 
     public void delete(Long id){
-        boardManager.delete(id);
+        boardRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void visit(Long id){
+        BoardEntity board = boardRepository.findById(id).get();
+        Long visited = board.getVisited()+1;
+        board.changeVisited(visited);
     }
 
 

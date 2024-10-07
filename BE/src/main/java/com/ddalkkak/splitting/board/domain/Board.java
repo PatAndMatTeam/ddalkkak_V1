@@ -6,6 +6,7 @@ import com.ddalkkak.splitting.comment.domain.Comment;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,12 +18,19 @@ public class Board {
     private final Long rightCnt;
     private final String category;
     private final String writer;
+
+    private final Long visited;
+
+    private final Long recommend;
     private final List<String> comments;
     private final List<UploadFile> files;
 
+    private final LocalDateTime modifiedDate;
+
     @Builder
     public Board(Long id, String title, String content, Long leftCnt, Long rightCnt,
-                 String category, String writer, List<String> comments, List<UploadFile> files ) {
+                 String category, String writer, Long visited, Long recommend, List<String> comments, List<UploadFile> files,
+                 LocalDateTime modifiedDate) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -30,9 +38,11 @@ public class Board {
         this.rightCnt = rightCnt;
         this.category = category;
         this.writer = writer;
+        this.visited = visited;
+        this.recommend = recommend;
         this.comments = comments;
         this.files = files;
-
+        this.modifiedDate = modifiedDate;
     }
 
     public static Board from(BoardCreateRequest boardCreate, List<UploadFile> uploadFile){
@@ -48,8 +58,8 @@ public class Board {
     public Board update(BoardUpdateRequest boardUpdate, List<UploadFile> uploadFile){
         return Board.builder()
                 .id(id)
-                .title(boardUpdate.getTitle())
-                .content(boardUpdate.getContent())
+                .title(boardUpdate.title())
+                .content(boardUpdate.content())
                 .leftCnt(leftCnt)
                 .rightCnt(rightCnt)
                 .category(category)

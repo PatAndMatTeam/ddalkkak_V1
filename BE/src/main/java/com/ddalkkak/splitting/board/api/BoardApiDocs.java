@@ -1,23 +1,21 @@
-package com.ddalkkak.splitting.swagger.api;
+package com.ddalkkak.splitting.board.api;
 
-import com.ddalkkak.splitting.board.api.request.*;
+import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
-import com.ddalkkak.splitting.board.exception.BoardErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,8 +63,11 @@ public interface BoardApiDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "글 수정 성공"),
     })
-    public ResponseEntity<Void> updateBoard(@PathVariable("id") long id,
-                            @RequestBody BoardUpdateRequest boardUpdateRequest);
+    @PatchMapping(value = "/V1/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
+                                              @RequestPart BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest);
 
 
     @Operation(summary = "글 삭제", description = "글 삭제 합니다.")
@@ -75,13 +76,13 @@ public interface BoardApiDocs {
     })
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id);
 
-    @Operation(summary = "글 추천", description = "글 추천기능.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", description = "글 수정 성공"),
-    })
-    @PatchMapping("/{id}/recommend")
-    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
-                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest);
+//    @Operation(summary = "글 추천", description = "글 추천기능.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "202", description = "글 수정 성공"),
+//    })
+//    @PatchMapping("/{id}/recommend")
+//    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
+//                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest);
 
 
     @Operation(summary = "조회수 증가", description = "조회수 증가")

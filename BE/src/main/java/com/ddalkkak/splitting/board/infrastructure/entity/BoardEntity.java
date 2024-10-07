@@ -28,11 +28,17 @@ public class BoardEntity extends BaseTimeEntity {
 
     private String content;
 
-    @ColumnDefault("0")
-    private Long leftCnt;
+    @Builder.Default
+    private Long recommend = 0L;
 
-    @ColumnDefault("0")
-    private Long rightCnt;
+    @Builder.Default
+    private Long leftCnt = 0L;
+
+    @Builder.Default
+    private Long rightCnt = 0L;
+
+    @Builder.Default
+    private Long visited = 0L;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -62,6 +68,10 @@ public class BoardEntity extends BaseTimeEntity {
 
     public void changeRightCnt(long rightCnt){
         this.rightCnt = rightCnt;
+    }
+
+    public void changeVisited(long visited){
+        this.visited = visited;
     }
 
     // Helper methods to manage replies
@@ -98,8 +108,10 @@ public class BoardEntity extends BaseTimeEntity {
                 .id(this.id)
                 .title(this.title)
                 .content(this.content)
+                .recommend(this.recommend)
                 .leftCnt(this.leftCnt)
                 .rightCnt(this.rightCnt)
+                .visited(this.visited)
                 .category(this.category.name())
                 .writer(this.writer)
                 .build();

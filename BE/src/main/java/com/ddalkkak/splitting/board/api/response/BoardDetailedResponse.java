@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.api.response;
 
+import com.ddalkkak.splitting.board.domain.UploadFile;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.dto.UploadFileDto;
 import com.ddalkkak.splitting.comment.dto.CommentView;
@@ -23,11 +24,14 @@ public record BoardDetailedResponse(
         String createDate,
         @Schema(description = "글 카테고리", example = "롤|정치|축구")
         String category,
+        @Schema(description = "글 추천 수", example = "123")
+        Long recommend,
         @Schema(description = "왼쪽 추천 수", example = "315")
         Long leftRecommend,
         @Schema(description = "오른쪽 추천 수", example = "200")
         Long rightRecommend,
-
+        @Schema(description = "글 방문수", example = "200")
+        Long visited,
         @Schema(description = "댓글")
         List<CommentResponse> comments,
         @Schema(description = "업로드 파일")
@@ -43,8 +47,10 @@ public record BoardDetailedResponse(
                 .content(boardDto.content())
                 .category(boardDto.category())
                 .createDate(boardDto.createDate())
+                .recommend(boardDto.recommend())
                 .leftRecommend(boardDto.leftCnt())
                 .rightRecommend(boardDto.rightCnt())
+                .visited(boardDto.visited())
                 .comments(boardDto.comments().stream()
                         .map(CommentResponse::from)
                         .collect(Collectors.toList()))
@@ -90,6 +96,14 @@ public record BoardDetailedResponse(
                     .fileTitle(uploadFileDto.fileTitle())
                     .fileName(uploadFileDto.fileName())
                     .data(uploadFileDto.data())
+                    .build();
+        }
+
+        public static UploadFileResponse from(UploadFile uploadFile){
+            return UploadFileResponse.builder()
+                    .fileTitle(uploadFile.getFileTile())
+                    .fileName(uploadFile.getFileName())
+                    .data(uploadFile.getData())
                     .build();
         }
 

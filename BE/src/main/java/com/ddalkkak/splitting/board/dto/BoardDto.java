@@ -20,6 +20,8 @@ public record BoardDto(
         String category,
         String createDate,
         String writer,
+        Long recommend,
+        Long visited,
         Long leftCnt,
         Long rightCnt,
         List<UploadFileDto> files,
@@ -48,8 +50,10 @@ public record BoardDto(
                 .content(entity.getContent())
                 .category(entity.getCategory().name())
                 .createDate(entity.getCreateDate().toString())
+                .recommend(entity.getRecommend())
                 .leftCnt(entity.getLeftCnt())
                 .rightCnt(entity.getRightCnt())
+                .visited(entity.getVisited())
                 .writer(entity.getWriter())
                 .files(entity.getFiles().stream()
                         .map(UploadFileDto::from).collect(Collectors.toList())

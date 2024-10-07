@@ -30,10 +30,10 @@ public class BoardCreateRequest {
 
     @Schema(description = "사진 가로 보정 길이", example = "200")
     @Min(value = 0, message = "최소 값은 0 입니다.")
-    int width = 200;
+    int width;
 
     @Schema(description = "사진 세로 보정 길이", example = "200")
     @Min(value = 0, message = "최소 값은 0 입니다.")
-    int height = 200;
+    int height;
 
 }

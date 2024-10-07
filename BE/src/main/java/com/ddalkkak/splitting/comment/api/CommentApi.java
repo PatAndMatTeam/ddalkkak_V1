@@ -3,8 +3,6 @@ package com.ddalkkak.splitting.comment.api;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
 import com.ddalkkak.splitting.comment.service.CommentService;
-import com.ddalkkak.splitting.swagger.api.BoardApiDocs;
-import com.ddalkkak.splitting.swagger.api.CommentApiDocs;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
