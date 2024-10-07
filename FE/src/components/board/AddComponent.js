@@ -4,18 +4,15 @@ import ResultModal from "../common/ResultModal";
 import { postAdd } from "../../api/todoApi";
 
 const initState = {
-    category: '정치',  // 카테고리 기본값 '스포츠'
+    category: '정치',  // 카테고리 기본값 설정
     title: '',
     content: '',
     writer: 'LJH',
-    //dueDate: ''
 }
 
 function AddComponent(props) {
     const [board, setBoard] = useState({ ...initState });
     const [result, setResult] = useState(null);
-
-    // 이미지 파일과 크기를 저장할 배열
     const [files, setFiles] = useState([]);
     const [imageA, setImageA] = useState(null);
     const [imageB, setImageB] = useState(null);
@@ -28,21 +25,22 @@ function AddComponent(props) {
     }
 
     const handleClickAdd = () => {
-        // 게시글 데이터와 함께 파일 배열을 전송
         postAdd(board, files).then(data => {
             setBoard({ ...initState });
-            setFiles([]);  // 파일 배열 초기화
+            setFiles([]);
             setImageA(null);
             setImageB(null);
+            setResult(data);  // 결과 값 설정
+        }).catch(error => {
+            console.error("Error adding post", error);
         });
     }
 
     const closeModal = () => {
         setResult(null);
-        moveToList();
+        moveToList();  // 리스트로 이동
     }
 
-    // 이미지 업로드 핸들러: 파일과 크기를 files 배열에 추가
     const handleImageUpload = (event, setImage, fileKey) => {
         const file = event.target.files[0];
         const img = new Image();
@@ -51,19 +49,18 @@ function AddComponent(props) {
         img.src = objectUrl;
         img.onload = () => {
             const newFile = {
-                key: fileKey,  // 파일을 구분하기 위한 키 값 (A or B)
+                key: fileKey,
                 file: file,
                 width: img.width,
                 height: img.height
             };
 
-            // 해당 key에 해당하는 파일을 업데이트하거나 새로 추가
             setFiles(prevFiles => {
                 const updatedFiles = prevFiles.filter(f => f.key !== fileKey);
                 return [...updatedFiles, newFile];
             });
 
-            setImage(file); // 미리보기를 위해 이미지 파일 저장
+            setImage(file);
             URL.revokeObjectURL(objectUrl);  // 메모리 해제
         };
     };
@@ -72,7 +69,6 @@ function AddComponent(props) {
         <div className="border-2 border-sky-200 mt-10 m-2 p-6 shadow-lg rounded-lg bg-white">
             <div className="flex justify-center mb-6">
                 <div className="w-full max-w-md">
-                    {/* 카테고리 표시 */}
                     <div className="mb-4 flex items-center">
                         <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">카테고리</label>
                         <input
@@ -84,7 +80,6 @@ function AddComponent(props) {
                         />
                     </div>
 
-                    {/* 제목 입력 */}
                     <div className="mb-4 flex items-center">
                         <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">제목</label>
                         <input
@@ -96,7 +91,6 @@ function AddComponent(props) {
                         />
                     </div>
 
-                    {/* 설명 입력 */}
                     <div className="mb-4 flex items-center">
                         <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">설명</label>
                         <input
@@ -108,7 +102,16 @@ function AddComponent(props) {
                         />
                     </div>
 
-                    {/* A 이미지 업로드 */}
+                    <div className="mb-4 flex items-center">
+                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">A 이름 </label>
+                        <input
+                            className="w-2/3 p-3 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            //name="content"
+                            type="text"
+                          //  value={board.content}
+                         //   onChange={handleChangeTodo}
+                        />
+                    </div>
                     <div className="mb-4 flex items-center">
                         <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">A의 메인 이미지</label>
                         <input
@@ -125,8 +128,16 @@ function AddComponent(props) {
                             className="mt-2 w-full h-64 object-cover rounded shadow-md"
                         />
                     )}
-
-                    {/* B 이미지 업로드 */}
+                    <div className="mb-4 flex items-center">
+                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">B 이름 </label>
+                        <input
+                            className="w-2/3 p-3 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                         //   name="content"
+                            type="text"
+                          //  value={board.content}
+                          //  onChange={handleChangeTodo}
+                        />
+                    </div>
                     <div className="mb-4 flex items-center">
                         <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">B의 메인 이미지</label>
                         <input
@@ -144,7 +155,6 @@ function AddComponent(props) {
                         />
                     )}
 
-                    {/* 추가 버튼 */}
                     <div className="flex justify-end">
                         <button
                             type="button"
@@ -157,13 +167,13 @@ function AddComponent(props) {
                 </div>
             </div>
 
-            {result ? (
+            {result && (
                 <ResultModal
                     title={'Add Result'}
-                    content={`New ${result} Added`}
+                    content={`새 게시글이 추가되었습니다: ${result}`}
                     callbackFn={closeModal}
                 />
-            ) : null}
+            )}
         </div>
     );
 }

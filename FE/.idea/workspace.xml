@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="350e8177-b526-4f65-bf27-02193467010a" name="변경" comment="">
+    <list default="true" id="350e8177-b526-4f65-bf27-02193467010a" name="변경" comment="ADD :  분석글 리스트">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
@@ -12,16 +12,8 @@
       <change beforePath="$PROJECT_DIR$/src/components/board/AddComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/AddComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/board/ListComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ListComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/board/ReadComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ReadComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useCustomMove.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useCustomMove.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layouts/BasicLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/BasicLayout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menus/CategoryMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/CategoryMenu.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/layouts/ListLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/ListLayout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/MainPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/MainPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/AddPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/AddPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/ListPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ListPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/ReadPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ReadPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/router/boardRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/boardRouter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/router/root.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/root.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +48,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;wjdghks9400&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/PatAndMatTeam/ddalkkak_V1.git&quot;,
+    &quot;accountId&quot;: &quot;973398ec-41aa-44d8-8eb8-bdc1e45ec915&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -141,10 +145,25 @@
       <workItem from="1727168705270" duration="182000" />
       <workItem from="1727268386125" duration="7070000" />
       <workItem from="1727358936744" duration="2484000" />
+      <workItem from="1727776959554" duration="44883000" />
+      <workItem from="1728279484761" duration="2328000" />
     </task>
+    <task id="LOCAL-00001" summary="ADD :  분석글 리스트">
+      <option name="closed" value="true" />
+      <created>1727777190595</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727777190595</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ADD :  분석글 리스트" />
+    <option name="LAST_COMMIT_MESSAGE" value="ADD :  분석글 리스트" />
   </component>
 </project>

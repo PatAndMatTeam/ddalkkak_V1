@@ -12,7 +12,7 @@ const ListLayout = ({ children }) => {
 
             {/* 카테고리 메뉴 */}
             <CategoryMenu/>
-aaa
+
             <div>
                 <main >{children}</main>
             </div>

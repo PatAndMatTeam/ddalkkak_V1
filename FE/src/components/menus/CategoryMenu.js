@@ -5,19 +5,43 @@ import useCustomMove from "../../hooks/useCustomMove";
 const categories = [
     {
         title: "MENU1",
-        items: ["submenu01", "submenu02", "submenu03", "submenu04", "submenu05"]
+        items: [
+            { name: "롤", value: "lol" },
+            { name: "정치", value: "politics" },
+            { name: "축구", value: "football" },
+            { name: "submenu04", value: "submenu04" },
+            { name: "submenu05", value: "submenu05" }
+        ]
     },
     {
         title: "MENU2",
-        items: ["submenu01", "submenu02", "submenu03", "submenu04", "submenu05"]
+        items: [
+            { name: "롤", value: "lol" },
+            { name: "정치", value: "politics" },
+            { name: "축구", value: "football" },
+            { name: "submenu04", value: "submenu04" },
+            { name: "submenu05", value: "submenu05" }
+        ]
     },
     {
         title: "MENU3",
-        items: ["submenu01", "submenu02", "submenu03", "submenu04", "submenu05"]
+        items: [
+            { name: "롤", value: "lol" },
+            { name: "정치", value: "politics" },
+            { name: "축구", value: "football" },
+            { name: "submenu04", value: "submenu04" },
+            { name: "submenu05", value: "submenu05" }
+        ]
     },
     {
         title: "MENU4",
-        items: ["submenu01", "submenu02", "submenu03", "submenu04", "submenu05"]
+        items: [
+            { name: "롤", value: "lol" },
+            { name: "정치", value: "politics" },
+            { name: "축구", value: "football" },
+            { name: "submenu04", value: "submenu04" },
+            { name: "submenu05", value: "submenu05" }
+        ]
     },
     {
         title: "MENU5",
@@ -39,9 +63,8 @@ const CategoryMenu = () => {
                         <SubMenu>
                             {category.items.map((item, itemIndex) => (
                                 <li key={itemIndex}>
-                                    {/* 카테고리 이동 함수 연결 */}
-                                    <button onClick={() => moveToCategory(item)}>
-                                        {item}
+                                    <button onClick={() => moveToCategory(item.value)}>
+                                        {item.name}
                                     </button>
                                 </li>
                             ))}
