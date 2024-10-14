@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -113,7 +114,10 @@ public class BoardEntity extends BaseTimeEntity {
                 .rightCnt(this.rightCnt)
                 .visited(this.visited)
                 .category(this.category.name())
+                .modifiedDate(this.getLastModifiedDate())
                 .writer(this.writer)
+                .files(this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
+                .comments(this.comments.stream().map(CommentEntity::toModel).collect(Collectors.toList()))
                 .build();
     }
 

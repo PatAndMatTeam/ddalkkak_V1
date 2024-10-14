@@ -1,8 +1,10 @@
 package com.ddalkkak.splitting.board.api.response;
 
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.domain.UploadFile;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.dto.UploadFileDto;
+import com.ddalkkak.splitting.comment.domain.Comment;
 import com.ddalkkak.splitting.comment.dto.CommentView;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -57,6 +59,25 @@ public record BoardDetailedResponse(
                 .files(boardDto.files().stream().map(UploadFileResponse::from).collect(Collectors.toList()))
                 .build();
     }
+
+    public static BoardDetailedResponse from(Board board){
+        return BoardDetailedResponse.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .writer(board.getWriter())
+                .content(board.getContent())
+                .category(board.getCategory())
+                .createDate(board.getModifiedDate().toString())
+                .recommend(board.getRecommend())
+                .leftRecommend(board.getLeftCnt())
+                .rightRecommend(board.getRightCnt())
+                .visited(board.getVisited())
+                .comments(board.getComments().stream()
+                        .map(CommentResponse::from)
+                        .collect(Collectors.toList()))
+                .files(board.getFiles().stream().map(UploadFileResponse::from).collect(Collectors.toList()))
+                .build();
+    }
     @Builder
      record CommentResponse (
 
@@ -77,6 +98,15 @@ public record BoardDetailedResponse(
                     .writer(commentView.writer())
                     .content(commentView.content())
                     .modifyDate(commentView.createdAt())
+                    .build();
+        }
+
+        public static CommentResponse from(Comment comment){
+            return CommentResponse.builder()
+                    .id(comment.getId())
+                    .writer(comment.getWriter())
+                    .content(comment.getContent())
+                    .modifyDate(comment.getModifiedDate().toString())
                     .build();
         }
 

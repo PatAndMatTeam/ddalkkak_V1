@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FileCreateRequest {
 
                 @Schema(description = "게시글에 표시되기 위한 사진의 제목", example = "나루토")

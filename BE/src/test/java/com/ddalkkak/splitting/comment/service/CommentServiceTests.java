@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.comment.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +38,10 @@ public class CommentServiceTests {
                 .content("월드컵 우승하자")
                 .writer("윤주영")
                 .build();
-        Long boardId = boardService.create(boardCreateRequest, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 
         CommentCreateRequest commentCreateRequest = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -60,7 +67,10 @@ public class CommentServiceTests {
                 .content("월드컵 우승하자")
                 .writer("윤주영")
                 .build();
-        Long boardId = boardService.create(boardCreateRequest, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -90,7 +100,10 @@ public class CommentServiceTests {
                 .content("월드컵 우승하자")
                 .writer("윤주영")
                 .build();
-        Long boardId = boardService.create(boardCreateRequest, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")

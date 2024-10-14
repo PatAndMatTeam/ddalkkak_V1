@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -10,11 +11,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,6 +40,7 @@ public class BoardApiTests {
 
     @Autowired
     private BoardService boardService;
+
 
     @DisplayName("글을 작성할 수 있다.")
     @Test
@@ -71,8 +79,10 @@ public class BoardApiTests {
                 .content("내용입니다.")
                 .writer("윤주영")
                 .build();
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
 
-        boardService.create(createRequest1, null);
+        boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
         BoardCreateRequest createRequest2 = BoardCreateRequest.builder()
                 .category("정치")
@@ -80,8 +90,10 @@ public class BoardApiTests {
                 .content("정치 내용입니다.")
                 .writer("임정환")
                 .build();
+        List<MultipartFile> multipartFiles2 = List.of();
+        List<FileCreateRequest> fileInfos2 = List.of();
 
-       boardService.create(createRequest2, null);
+        boardService.create(createRequest2, multipartFiles2, fileInfos2);
 
         //when-then
        ResultActions resultActions =  mockMvc.perform(get("/api/board/all"));
@@ -107,8 +119,10 @@ public class BoardApiTests {
                 .content("내용입니다.")
                 .writer("윤주영")
                 .build();
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(createRequest1, null);
+        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
         //when-then
         mockMvc.perform(get("/api/board/{boardId}", boardId))
@@ -133,8 +147,10 @@ public class BoardApiTests {
                 .content("내용입니다.")
                 .writer("윤주영")
                 .build();
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(createRequest1, null);
+        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
         //when-then
         mockMvc.perform(delete("/api/board/{boardId}", boardId))
@@ -146,26 +162,38 @@ public class BoardApiTests {
     @Test
     public void testUpdateBoard() throws Exception {
         //given
-        BoardCreateRequest createRequest1 = BoardCreateRequest.builder()
+        BoardCreateRequest create = BoardCreateRequest.builder()
                 .category("롤")
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .writer("윤주영")
                 .build();
 
-        Long boardId = boardService.create(createRequest1, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of(FileCreateRequest.builder()
+                        .fileTitle("test")
+                        .width(100)
+                        .height(100)
+                .build());
 
+        Long boardId = boardService.create(create, multipartFiles1, fileInfos1);
+
+        BoardCreateRequest update = BoardCreateRequest.builder()
+                .category("롤")
+                .title("제목 변경")
+                .content("내용 변경")
+                .writer("윤주영")
+                .build();
         //when-then
-        mockMvc.perform(patch("/api/board/{boardId}", boardId)
-                        .content(objectMapper.writeValueAsString(createRequest1))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isAccepted())
-                .andDo(print());
+        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, "/api/board/{id}", boardId)
+                        .file(new MockMultipartFile("board", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(update).getBytes()))
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isAccepted());
 
         mockMvc.perform(get("/api/board/{boardId}", boardId))
                 .andExpect(status().isFound())
-                .andExpect(jsonPath("$.title").value(createRequest1.getTitle()))
-                .andExpect(jsonPath("$.content").value(createRequest1.getContent()))
+                .andExpect(jsonPath("$.title").value(update.getTitle()))
+                .andExpect(jsonPath("$.content").value(update.getContent()))
                 .andDo(print());
     }
 
@@ -180,7 +208,10 @@ public class BoardApiTests {
                 .writer("윤주영")
                 .build();
 
-        Long boardId = boardService.create(createRequest1, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
         BoardRecommendUpdateRequest request = BoardRecommendUpdateRequest.builder()
                 .leftRecommend(1)

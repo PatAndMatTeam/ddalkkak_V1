@@ -23,13 +23,6 @@ import java.util.Optional;
 @Service
 public class FileService {
 
-    private final FileManager fileManager;
-
-    public void isValid() {
-
-    }
-
-
     public List<UploadFileCreateDto> make(final List<MultipartFile> multipartFiles,
                                             final List<FileCreateRequest> fileInfoRequest){
         List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(multipartFiles)

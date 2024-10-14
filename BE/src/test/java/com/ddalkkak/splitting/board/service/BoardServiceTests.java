@@ -1,6 +1,8 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 
@@ -26,10 +28,6 @@ public class BoardServiceTests {
 
     @Autowired
     private BoardService boardService;
-    @Autowired
-    private BoardManager boardManager;
-    @Autowired
-    private FileManager fileManager;
 
 
     @DisplayName("게시글과 파일을 같이 등록할 수 있다.")
@@ -48,8 +46,6 @@ public class BoardServiceTests {
             List<MockMultipartFile> files = new ArrayList<>();
             files.add(givenFile);
 
-            List<MultipartFile> fileCreateRequest = List.of(givenFile);
-
             //board
             BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
@@ -58,19 +54,26 @@ public class BoardServiceTests {
                     .writer("윤주영")
                     .build();
 
-            //when
-            Long createdId = boardService.create(boardCreateRequest, List.of(givenFile));
-            //then
-            BoardDto result = boardService.read(createdId);
+            List<MultipartFile> multipartFiles = List.of(givenFile);
+            List<FileCreateRequest> fileInfos = List.of(FileCreateRequest.builder()
+                            .fileTitle("test")
+                            .width(100)
+                            .height(100)
+                    .build());
 
-            assertEquals(boardCreateRequest.getTitle(), result.title());
-            assertEquals(boardCreateRequest.getCategory(), result.category());
-            assertEquals(boardCreateRequest.getContent(), result.content());
-            assertEquals(boardCreateRequest.getWriter(), result.writer());
-            assertEquals(fileCreateRequest.get(0).getContentType(),
-                    result.files().get(0).fileType());
-            assertEquals(fileCreateRequest.get(0).getOriginalFilename(),
-                    result.files().get(0).fileName());
+            //when
+            Long createdId = boardService.create(boardCreateRequest, multipartFiles, fileInfos);
+            //then
+            Board result = boardService.read(createdId);
+
+            assertEquals(boardCreateRequest.getTitle(), result.getTitle());
+            assertEquals(boardCreateRequest.getCategory(), result.getCategory());
+            assertEquals(boardCreateRequest.getContent(), result.getContent());
+            assertEquals(boardCreateRequest.getWriter(), result.getWriter());
+            assertEquals(multipartFiles.get(0).getContentType(),
+                    result.getFiles().get(0).getFileType());
+            assertEquals(multipartFiles.get(0).getOriginalFilename(),
+                    result.getFiles().get(0).getFileName());
         }
 
 

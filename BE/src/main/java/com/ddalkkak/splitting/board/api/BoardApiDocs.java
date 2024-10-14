@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "글 API", description = "글 관련 API 입니다.")
 public interface BoardApiDocs {
@@ -63,10 +64,10 @@ public interface BoardApiDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "글 수정 성공"),
     })
-    @PatchMapping(value = "/V1/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
                                               @RequestPart BoardUpdateRequest boardUpdateRequest,
-                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                              @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
                                               @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest);
 
 
@@ -76,15 +77,7 @@ public interface BoardApiDocs {
     })
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id);
 
-//    @Operation(summary = "글 추천", description = "글 추천기능.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "202", description = "글 수정 성공"),
-//    })
-//    @PatchMapping("/{id}/recommend")
-//    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
-//                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest);
-
-
+    
     @Operation(summary = "조회수 증가", description = "조회수 증가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "조회수 증가 성공"),

@@ -1,5 +1,6 @@
 package com.ddalkkak.splitting.board.api.response;
 
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.dto.BoardDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -18,6 +19,13 @@ public record BoardRecommendResponse(
         return BoardRecommendResponse.builder()
                 .leftRecommend(boardDto.leftCnt())
                 .rightRecommend(boardDto.rightCnt())
+                .build();
+    }
+
+    public static BoardRecommendResponse from(Board board){
+        return BoardRecommendResponse.builder()
+                .leftRecommend(board.getLeftCnt())
+                .rightRecommend(board.getRightCnt())
                 .build();
     }
 }

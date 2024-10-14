@@ -22,14 +22,14 @@ public class Board {
     private final Long visited;
 
     private final Long recommend;
-    private final List<String> comments;
+    private final List<Comment> comments;
     private final List<UploadFile> files;
 
     private final LocalDateTime modifiedDate;
 
     @Builder
     public Board(Long id, String title, String content, Long leftCnt, Long rightCnt,
-                 String category, String writer, Long visited, Long recommend, List<String> comments, List<UploadFile> files,
+                 String category, String writer, Long visited, Long recommend, List<Comment> comments, List<UploadFile> files,
                  LocalDateTime modifiedDate) {
         this.id = id;
         this.title = title;
@@ -45,13 +45,12 @@ public class Board {
         this.modifiedDate = modifiedDate;
     }
 
-    public static Board from(BoardCreateRequest boardCreate, List<UploadFile> uploadFile){
+    public static Board from(BoardCreateRequest boardCreate){
         return Board.builder()
                 .title(boardCreate.getTitle())
                 .content(boardCreate.getContent())
                 .category(boardCreate.getCategory())
                 .writer(boardCreate.getWriter())
-                .files(uploadFile)
                 .build();
     }
 

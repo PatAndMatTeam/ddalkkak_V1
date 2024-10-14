@@ -8,7 +8,6 @@ import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
 import com.ddalkkak.splitting.board.service.BoardService;
-import com.ddalkkak.splitting.board.service.BoardServiceV1;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @Validated
 public class BoardApi implements BoardApiDocs {
     private final BoardService boardService;
-    private final BoardServiceV1 boardServiceV1;
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardDetailedResponse> getBoard(@PathVariable("id") long id){
@@ -68,23 +67,12 @@ public class BoardApi implements BoardApiDocs {
                 .build();
     }
 
-
-//    @PatchMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-//    public ResponseEntity<Void> updateBoard(@PathVariable("id") long id,
-//                    @RequestBody BoardUpdateRequest boardUpdateRequest){
-//        boardService.update(id, boardUpdateRequest);
-//
-//        return ResponseEntity
-//                .status(HttpStatus.ACCEPTED)
-//                .build();
-//    }
-
-    @PatchMapping(value = "/V1/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
-                                            @RequestPart BoardUpdateRequest boardUpdateRequest,
-                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                            @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
                                               @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
-        boardServiceV1.update(id, boardUpdateRequest, files, fileInfoRequest);
+        boardService.update(id, boardUpdateRequest, files, fileInfoRequest);
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
@@ -114,7 +102,7 @@ public class BoardApi implements BoardApiDocs {
 
     @PatchMapping(path="/{id}/visit")
     public ResponseEntity<BoardRecommendResponse> visit(@PathVariable("id") long id){
-        boardServiceV1.visit(id);
+        boardService.visit(id);
         return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
@@ -122,7 +110,7 @@ public class BoardApi implements BoardApiDocs {
     public ResponseEntity<BoardAllQueryResponse> getBoards(@PathVariable("category") String category,
                                                             @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
                                                            @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end) {
-        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardServiceV1.readAll(category,start, end).stream()
+        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardService.readAll(category,start, end).stream()
                 .map(BoardAllQueryResponse.BoardQueryResponse::from)
                 .collect(Collectors.toList());
 

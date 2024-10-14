@@ -1,6 +1,7 @@
 package com.ddalkkak.splitting.comment.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
@@ -16,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +51,12 @@ public class CommentApiTests {
                 .content("암담하다")
                 .writer("윤주영")
                 .build();
-        Long boardId = boardService.create(boardCreateRequest, null);
+
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+
 
         CommentCreateRequest createRequest = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -74,7 +83,10 @@ public class CommentApiTests {
                 .content("암담하다")
                 .writer("윤주영")
                 .build();
-       Long boardId = boardService.create(boardCreateRequest, null);
+        List<MultipartFile> multipartFiles1 = List.of();
+        List<FileCreateRequest> fileInfos1 = List.of();
+
+        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 
         CommentCreateRequest createRequest = CommentCreateRequest.builder()
                 .writer("윤주영")

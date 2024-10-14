@@ -69,3 +69,18 @@ tasks.named('test') {
     enabled = false
 }
 
+//when build, except test code
+tasks.withType(Test) {
+    enabled = false
+}
+
+//sourceSets {
+//    test {
+//        java {
+//            srcDirs = [] // 테스트 소스 디렉터리를 비워서 테스트 소스 제외
+//        }
+//    }
+//}
+
+
+
