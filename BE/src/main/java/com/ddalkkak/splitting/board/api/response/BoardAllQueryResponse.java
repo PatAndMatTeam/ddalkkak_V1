@@ -30,7 +30,6 @@ public record BoardAllQueryResponse(
             Long visited,
             @Schema(description = "업로드 파일")
             List<BoardDetailedResponse.UploadFileResponse> files
-
     ){
 
         public static BoardQueryResponse from(BoardDto boardDto){

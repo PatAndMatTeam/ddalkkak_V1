@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Validated
-public class BoardApi implements BoardApiDocs {
+public class BoardApiV1 implements BoardApiDocsV1 {
     private final BoardService boardService;
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})

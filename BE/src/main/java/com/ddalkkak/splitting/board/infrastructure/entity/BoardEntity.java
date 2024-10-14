@@ -99,7 +99,10 @@ public class BoardEntity extends BaseTimeEntity {
 
     public void addChild(BoardEntity board) {
         getChildren().add(board);
+    }
 
+    public void addParent(BoardEntity board){
+        this.parent = board;
     }
 
 
@@ -131,6 +134,7 @@ public class BoardEntity extends BaseTimeEntity {
                 .writer(this.writer)
                 .files(this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
                 .comments(this.comments.stream().map(CommentEntity::toModel).collect(Collectors.toList()))
+                .children(this.children.stream().map(BoardEntity::toModel).collect(Collectors.toList()))
                 .build();
     }
 

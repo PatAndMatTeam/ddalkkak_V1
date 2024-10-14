@@ -21,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(controllers = {BoardApi.class})
+@WebMvcTest(controllers = {BoardApiV1.class})
 @ActiveProfiles("test")
-public class BoardApiValidTests {
+public class BoardApiV1ValidTests {
 
     @Autowired
     private MockMvc mockMvc;

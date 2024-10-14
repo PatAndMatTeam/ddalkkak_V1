@@ -1,7 +1,6 @@
 package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
@@ -24,9 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "글 API", description = "글 관련 API 입니다.")
-public interface BoardApiDocs {
-
+@Tag(name = "글 API V1", description = "글 관련 API 입니다.")
+public interface BoardApiDocsV2 {
 
     @Operation(summary = "글 상세확인", description = "글 번호로 글 상세확인.")
     @Parameter(name = "id", description = "글의 번호(기본값: 1)", example = "1")

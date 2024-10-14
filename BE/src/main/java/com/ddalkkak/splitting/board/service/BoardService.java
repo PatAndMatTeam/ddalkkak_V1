@@ -31,30 +31,68 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
+
     public Long create(final BoardCreateRequest createRequest,
                        final List<MultipartFile> multipartFiles,
                          final List<FileCreateRequest> fileInfoRequest) {
         Board board = Board.from(createRequest);
         BoardEntity entity = BoardEntity.fromModel(board);
 
-        List<UploadFile> files = null;
 
-        if (multipartFiles!=null && multipartFiles.size()>0){
-            files = IntStream.range(0, multipartFiles.size())
-                    .mapToObj(cnt -> UploadFile.from(multipartFiles.get(cnt),
-                            fileInfoRequest.get(cnt)))
-                    .collect(Collectors.toList());
+        Optional.ofNullable(multipartFiles)
+                .filter(files -> !files.isEmpty())
+                .ifPresent(files -> {
+                    files.stream()
+                            .map(UploadFile::from)
+                            .map(UploadFileEntity::fromModel)
+                            .forEach(entity::addFile);
+                });
 
-            files.stream().forEach(file -> {
-                entity.addFile(UploadFileEntity.fromModel(file));
-            });
-        }
+//        List<UploadFile> files = null;
+//
+//        if (multipartFiles!=null && multipartFiles.size()>0){
+//            files = IntStream.range(0, multipartFiles.size())
+//                    .mapToObj(cnt -> UploadFile.from(multipartFiles.get(cnt),
+//                            fileInfoRequest.get(cnt)))
+//                    .collect(Collectors.toList());
+//
+//            files.stream().forEach(file -> {
+//                entity.addFile(UploadFileEntity.fromModel(file));
+//            });
+//        }
 
         return boardRepository.save(entity).getId();
     }
 
+    public Long create(final Long id,
+                        final BoardCreateRequest createRequest,
+                       final List<MultipartFile> multipartFiles) {
+        BoardEntity parent = boardRepository.findById(id).get();
+
+        Board create = Board.from(createRequest);
+
+        BoardEntity result = BoardEntity.fromModel(create);
+
+        Optional.ofNullable(multipartFiles)
+                .filter(files -> !files.isEmpty())
+                .ifPresent(files -> {
+                    files.stream()
+                            .map(UploadFile::from)
+                            .map(UploadFileEntity::fromModel)
+                            .forEach(result::addFile);
+                });
+
+        result.addParent(parent);
+
+        return boardRepository.save(result).getId();
+    }
+
     public Board read(Long id){
         return boardRepository.findById(id).get().toModel();
+    }
+
+    public Board readV1(String category, Long id){
+        return boardRepository.findByCategory(category, id).toModel();
     }
 
     public List<Board> readAll(int start, int end){

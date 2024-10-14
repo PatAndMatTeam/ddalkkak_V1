@@ -45,6 +45,18 @@ public class UploadFile {
                 .build();
     }
 
+    public static UploadFile from(MultipartFile file){
+        String fileName = getFileName(file);
+        String fileType = validFileType(file);
+
+        return UploadFile.builder()
+                .fileTile(fileName)
+                .data(makeThumbnail(file, 200, 200))
+                .fileName(fileName)
+                .fileType(fileType)
+                .build();
+    }
+
     private static byte[] makeThumbnail(MultipartFile file, int width, int height){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {

@@ -24,13 +24,14 @@ public class Board {
     private final Long recommend;
     private final List<Comment> comments;
     private final List<UploadFile> files;
+    private final List<Board> children;
 
     private final LocalDateTime modifiedDate;
 
     @Builder
     public Board(Long id, String title, String content, Long leftCnt, Long rightCnt,
-                 String category, String writer, Long visited, Long recommend, List<Comment> comments, List<UploadFile> files,
-                 LocalDateTime modifiedDate) {
+                 String category, String writer, Long visited, Long recommend, List<Comment> comments,
+                 List<Board> children, List<UploadFile> files, LocalDateTime modifiedDate) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -41,6 +42,7 @@ public class Board {
         this.visited = visited;
         this.recommend = recommend;
         this.comments = comments;
+        this.children = children;
         this.files = files;
         this.modifiedDate = modifiedDate;
     }
