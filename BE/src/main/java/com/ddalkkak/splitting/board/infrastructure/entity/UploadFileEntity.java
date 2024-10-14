@@ -34,7 +34,6 @@ public class UploadFileEntity extends BaseTimeEntity {
     }
 
 
-
     public UploadFile toModel(){
         return UploadFile.builder()
                 .id(this.id)

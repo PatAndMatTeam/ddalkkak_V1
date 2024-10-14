@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
+public interface BoardRepository extends JpaRepository<BoardEntity, Long>, BoardCustomRepository {
 
     @EntityGraph(attributePaths = {"files", "comments"}) // "files" 속성도 함께 로드
     Optional<BoardEntity> findById(Long id);

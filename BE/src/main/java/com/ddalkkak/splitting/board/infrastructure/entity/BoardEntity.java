@@ -54,6 +54,13 @@ public class BoardEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UploadFileEntity> files = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private BoardEntity parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<BoardEntity> children = new ArrayList<>();
+
 
     public void changeTitle(String title){
         this.title = title;
@@ -89,6 +96,12 @@ public class BoardEntity extends BaseTimeEntity {
 
         file.addBoard(this);
     }
+
+    public void addChild(BoardEntity board) {
+        getChildren().add(board);
+
+    }
+
 
     public void removeFile(UploadFileEntity file) {
         files.remove(file);

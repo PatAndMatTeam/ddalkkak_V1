@@ -77,7 +77,7 @@ public interface BoardApiDocs {
     })
     public ResponseEntity<Void> removeBoard(@PathVariable("id") long id);
 
-    
+
     @Operation(summary = "조회수 증가", description = "조회수 증가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "조회수 증가 성공"),
