@@ -7,11 +7,13 @@ import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.domain.UploadFile;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
+import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
 import com.ddalkkak.splitting.board.infrastructure.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -105,7 +107,15 @@ public class BoardService {
 
     public List<Board> readAll(String category, int start, int end){
         Pageable pageable = PageRequest.of(start, end);
-        return boardRepository.findByCategory(category, pageable).getContent()
+        return boardRepository.findByCategory(Category.fromValue(category), pageable)
+                .stream()
+                .map(BoardEntity::toModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<Board> readAll(Long parentId, String category, int start, int end){
+        Pageable pageable = PageRequest.of(start, end);
+        return boardRepository.findByCategoryAndParentId(Category.fromValue(category), parentId, pageable)
                 .stream()
                 .map(BoardEntity::toModel)
                 .collect(Collectors.toList());

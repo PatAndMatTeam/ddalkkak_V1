@@ -115,7 +115,7 @@ public class BoardEntity extends BaseTimeEntity {
         return BoardEntity.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
-                .category(Category.valueOf(board.getCategory()))
+                .category(Category.fromValue(board.getCategory()))
                 .writer(board.getWriter())
                 .build();
     }
@@ -129,7 +129,7 @@ public class BoardEntity extends BaseTimeEntity {
                 .leftCnt(this.leftCnt)
                 .rightCnt(this.rightCnt)
                 .visited(this.visited)
-                .category(this.category.name())
+                .category(this.category.name)
                 .modifiedDate(this.getLastModifiedDate())
                 .writer(this.writer)
                 .files(this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))

@@ -5,7 +5,11 @@ import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.infrastructure.entity.QBoardEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,5 +25,16 @@ public class BoardCustomRepositoryImpl implements  BoardCustomRepository {
                 .where(board.category.eq(Category.valueOf(category))
                         .and(board.parent.id.eq(id)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<BoardEntity> findByCategoryAndParentId(Category category, Long parentId, Pageable pageable) {
+        return jpaQueryFactory.selectFrom(board)
+                .where(board.category.eq(category)
+                        .and(board.parent.id.eq(parentId)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
     }
 }

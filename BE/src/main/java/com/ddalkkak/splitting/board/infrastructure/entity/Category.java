@@ -8,7 +8,7 @@ public enum Category {
     BASKETBALL("농구"),
     ETC_SPORTS("기타 스포츠"),
     
-    LOL("롤"),
+    LOL("lol"),
     STARCRAFT("스타크래프트"),
     FPS("FPS"),
     RPG("RPG"),
@@ -47,6 +47,16 @@ public enum Category {
 
     private Category(String name){
         this.name = name;
+    }
+
+    public static Category fromValue(String value) {
+        for (Category type : Category.values()) {
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        // 일치하는 값이 없을 경우 예외 처리
+        throw new IllegalArgumentException("Unknown game type: " + value);
     }
 
 }
