@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.comment.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,7 +48,7 @@ public class CommentApiTests {
     void registCommentApi() throws Exception {
         //given
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
-                .category("정치")
+                .category(Category.정치.name)
                 .title("대한민국 인구 미래")
                 .content("암담하다")
                 .writer("윤주영")
@@ -78,7 +80,7 @@ public class CommentApiTests {
     void removeCommentApi() throws Exception {
         //given
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
-                .category("정치")
+                .category(Category.정치.name)
                 .title("대한민국 인구 미래")
                 .content("암담하다")
                 .writer("윤주영")
@@ -104,6 +106,7 @@ public class CommentApiTests {
         //when-then
         mockMvc.perform(delete("/api/board/{boardId}/comment/{commendId}",boardId, commentId)
                         .content(objectMapper.writeValueAsString(deleteRequest))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                         .andExpect(status().isAccepted());
     }

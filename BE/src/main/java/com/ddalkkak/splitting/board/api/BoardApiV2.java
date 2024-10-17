@@ -45,9 +45,7 @@ public class BoardApiV2 implements BoardApiDocsV2 {
     }
 
 
-
-
-
+    
     @GetMapping(path ="/{category}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardAllQueryResponse> getBoards(@PathVariable("category") String category,
                                                            @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,

@@ -129,12 +129,12 @@ public class BoardEntity extends BaseTimeEntity {
                 .leftCnt(this.leftCnt)
                 .rightCnt(this.rightCnt)
                 .visited(this.visited)
-                .category(this.category.name)
+                .category(this.category.toString())
                 .modifiedDate(this.getLastModifiedDate())
                 .writer(this.writer)
-                .files(this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
-                .comments(this.comments.stream().map(CommentEntity::toModel).collect(Collectors.toList()))
-                .children(this.children.stream().map(BoardEntity::toModel).collect(Collectors.toList()))
+                .files(this.files == null ? null : this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
+                .comments(this.comments == null ? null : this.comments.stream().map(CommentEntity::toModel).collect(Collectors.toList()))
+                .children(this.children == null ? null : this.children.stream().map(BoardEntity::toModel).collect(Collectors.toList()))
                 .build();
     }
 

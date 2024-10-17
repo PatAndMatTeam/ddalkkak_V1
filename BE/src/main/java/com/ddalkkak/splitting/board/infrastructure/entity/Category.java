@@ -1,47 +1,47 @@
 package com.ddalkkak.splitting.board.infrastructure.entity;
 
 public enum Category {
-    POLITICS("정치"),
+    정치("politics"),
     
-    SOCCER("축구"),
-    BASEBALL("야구"),
-    BASKETBALL("농구"),
-    ETC_SPORTS("기타 스포츠"),
+    축구("soccer"),
+    야구("baseball"),
+    농구("basketball"),
+    기타스포츠("etc-sports"),
     
-    LOL("lol"),
-    STARCRAFT("스타크래프트"),
-    FPS("FPS"),
-    RPG("RPG"),
-    MOBILE("모바일"),
-    ETC_GAMES("기타 게임"),
+    리그오브레전드("lol"),
+    스타크래프트("starcraft"),
+    FPS("fps"),
+    RPG("rpg"),
+    모바일("mobile"),
+    기타_게임("etc-games"),
 
 
-    CELEBRITY("연예인"),
-    GIRL_GROUP("여자아이돌"),
-    BOY_GROUP("남자아이돌"),
-    CARTOON("애니"),
-    WEBTOON("웹툰"),
-    CHARACTER("캐릭터"),
+    연예인("celebrity"),
+    여자아이돌("girl-group"),
+    남자아이돌("boy-group"),
+    애니("cartoon"),
+    웹툰("webtoon"),
+    캐릭터("character"),
 
 
-    FASHION("패션"),
+    패션("fashion"),
 
-    HEALTH("운동"),
+    운동("health"),
 
-    MOVIE("영화"),
+    영화("movie"),
 
-    FOOD("음식"),
+    음식("food"),
 
-    TRAVEL("여행"),
+    여행("travel"),
 
-    PET("애완동물"),
+    애완동물("pet"),
 
-    MUSIC("음악"),
+    음악("music"),
 
 
-    INTERNET("인터넷방송"),
-    YOUTUBER("유튜버"),
-    VTUBER("버튜버");
+    인터넷방송("internet"),
+    유튜버("youtuber"),
+    버튜버("vtuber");
 
     public final String name;
 
@@ -51,7 +51,7 @@ public enum Category {
 
     public static Category fromValue(String value) {
         for (Category type : Category.values()) {
-            if (type.name().equalsIgnoreCase(value)) {
+            if (type.name.equals(value)) {
                 return type;
             }
         }

@@ -66,6 +66,10 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 
+    //security for testing
+    testImplementation 'org.springframework.security:spring-security-test:6.3.3'
+
+
 }
 
 tasks.named('test') {

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,42 +39,28 @@ public class BoardService {
                        final List<MultipartFile> multipartFiles,
                          final List<FileCreateRequest> fileInfoRequest) {
         Board board = Board.from(createRequest);
-        BoardEntity entity = BoardEntity.fromModel(board);
-
+        BoardEntity create = BoardEntity.fromModel(board);
 
         Optional.ofNullable(multipartFiles)
                 .filter(files -> !files.isEmpty())
                 .ifPresent(files -> {
-                    files.stream()
-                            .map(UploadFile::from)
+                    IntStream.range(0, files.size())
+                                    .mapToObj(cnt -> UploadFile.from(multipartFiles.get(cnt),
+                                                                    fileInfoRequest.get(cnt)))
                             .map(UploadFileEntity::fromModel)
-                            .forEach(entity::addFile);
+                            .forEach(create::addFile);
                 });
-
-//        List<UploadFile> files = null;
-//
-//        if (multipartFiles!=null && multipartFiles.size()>0){
-//            files = IntStream.range(0, multipartFiles.size())
-//                    .mapToObj(cnt -> UploadFile.from(multipartFiles.get(cnt),
-//                            fileInfoRequest.get(cnt)))
-//                    .collect(Collectors.toList());
-//
-//            files.stream().forEach(file -> {
-//                entity.addFile(UploadFileEntity.fromModel(file));
-//            });
-//        }
-
-        return boardRepository.save(entity).getId();
+        return boardRepository.save(create).getId();
     }
 
-    public Long create(final Long id,
+    public Long create(final Long parentId,
                         final BoardCreateRequest createRequest,
                        final List<MultipartFile> multipartFiles) {
-        BoardEntity parent = boardRepository.findById(id).get();
+        BoardEntity parent = boardRepository.findById(parentId).get();
 
-        Board create = Board.from(createRequest);
+        Board board = Board.from(createRequest);
 
-        BoardEntity result = BoardEntity.fromModel(create);
+        BoardEntity create = BoardEntity.fromModel(board);
 
         Optional.ofNullable(multipartFiles)
                 .filter(files -> !files.isEmpty())
@@ -81,12 +68,12 @@ public class BoardService {
                     files.stream()
                             .map(UploadFile::from)
                             .map(UploadFileEntity::fromModel)
-                            .forEach(result::addFile);
+                            .forEach(create::addFile);
                 });
 
-        result.addParent(parent);
+        create.addParent(parent);
 
-        return boardRepository.save(result).getId();
+        return boardRepository.save(create).getId();
     }
 
     public Board read(Long id){
@@ -123,9 +110,9 @@ public class BoardService {
 
     @Transactional
     public void update(Long id, BoardUpdateRequest updateRequest, Optional<List<MultipartFile>> filesRequest, List<FileCreateRequest> fileInfoRequest){
-        BoardEntity board = boardRepository.findById(id).get();
-        board.changeTitle(updateRequest.title());
-        board.changeContent(updateRequest.content());
+        BoardEntity read = boardRepository.findById(id).get();
+        read.changeTitle(updateRequest.title());
+        read.changeContent(updateRequest.content());
         List<MultipartFile> files = filesRequest.orElse(Collections.emptyList());
 
         List<UploadFile> uploadFiles = IntStream.range(0, files.size())
@@ -134,26 +121,26 @@ public class BoardService {
                 .collect(Collectors.toList());
 
         // 1. 기존 파일 중 새로운 리스트에 없는 파일들은 삭제
-        board.getFiles().stream()
-                .forEach(board::removeFile); // DB에서 파일 삭제 처리
+        List<UploadFileEntity> filesToRemove = new ArrayList<>(read.getFiles());
+        filesToRemove.forEach(read::removeFile);
 
         // 2. 새로운 파일 중 기존 리스트에 없는 파일들은 추가
-        uploadFiles.stream()
+        uploadFiles
                 .forEach(file -> {
-                    board.addFile(UploadFileEntity.fromModel(file));
+                    read.addFile(UploadFileEntity.fromModel(file));
                 });
 
-        boardRepository.save(board);
+        boardRepository.save(read);
     }
 
 
     @Transactional
     public Board update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
-        BoardEntity board = boardRepository.findById(id).get();
+        BoardEntity read = boardRepository.findById(id).get();
 
-        board.changeLeftCnt(boardRecommendUpdateRequest.leftRecommend());
-        board.changeRightCnt(boardRecommendUpdateRequest.rightRecommend());
-        return boardRepository.save(board).toModel();
+        read.changeLeftCnt(boardRecommendUpdateRequest.leftRecommend());
+        read.changeRightCnt(boardRecommendUpdateRequest.rightRecommend());
+        return boardRepository.save(read).toModel();
     }
 
     public void delete(Long id){
@@ -163,10 +150,9 @@ public class BoardService {
 
     @Transactional
     public void visit(Long id){
-        BoardEntity board = boardRepository.findById(id).get();
-        Long visited = board.getVisited()+1;
-        board.changeVisited(visited);
+        BoardEntity read = boardRepository.findById(id).get();
+        Long visited = read.getVisited()+1;
+        read.changeVisited(visited);
     }
-
 
 }

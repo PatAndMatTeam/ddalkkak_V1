@@ -2,15 +2,18 @@ package com.ddalkkak.splitting.comment.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
 import com.ddalkkak.splitting.comment.exception.CommentErrorCode;
 import com.ddalkkak.splitting.comment.exception.CommentException;
+import com.ddalkkak.splitting.config.TestSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +21,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Import(TestSecurityConfig.class) // 테스트용 보안 구성 클래스 추가
 @ActiveProfiles("test")
 @SpringBootTest
 public class CommentServiceTests {
@@ -33,7 +37,7 @@ public class CommentServiceTests {
     void registComment(){
         //given
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
-                .category("축구")
+                .category(Category.축구.name)
                 .title("손흥민 화이팅")
                 .content("월드컵 우승하자")
                 .writer("윤주영")
@@ -62,7 +66,7 @@ public class CommentServiceTests {
     @Test
     void deleteCommentMatchPassword(){
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
-                .category("축구")
+                .category(Category.축구.name)
                 .title("손흥민 화이팅")
                 .content("월드컵 우승하자")
                 .writer("윤주영")
@@ -95,7 +99,7 @@ public class CommentServiceTests {
     @Test
     void deleteCommentNotMatchPassword(){
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
-                .category("축구")
+                .category(Category.축구.name)
                 .title("손흥민 화이팅")
                 .content("월드컵 우승하자")
                 .writer("윤주영")
