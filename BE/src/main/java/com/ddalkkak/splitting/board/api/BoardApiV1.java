@@ -3,7 +3,7 @@ package com.ddalkkak.splitting.board.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Validated
-public class BoardApiV1 implements BoardApiDocsV1 {
+public class BoardApiV1 {
     private final BoardService boardService;
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -56,8 +56,8 @@ public class BoardApiV1 implements BoardApiDocsV1 {
 
     @PostMapping(path = "/" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createBoard(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
-                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
+                                              @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
 
         log.info("{}", fileInfoRequest);
         boardService.create(boardCreateRequest, files, fileInfoRequest);
@@ -71,7 +71,7 @@ public class BoardApiV1 implements BoardApiDocsV1 {
     public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
                                             @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
                                               @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
-                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
+                                              @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
         boardService.update(id, boardUpdateRequest, files, fileInfoRequest);
 
         return ResponseEntity

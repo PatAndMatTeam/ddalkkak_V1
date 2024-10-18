@@ -1,7 +1,6 @@
 package com.ddalkkak.splitting.board.service;
 
-import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.dto.UploadFileCreateDto;
 import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
 import com.ddalkkak.splitting.board.exception.UploadFileException;
@@ -24,7 +23,7 @@ import java.util.Optional;
 public class FileService {
 
     public List<UploadFileCreateDto> make(final List<MultipartFile> multipartFiles,
-                                            final List<FileCreateRequest> fileInfoRequest){
+                                            final List<FileInfoCreateRequest> fileInfoRequest){
         List<UploadFileCreateDto> fileCreateDtos = Optional.ofNullable(multipartFiles)
                 .filter(f -> !f.isEmpty()) // 파일이 비어 있지 않을 때만 처리
                 .map(file -> createFile(file, fileInfoRequest))
@@ -35,7 +34,7 @@ public class FileService {
 
 
     private List<UploadFileCreateDto> createFile(List<MultipartFile> files,
-                                             List<FileCreateRequest> fileInfoRequest){
+                                             List<FileInfoCreateRequest> fileInfoRequest){
         // 파일 리스트가 null이거나 비어 있는 경우 빈 리스트 반환
         if (files == null || files.isEmpty()) {
             return Collections.emptyList();
@@ -52,7 +51,7 @@ public class FileService {
 
             if (!fileType.contains("image")){
                 log.info(fileType);
-                throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,1l);
+                throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,"test");
             }
 
             log.info(fileType);
@@ -63,7 +62,7 @@ public class FileService {
                                 fileInfoRequest.get(i).getHeight())
                         .toOutputStream(baos);
             }catch (IOException io){
-                throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.CANNOT_BE_UPLOADED,1l);
+                throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.CANNOT_BE_UPLOADED,"test");
             }
 
             byte[] bytes  = baos.toByteArray();

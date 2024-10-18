@@ -23,7 +23,7 @@ public class BoardCustomRepositoryImpl implements  BoardCustomRepository {
     public BoardEntity findByCategory(final String category, final Long id) {
         return jpaQueryFactory.selectFrom(board)
                 .where(board.category.eq(Category.valueOf(category))
-                        .and(board.parent.id.eq(id)))
+                        .and(board.id.eq(id)))
                 .fetchOne();
     }
 

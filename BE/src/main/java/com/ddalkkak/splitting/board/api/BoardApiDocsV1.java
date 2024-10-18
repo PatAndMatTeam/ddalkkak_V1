@@ -2,7 +2,7 @@ package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
 import com.ddalkkak.splitting.board.api.response.BoardRecommendResponse;
@@ -55,7 +55,7 @@ public interface BoardApiDocsV1 {
     })
     public ResponseEntity<Void> createBoard(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
                                             @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                            @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest);
+                                            @Valid @RequestPart(value = "fileInfo", required = false) List<FileInfoCreateRequest> fileInfoRequest);
 
 
 
@@ -67,7 +67,7 @@ public interface BoardApiDocsV1 {
     public ResponseEntity<Void> updateBoardV1(@PathVariable("id") long id,
                                               @RequestPart BoardUpdateRequest boardUpdateRequest,
                                               @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
-                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest);
+                                              @Valid @RequestPart(value = "fileInfo", required = false) List<FileInfoCreateRequest> fileInfoRequest);
 
 
     @Operation(summary = "글 삭제", description = "글 삭제 합니다.")

@@ -3,9 +3,8 @@ package com.ddalkkak.splitting.board.service;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
-import com.ddalkkak.splitting.board.dto.BoardDto;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 
 import jakarta.transaction.Transactional;
@@ -50,7 +49,7 @@ public class BoardServiceTests {
             files.add(givenFile);
 
             //board
-            BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+            BoardCreateRequest createRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name)
@@ -58,25 +57,79 @@ public class BoardServiceTests {
                     .build();
 
             List<MultipartFile> multipartFiles = List.of(givenFile);
-            List<FileCreateRequest> fileInfos = List.of(FileCreateRequest.builder()
+            List<FileInfoCreateRequest> fileInfos = List.of(FileInfoCreateRequest.builder()
                     .fileTitle("test")
                     .width(100)
                     .height(100)
                     .build());
 
             //when
-            Long createdId = boardService.create(boardCreateRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
             //then
             Board result = boardService.read(createdId);
 
-            assertEquals(boardCreateRequest.getTitle(), result.getTitle());
-            assertEquals(Category.fromValue(boardCreateRequest.getCategory()).toString(), result.getCategory());
-            assertEquals(boardCreateRequest.getContent(), result.getContent());
-            assertEquals(boardCreateRequest.getWriter(), result.getWriter());
+            assertEquals(createRequest.getTitle(), result.getTitle());
+            assertEquals(Category.fromValue(createRequest.getCategory()).toString(), result.getCategory());
+            assertEquals(createRequest.getContent(), result.getContent());
+            assertEquals(createRequest.getWriter(), result.getWriter());
             assertEquals(multipartFiles.get(0).getContentType(),
                     result.getFiles().get(0).getFileType());
             assertEquals(multipartFiles.get(0).getOriginalFilename(),
                     result.getFiles().get(0).getFileName());
+        }
+    }
+
+    @DisplayName("파일을 여러개 등록할 수 있다.")
+    @Test
+    void registFiles() throws IOException {
+        //given
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("images/testimage.jpg")) {
+            if (inputStream == null) {
+                throw new IOException("File not found in classpath");
+            }
+            //file
+            MockMultipartFile givenFile1 = new MockMultipartFile("file", "image1.jpg",
+                    "image/jpeg", inputStream);
+            MockMultipartFile givenFile2 = givenFile1;
+
+            List<MockMultipartFile> files = new ArrayList<>();
+            files.add(givenFile1);
+            files.add(givenFile2);
+
+            //board
+            BoardCreateRequest createRequest = BoardCreateRequest.builder()
+                    .title("갈라치기 해보자")
+                    .content("어떻게 하면 잘 만들수 있을까?")
+                    .category(Category.정치.name)
+                    .writer("윤주영")
+                    .build();
+
+            List<MultipartFile> multipartFiles = List.of(givenFile1, givenFile2);
+            FileInfoCreateRequest fileInfoCreateRequest1 =  FileInfoCreateRequest.builder()
+                    .fileTitle("test")
+                    .width(100)
+                    .height(100)
+                    .build();
+            List<FileInfoCreateRequest> fileInfos = List.of(fileInfoCreateRequest1, fileInfoCreateRequest1);
+
+            //when
+            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            //then
+            Board result = boardService.read(createdId);
+
+
+                assertEquals(createRequest.getTitle(), result.getTitle());
+                assertEquals(Category.fromValue(createRequest.getCategory()).toString(), result.getCategory());
+                assertEquals(createRequest.getContent(), result.getContent());
+                assertEquals(createRequest.getWriter(), result.getWriter());
+                assertEquals(fileInfos.size(), result.getFiles().size());
+
+                for (int i=0; i<result.getFiles().size(); i++){
+                    assertEquals(multipartFiles.get(i).getContentType(),
+                            result.getFiles().get(i).getFileType());
+                    assertEquals(multipartFiles.get(i).getOriginalFilename(),
+                            result.getFiles().get(i).getFileName());
+                }
         }
     }
 
@@ -97,7 +150,7 @@ public class BoardServiceTests {
             files.add(givenFile);
 
             //board
-            BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+            BoardCreateRequest createRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name)
@@ -105,14 +158,14 @@ public class BoardServiceTests {
                     .build();
 
             List<MultipartFile> multipartFiles = List.of(givenFile);
-            List<FileCreateRequest> fileInfos = List.of(FileCreateRequest.builder()
+            List<FileInfoCreateRequest> fileInfos = List.of(FileInfoCreateRequest.builder()
                     .fileTitle("test")
                     .width(100)
                     .height(100)
                     .build());
 
 
-            Long createdId = boardService.create(boardCreateRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
 
             //when
             boardService.visit(createdId);
@@ -141,7 +194,7 @@ public class BoardServiceTests {
             List<MultipartFile> updateFiles = List.of(givenFile2);
 
             //board
-            BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+            BoardCreateRequest createRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name)
@@ -149,13 +202,13 @@ public class BoardServiceTests {
                     .build();
 
             List<MultipartFile> multipartFiles = List.of(givenFile1);
-            List<FileCreateRequest> fileInfos = List.of(FileCreateRequest.builder()
+            List<FileInfoCreateRequest> fileInfos = List.of(FileInfoCreateRequest.builder()
                     .fileTitle("test")
                     .width(100)
                     .height(100)
                     .build());
 
-            Long createdId = boardService.create(boardCreateRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
 
             BoardUpdateRequest updateBoard = BoardUpdateRequest.builder()
                     .build();
@@ -187,7 +240,7 @@ public class BoardServiceTests {
             files.add(givenFile);
 
             //board
-            BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()
+            BoardCreateRequest createRequest = BoardCreateRequest.builder()
                     .title("갈라치기 해보자")
                     .content("어떻게 하면 잘 만들수 있을까?")
                     .category(Category.정치.name)
@@ -195,13 +248,13 @@ public class BoardServiceTests {
                     .build();
 
             List<MultipartFile> multipartFiles = List.of(givenFile);
-            List<FileCreateRequest> fileInfos = List.of(FileCreateRequest.builder()
+            List<FileInfoCreateRequest> fileInfos = List.of(FileInfoCreateRequest.builder()
                     .fileTitle("test")
                     .width(100)
                     .height(100)
                     .build());
 
-            Long createdId = boardService.create(boardCreateRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
 
 
 
@@ -217,5 +270,36 @@ public class BoardServiceTests {
             assertEquals(request.leftRecommend(), read.getLeftCnt());
             assertEquals(request.rightRecommend(), read.getRightCnt());
         }
+    }
+    
+    @DisplayName("부모ID로 부모와 자식 글들을 조회할 수 있다.")
+    @Test
+    void getParentAndChilds(){
+        //given
+        //부모 생성
+        BoardCreateRequest createRequest = BoardCreateRequest.builder()
+                .category(Category.정치.name)
+                .title("대한민국 인구 미래")
+                .content("암담하다")
+                .writer("윤주영")
+                .build();
+        List<MultipartFile> multipartFiles = List.of();
+        List<FileInfoCreateRequest> fileInfos = List.of();
+
+        Long parentId = boardService.create(createRequest, multipartFiles, fileInfos);
+
+        //자식 생성
+        boardService.create(parentId, createRequest, multipartFiles);
+
+        //when
+        //부모 id 조회
+        Board parent = boardService.readAll(parentId, createRequest.getCategory(), 0, 10);
+
+        //then
+        assertEquals(1, parent.getChildren().size());
+        assertEquals(Category.fromValue(createRequest.getCategory()).toString(), parent.getChildren().get(0).getCategory());
+        assertEquals(createRequest.getTitle(), parent.getChildren().get(0).getTitle());
+        assertEquals(createRequest.getContent(), parent.getChildren().get(0).getContent());
+        assertEquals(createRequest.getWriter(), parent.getChildren().get(0).getWriter());
     }
 }

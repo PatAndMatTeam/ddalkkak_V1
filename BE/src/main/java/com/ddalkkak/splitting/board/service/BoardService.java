@@ -3,9 +3,11 @@ package com.ddalkkak.splitting.board.service;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.domain.UploadFile;
+import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
+import com.ddalkkak.splitting.board.exception.UploadFileException;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
@@ -13,7 +15,6 @@ import com.ddalkkak.splitting.board.infrastructure.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,17 +37,28 @@ public class BoardService {
 
 
     public Long create(final BoardCreateRequest createRequest,
-                       final List<MultipartFile> multipartFiles,
-                         final List<FileCreateRequest> fileInfoRequest) {
+                       final Optional<List<MultipartFile>> multipartFiles,
+                         final Optional<List<FileInfoCreateRequest>> fileInfoRequest) {
+
+        List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
+        List<FileInfoCreateRequest> fileInfos = fileInfoRequest.orElse(Collections.emptyList());
+
+        int filesCount = files.size();
+        int fileInfoCount = fileInfos.size();
+        if (filesCount!=fileInfoCount){
+            throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.NOT_MATCH_COUNT,
+                    "file cnt: "+filesCount+"\n file info cnt: "+fileInfoCount);
+        }
+
         Board board = Board.from(createRequest);
         BoardEntity create = BoardEntity.fromModel(board);
 
-        Optional.ofNullable(multipartFiles)
-                .filter(files -> !files.isEmpty())
-                .ifPresent(files -> {
-                    IntStream.range(0, files.size())
-                                    .mapToObj(cnt -> UploadFile.from(multipartFiles.get(cnt),
-                                                                    fileInfoRequest.get(cnt)))
+        Optional.ofNullable(files)
+                .filter(f -> !f.isEmpty())
+                .ifPresent(f -> {
+                    IntStream.range(0, f.size())
+                                    .mapToObj(cnt -> UploadFile.from(files.get(cnt),
+                                            fileInfos.get(cnt)))
                             .map(UploadFileEntity::fromModel)
                             .forEach(create::addFile);
                 });
@@ -55,25 +67,27 @@ public class BoardService {
 
     public Long create(final Long parentId,
                         final BoardCreateRequest createRequest,
-                       final List<MultipartFile> multipartFiles) {
+                       final Optional<List<MultipartFile>> multipartFiles) {
+
+        List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
         BoardEntity parent = boardRepository.findById(parentId).get();
 
-        Board board = Board.from(createRequest);
+        Board child = Board.from(createRequest);
 
-        BoardEntity create = BoardEntity.fromModel(board);
+        BoardEntity create = BoardEntity.fromModel(child);
 
-        Optional.ofNullable(multipartFiles)
-                .filter(files -> !files.isEmpty())
-                .ifPresent(files -> {
+        Optional.ofNullable(files)
+                .filter(f -> !files.isEmpty())
+                .ifPresent(f -> {
                     files.stream()
                             .map(UploadFile::from)
                             .map(UploadFileEntity::fromModel)
                             .forEach(create::addFile);
                 });
 
-        create.addParent(parent);
+        parent.addChild(create);
 
-        return boardRepository.save(create).getId();
+        return boardRepository.save(parent).getId();
     }
 
     public Board read(Long id){
@@ -100,24 +114,40 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    public List<Board> readAll(Long parentId, String category, int start, int end){
+    public Board readAll(Long parentId, String category, int start, int end){
         Pageable pageable = PageRequest.of(start, end);
-        return boardRepository.findByCategoryAndParentId(Category.fromValue(category), parentId, pageable)
-                .stream()
-                .map(BoardEntity::toModel)
-                .collect(Collectors.toList());
+
+        BoardEntity parent = boardRepository.findById(parentId).get();
+        List<BoardEntity> child = boardRepository.findByCategoryAndParentId(Category.fromValue(category),
+                parentId,
+                pageable);
+
+        System.out.println("child.size() = " + child.size());
+        Board result = parent.toModel();
+        child.forEach(c -> {
+            result.addChild(c.toModel());
+        });
+
+        return result;
     }
 
     @Transactional
-    public void update(Long id, BoardUpdateRequest updateRequest, Optional<List<MultipartFile>> filesRequest, List<FileCreateRequest> fileInfoRequest){
+    public void update(Long id, BoardUpdateRequest updateRequest,
+                       Optional<List<MultipartFile>> multipartFiles,
+                       Optional<List<FileInfoCreateRequest>> fileInfoRequest){
+
+        List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
+        List<FileInfoCreateRequest> fileInfos = fileInfoRequest.orElse(Collections.emptyList());
+
+
         BoardEntity read = boardRepository.findById(id).get();
         read.changeTitle(updateRequest.title());
         read.changeContent(updateRequest.content());
-        List<MultipartFile> files = filesRequest.orElse(Collections.emptyList());
+
 
         List<UploadFile> uploadFiles = IntStream.range(0, files.size())
                 .mapToObj(cnt -> UploadFile.from(files.get(cnt),
-                        fileInfoRequest.get(cnt)))
+                        fileInfos.get(cnt)))
                 .collect(Collectors.toList());
 
         // 1. 기존 파일 중 새로운 리스트에 없는 파일들은 삭제

@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  split:
+    container_name: split
+    network_mode: "host"  
+    image: openjdk:17-alpine
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          memory: 128M
+    working_dir: /app
+    logging:
+      driver: 'json-file'
+      options:
+       max-size: '10m'
+       max-file: '10'  
+    volumes:
+      - "/app/test/Splitting-20241015.jar:/app/corr-alert"
+      - "/app/test/application-test.yml:/app/application-prod.yml"
+      - "/app/test/logs:/app/logs"
+    command: java -Xms256m -Xmx512m -Dspring.profiles.active=prod -jar corr-alert

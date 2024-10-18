@@ -1,6 +1,6 @@
 package com.ddalkkak.splitting.board.domain;
 
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
 import com.ddalkkak.splitting.board.exception.UploadFileException;
 import lombok.Builder;
@@ -33,7 +33,7 @@ public class UploadFile {
         this.data = data;
     }
 
-    public static UploadFile from(MultipartFile file, FileCreateRequest fileCreate){
+    public static UploadFile from(MultipartFile file, FileInfoCreateRequest fileCreate){
         String fileName = getFileName(file);
         String fileType = validFileType(file);
 
@@ -64,7 +64,7 @@ public class UploadFile {
                     .size(width, height)
                     .toOutputStream(baos);
         }catch (IOException io){
-            throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.CANNOT_BE_UPLOADED,1l);
+            throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.CANNOT_BE_UPLOADED,"test");
         }
 
         return baos.toByteArray();
@@ -73,7 +73,7 @@ public class UploadFile {
     private static String validFileType(MultipartFile file){
         String fileType = file.getContentType();
         if (!fileType.contains("image")){
-            throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,1l);
+            throw new UploadFileException.CannotBeUploadedException(UploadFileErrorCode.IS_NOT_IMAGE,fileType);
         }
         return fileType;
     }

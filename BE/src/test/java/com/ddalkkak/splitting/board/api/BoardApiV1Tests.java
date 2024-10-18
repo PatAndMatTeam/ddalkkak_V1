@@ -2,7 +2,7 @@ package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.config.TestSecurityConfig;
@@ -86,7 +86,7 @@ public class BoardApiV1Tests {
                 .writer("윤주영")
                 .build();
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
@@ -97,7 +97,7 @@ public class BoardApiV1Tests {
                 .writer("임정환")
                 .build();
         List<MultipartFile> multipartFiles2 = List.of();
-        List<FileCreateRequest> fileInfos2 = List.of();
+        List<FileInfoCreateRequest> fileInfos2 = List.of();
 
         boardService.create(createRequest2, multipartFiles2, fileInfos2);
 
@@ -127,7 +127,7 @@ public class BoardApiV1Tests {
                 .writer("윤주영")
                 .build();
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
@@ -156,7 +156,7 @@ public class BoardApiV1Tests {
                 .writer("윤주영")
                 .build();
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 
@@ -179,7 +179,7 @@ public class BoardApiV1Tests {
                 .build();
 
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of(FileCreateRequest.builder()
+        List<FileInfoCreateRequest> fileInfos1 = List.of(FileInfoCreateRequest.builder()
                         .fileTitle("test")
                         .width(100)
                         .height(100)
@@ -221,7 +221,7 @@ public class BoardApiV1Tests {
                 .build();
 
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
 

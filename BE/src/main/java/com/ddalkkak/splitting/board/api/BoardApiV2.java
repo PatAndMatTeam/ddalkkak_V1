@@ -2,9 +2,13 @@ package com.ddalkkak.splitting.board.api;
 
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
 import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
+import com.ddalkkak.splitting.board.api.response.CategoryAnalysisBoardAllQueryResponse;
+import com.ddalkkak.splitting.board.api.response.CategoryBoardDetailedResponse;
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.service.BoardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
@@ -26,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Validated
-public class BoardApiV2 implements BoardApiDocsV2 {
+public class BoardApiV2 {
 /*
 /api/board/{롤}/all
 /api/board/롤/{id}/all
@@ -35,19 +40,18 @@ public class BoardApiV2 implements BoardApiDocsV2 {
 
 
     @GetMapping(path = "/{category}/{categoryBoardId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<BoardDetailedResponse> getBoard(@PathVariable("category") String category,
+    public ResponseEntity<CategoryBoardDetailedResponse> getCategoryBoard(@PathVariable("category") String category,
                                                             @PathVariable("categoryBoardId") long parentId){
         //1.아티클
         //2.하위 분석글
-        BoardDetailedResponse response = BoardDetailedResponse.from(boardService.read(parentId));
+        CategoryBoardDetailedResponse response = CategoryBoardDetailedResponse.from(boardService.read(parentId));
 
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
 
-    
     @GetMapping(path ="/{category}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<BoardAllQueryResponse> getBoards(@PathVariable("category") String category,
+    public ResponseEntity<BoardAllQueryResponse> getCategoryBoardAll(@PathVariable("category") String category,
                                                            @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
                                                            @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end) {
         List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardService.readAll(category,start,end).stream()
@@ -62,11 +66,12 @@ public class BoardApiV2 implements BoardApiDocsV2 {
 
 
     @PostMapping(path = "/{category}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> createParent(@Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
-                                       @RequestPart(value = "files", required = false) List<MultipartFile> files,
-                                             @Valid @RequestPart(value = "fileInfo", required = false) List<FileCreateRequest> fileInfoRequest){
+    public ResponseEntity<Void> createCategoryBoard(
+                                    @PathVariable("category") String category,
+                                    @Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
+                                   @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
+                                     @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
 
-        log.info("z");
         boardService.create(boardCreateRequest, files, fileInfoRequest);
 
         return ResponseEntity
@@ -74,11 +79,35 @@ public class BoardApiV2 implements BoardApiDocsV2 {
                 .build();
     }
 
+
+    @DeleteMapping(path = "/{category}/{categoryBoardId}")
+    public ResponseEntity<Void> deleteCategoryBoard(@PathVariable("categoryBoardId") Long id){
+
+        boardService.delete(id);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .build();
+    }
+
+    @PatchMapping(value = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> updateCategoryBoard(@PathVariable("analysisBoardId") long id,
+                                              @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
+        boardService.update(id, boardUpdateRequest, files, fileInfoRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .build();
+    }
+
+
     //  /api/board/롤/{id}/
     @PostMapping(path = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> createChild(@PathVariable("categoryBoardId") Long parentId,
+    public ResponseEntity<Void> createAnalysisBoard(@PathVariable("categoryBoardId") Long parentId,
                                        @Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
-                                       @RequestPart(value = "files", required = false) List<MultipartFile> files){
+                                       @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files){
 
         boardService.create(parentId,boardCreateRequest, files);
 
@@ -87,30 +116,54 @@ public class BoardApiV2 implements BoardApiDocsV2 {
                 .build();
     }
 
-    @GetMapping(path = "/{category}/{categoryBoardId}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<BoardAllQueryResponse> getBoardAll(@PathVariable("category") String category,
-                                                             @PathVariable("categoryBoardId") Long parentId,
-                                                             @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
-                                                             @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end){
-        //1.아티클
-        //2.하위 분석글
-        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos =  boardService.readAll(parentId, category,start,end).stream()
-                .map(BoardAllQueryResponse.BoardQueryResponse::from)
-                .collect(Collectors.toList());
-
-        BoardAllQueryResponse response = BoardAllQueryResponse.builder()
-                .infos(changeInfos)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.FOUND);
-    }
 
     @GetMapping(path = "/{category}/{categoryBoardId}/{analysisBoardId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardDetailedResponse> getAnalysisBoard(@PathVariable("categoryBoardId") long parentId,
                                                                   @PathVariable("analysisBoardId") long childId){
         //1.아티클
         //2.하위 분석글
-
-        return new ResponseEntity<>(null, HttpStatus.FOUND);
+        BoardDetailedResponse response = BoardDetailedResponse.from(boardService.read(childId));
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
+
+    @DeleteMapping(path = "/{category}/{categoryBoardId}/{analysisBoardId}")
+    public ResponseEntity<Void> deleteAnalysisBoard(@PathVariable("analysisBoardId") Long id){
+
+        boardService.delete(id);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .build();
+    }
+
+    @PatchMapping(value = "/{category}/{categoryBoardId}/{analysisBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> updateAnalysisBoard(@PathVariable("analysisBoardId") long id,
+                                              @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
+                                              @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
+        boardService.update(id, boardUpdateRequest, files, fileInfoRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .build();
+    }
+
+
+    @GetMapping(path = "/{category}/{categoryBoardId}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CategoryAnalysisBoardAllQueryResponse> getAnalysisBoardAll(@PathVariable("category") String category,
+                                                             @PathVariable("categoryBoardId") Long parentId,
+                                                             @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
+                                                             @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end){
+        //1.아티클
+        //2.하위 분석글
+        Board board = boardService.readAll(parentId, category,start,end);
+
+        CategoryAnalysisBoardAllQueryResponse response = CategoryAnalysisBoardAllQueryResponse.builder()
+                .infos(CategoryAnalysisBoardAllQueryResponse.BoardQueryResponse.from(board))
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
+    }
+
+
+
 }

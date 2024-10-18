@@ -5,10 +5,14 @@ import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.comment.domain.Comment;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+
+@ToString
 @Getter
 public class Board {
     private final Long id;
@@ -41,9 +45,9 @@ public class Board {
         this.writer = writer;
         this.visited = visited;
         this.recommend = recommend;
-        this.comments = comments;
-        this.children = children;
-        this.files = files;
+        this.comments = comments != null ? comments : new ArrayList<>();
+        this.files = files != null ? files : new ArrayList<>();
+        this.children = children != null ? children : new ArrayList<>();
         this.modifiedDate = modifiedDate;
     }
 
@@ -67,6 +71,10 @@ public class Board {
                 .writer(writer)
                 .files(uploadFile)
                 .build();
+    }
+
+    public void addChild(Board board){
+        this.children.add(board);
     }
 
 }

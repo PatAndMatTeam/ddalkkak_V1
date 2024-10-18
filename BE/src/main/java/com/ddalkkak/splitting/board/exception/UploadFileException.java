@@ -11,7 +11,7 @@ public class UploadFileException extends GlobalException {
 
 
     public static class CannotBeUploadedException extends UploadFileException {
-        public CannotBeUploadedException(final UploadFileErrorCode errorCode, final Long category) {
+        public CannotBeUploadedException(final UploadFileErrorCode errorCode, final String category) {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
         }
     }

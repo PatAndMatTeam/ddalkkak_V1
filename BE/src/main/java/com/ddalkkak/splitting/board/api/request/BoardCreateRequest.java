@@ -13,9 +13,9 @@ import java.util.List;
 @Getter
 @Builder
 public class BoardCreateRequest {
-    @Schema(description = "카테고리", example = "politics|soccer|baseball|basketball|etc-sports|lol|starcraft|fps|rpg|mobile" +
-            "|etc-games|celebrity|girl-group|boy-group|cartoon|webtoon|character|fashion|health|movie|food|travel|pet|music" +
-            "|internet|youtuber|vtuber")
+    @Schema(description = "카테고리  value(politics|soccer|baseball|basketball|etc-sports|lol|starcraft|fps|rpg|mobile)|" +
+            "etc-games|celebrity|girl-group|boy-group|cartoon|webtoon|character|fashion|health|movie|food|travel|pet|" +
+            "music|internet|youtuber|vtuber", example = "lol")
     @NotBlank(message = "카테고리를 입력해주세요")
     @Pattern(regexp = "^[a-z]*$", message = "카테고리는 영어 알파벳 소문자로 입력해주세요.")
     String category;

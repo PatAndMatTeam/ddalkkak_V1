@@ -1,7 +1,7 @@
 package com.ddalkkak.splitting.comment.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.FileCreateRequest;
+import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
@@ -55,7 +55,7 @@ public class CommentApiTests {
                 .build();
 
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 
@@ -86,7 +86,7 @@ public class CommentApiTests {
                 .writer("윤주영")
                 .build();
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileCreateRequest> fileInfos1 = List.of();
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
         Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
 

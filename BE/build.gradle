@@ -82,13 +82,13 @@ tasks.withType(Test) {
 }
 
 //빌드 시 테스트 코드는 제외하고 패키지 한다.
-//sourceSets {
-//    test {
-//        java {
-//            srcDirs = [] // 테스트 소스 디렉터리를 비워서 테스트 소스 제외
-//        }
-//    }
-//}
+sourceSets {
+    test {
+        java {
+            srcDirs = [] // 테스트 소스 디렉터리를 비워서 테스트 소스 제외
+        }
+    }
+}
 
 def generated = 'src/main/generated'// querydsl QClass 파일 생성 위치를 지정
 tasks.withType(JavaCompile) {

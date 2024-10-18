@@ -3,10 +3,7 @@ package com.ddalkkak.splitting.board.infrastructure.entity;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.comment.instrastructure.entitiy.CommentEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
@@ -55,10 +52,12 @@ public class BoardEntity extends BaseTimeEntity {
     private List<UploadFileEntity> files = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private BoardEntity parent;
+    @JoinColumn(name = "parent_id") // 외래 키로 사용될 부모의 ID
+    private BoardEntity parent; // 부모 엔티티에 대한 참조
 
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "parent")  // 외래 키 설정
     private List<BoardEntity> children = new ArrayList<>();
 
 
@@ -98,7 +97,8 @@ public class BoardEntity extends BaseTimeEntity {
     }
 
     public void addChild(BoardEntity board) {
-        getChildren().add(board);
+        this.children.add(board);
+        board.addParent(this);
     }
 
     public void addParent(BoardEntity board){
@@ -134,7 +134,7 @@ public class BoardEntity extends BaseTimeEntity {
                 .writer(this.writer)
                 .files(this.files == null ? null : this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
                 .comments(this.comments == null ? null : this.comments.stream().map(CommentEntity::toModel).collect(Collectors.toList()))
-                .children(this.children == null ? null : this.children.stream().map(BoardEntity::toModel).collect(Collectors.toList()))
+                //.children(this.children == null ? null : this.children.stream().map(BoardEntity::toModel).collect(Collectors.toList()))
                 .build();
     }
 
