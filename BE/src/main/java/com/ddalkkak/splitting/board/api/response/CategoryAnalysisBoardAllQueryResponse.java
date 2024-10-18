@@ -20,6 +20,8 @@ public record CategoryAnalysisBoardAllQueryResponse(
             String title,
             @Schema(description = "작성자", example = "윤주영")
             String writer,
+            @Schema(description = "내용", example = "윤주영")
+            String content,
             @Schema(description = "수정 시간", example = "2024-09-07T14:58:02.714+00:00")
             String modifyDate,
             @Schema(description = "카테고리", example = "롤|정치|축구")
@@ -38,6 +40,7 @@ public record CategoryAnalysisBoardAllQueryResponse(
             return BoardQueryResponse.builder()
                     .id(board.getId())
                     .title(board.getTitle())
+                    .content(board.getContent())
                     .writer(board.getWriter())
                     .category(board.getCategory())
                     .recommend(board.getRecommend())

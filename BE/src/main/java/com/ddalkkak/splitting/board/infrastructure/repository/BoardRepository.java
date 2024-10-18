@@ -17,7 +17,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long>, Board
     @EntityGraph(attributePaths = {"files", "comments"}) // "files" 속성도 함께 로드
     Optional<BoardEntity> findById(Long id);
 
-    Page<BoardEntity> findByCategory(Category category, Pageable pageable);
+    Page<BoardEntity> findByCategoryAndParentIsNull(Category category, Pageable pageable);
 
     List<BoardEntity> findByCategoryAndParentId(Category category, Long parentId, Pageable pageable);
 

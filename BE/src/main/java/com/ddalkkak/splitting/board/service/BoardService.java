@@ -6,6 +6,8 @@ import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.domain.UploadFile;
+import com.ddalkkak.splitting.board.exception.BoardErrorCode;
+import com.ddalkkak.splitting.board.exception.BoardException;
 import com.ddalkkak.splitting.board.exception.UploadFileErrorCode;
 import com.ddalkkak.splitting.board.exception.UploadFileException;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
@@ -91,7 +93,9 @@ public class BoardService {
     }
 
     public Board read(Long id){
-        return boardRepository.findById(id).get().toModel();
+        return boardRepository
+                .findById(id).orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id))
+                .toModel();
     }
 
     public Board readV1(String category, Long id){
@@ -108,7 +112,7 @@ public class BoardService {
 
     public List<Board> readAll(String category, int start, int end){
         Pageable pageable = PageRequest.of(start, end);
-        return boardRepository.findByCategory(Category.fromValue(category), pageable)
+        return boardRepository.findByCategoryAndParentIsNull(Category.fromValue(category), pageable)
                 .stream()
                 .map(BoardEntity::toModel)
                 .collect(Collectors.toList());

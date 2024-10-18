@@ -30,8 +30,7 @@ public class BoardCustomRepositoryImpl implements  BoardCustomRepository {
     @Override
     public List<BoardEntity> findByCategoryAndParentId(Category category, Long parentId, Pageable pageable) {
         return jpaQueryFactory.selectFrom(board)
-                .where(board.category.eq(category)
-                        .and(board.parent.id.eq(parentId)))
+                .where(board.parent.id.eq(parentId).and(board.category.eq(category)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
