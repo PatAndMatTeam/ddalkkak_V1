@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +46,7 @@ public class CommentServiceTests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(boardCreateRequest, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         CommentCreateRequest commentCreateRequest = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -74,7 +75,7 @@ public class CommentServiceTests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(boardCreateRequest, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")
@@ -107,7 +108,7 @@ public class CommentServiceTests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(boardCreateRequest, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         CommentCreateRequest originComment = CommentCreateRequest.builder()
                 .writer("yjy")

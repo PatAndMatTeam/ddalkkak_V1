@@ -66,17 +66,15 @@ public class BoardApiV2 {
 
 
     @PostMapping(path = "/{category}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> createCategoryBoard(
+    public ResponseEntity<Long> createCategoryBoard(
                                     @PathVariable("category") String category,
                                     @Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
                                    @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
                                      @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
 
-        boardService.create(boardCreateRequest, files, fileInfoRequest);
+        Long createId = boardService.create(boardCreateRequest, files, fileInfoRequest);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
+        return new ResponseEntity<>(createId, HttpStatus.CREATED);
     }
 
 
@@ -91,7 +89,7 @@ public class BoardApiV2 {
     }
 
     @PatchMapping(value = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateCategoryBoard(@PathVariable("analysisBoardId") long id,
+    public ResponseEntity<Long> updateCategoryBoard(@PathVariable("categoryBoardId") long id,
                                               @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
                                               @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files,
                                               @Valid @RequestPart(value = "fileInfo", required = false) Optional<List<FileInfoCreateRequest>> fileInfoRequest){
@@ -105,15 +103,13 @@ public class BoardApiV2 {
 
     //  /api/board/롤/{id}/
     @PostMapping(path = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> createAnalysisBoard(@PathVariable("categoryBoardId") Long parentId,
+    public ResponseEntity<Long> createAnalysisBoard(@PathVariable("categoryBoardId") Long parentId,
                                        @Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
                                        @RequestPart(value = "files", required = false) Optional<List<MultipartFile>> files){
 
-        boardService.create(parentId,boardCreateRequest, files);
+        Long createId = boardService.create(parentId,boardCreateRequest, files);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
+        return new ResponseEntity<>(createId, HttpStatus.CREATED);
     }
 
 

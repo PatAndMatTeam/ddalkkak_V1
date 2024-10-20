@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -71,8 +73,6 @@ public class BoardApiV1Tests {
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andDo(print());
-
-
         }
 
     @DisplayName("글 리스트를 조회할 수 있다.")
@@ -88,7 +88,7 @@ public class BoardApiV1Tests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        boardService.create(createRequest1, multipartFiles1, fileInfos1);
+        boardService.create(createRequest1, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         BoardCreateRequest createRequest2 = BoardCreateRequest.builder()
                 .category("baseball")
@@ -99,7 +99,7 @@ public class BoardApiV1Tests {
         List<MultipartFile> multipartFiles2 = List.of();
         List<FileInfoCreateRequest> fileInfos2 = List.of();
 
-        boardService.create(createRequest2, multipartFiles2, fileInfos2);
+        boardService.create(createRequest2, Optional.of(multipartFiles2), Optional.of(fileInfos2));
 
         //when-then
        ResultActions resultActions =  mockMvc.perform(get("/api/board/all")
@@ -129,7 +129,7 @@ public class BoardApiV1Tests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(createRequest1, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         //when-then
         mockMvc.perform(get("/api/board/{boardId}", boardId)
@@ -158,7 +158,7 @@ public class BoardApiV1Tests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(createRequest1, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         //when-then
         mockMvc.perform(delete("/api/board/{boardId}", boardId)
@@ -179,13 +179,9 @@ public class BoardApiV1Tests {
                 .build();
 
         List<MultipartFile> multipartFiles1 = List.of();
-        List<FileInfoCreateRequest> fileInfos1 = List.of(FileInfoCreateRequest.builder()
-                        .fileTitle("test")
-                        .width(100)
-                        .height(100)
-                .build());
+        List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(create, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(create, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         BoardCreateRequest update = BoardCreateRequest.builder()
                 .category("baseball")
@@ -223,7 +219,7 @@ public class BoardApiV1Tests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(createRequest1, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(createRequest1, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         BoardRecommendUpdateRequest request = BoardRecommendUpdateRequest.builder()
                 .leftRecommend(1)

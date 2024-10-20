@@ -64,7 +64,7 @@ public class BoardServiceTests {
                     .build());
 
             //when
-            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
             //then
             Board result = boardService.read(createdId);
 
@@ -113,7 +113,7 @@ public class BoardServiceTests {
             List<FileInfoCreateRequest> fileInfos = List.of(fileInfoCreateRequest1, fileInfoCreateRequest1);
 
             //when
-            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
             //then
             Board result = boardService.read(createdId);
 
@@ -165,7 +165,7 @@ public class BoardServiceTests {
                     .build());
 
 
-            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
 
             //when
             boardService.visit(createdId);
@@ -208,12 +208,12 @@ public class BoardServiceTests {
                     .height(100)
                     .build());
 
-            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
 
             BoardUpdateRequest updateBoard = BoardUpdateRequest.builder()
                     .build();
 
-            boardService.update(createdId, updateBoard, Optional.of(updateFiles), fileInfos);
+            boardService.update(createdId, updateBoard, Optional.of(updateFiles), Optional.of(fileInfos));
 
             Board read = boardService.read(createdId);
 
@@ -254,7 +254,7 @@ public class BoardServiceTests {
                     .height(100)
                     .build());
 
-            Long createdId = boardService.create(createRequest, multipartFiles, fileInfos);
+            Long createdId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
 
 
 
@@ -286,10 +286,10 @@ public class BoardServiceTests {
         List<MultipartFile> multipartFiles = List.of();
         List<FileInfoCreateRequest> fileInfos = List.of();
 
-        Long parentId = boardService.create(createRequest, multipartFiles, fileInfos);
+        Long parentId = boardService.create(createRequest, Optional.of(multipartFiles), Optional.of(fileInfos));
 
         //자식 생성
-        boardService.create(parentId, createRequest, multipartFiles);
+        boardService.create(parentId, createRequest, Optional.of(multipartFiles));
 
         //when
         //부모 id 조회

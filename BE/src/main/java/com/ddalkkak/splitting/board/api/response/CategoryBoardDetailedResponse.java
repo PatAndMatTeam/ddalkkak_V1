@@ -43,6 +43,7 @@ public record CategoryBoardDetailedResponse (
         return CategoryBoardDetailedResponse.builder()
                 .id(board.getId())
                 .title(board.getTitle())
+                .content(board.getContent())
                 .writer(board.getWriter())
                 .category(board.getCategory())
                 .recommend(board.getRecommend())

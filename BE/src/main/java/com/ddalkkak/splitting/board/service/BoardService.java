@@ -71,9 +71,10 @@ public class BoardService {
                         final BoardCreateRequest createRequest,
                        final Optional<List<MultipartFile>> multipartFiles) {
 
-        List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
-        BoardEntity parent = boardRepository.findById(parentId).get();
+        BoardEntity parent = boardRepository.findById(parentId)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, parentId));
 
+        List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
         Board child = Board.from(createRequest);
 
         BoardEntity create = BoardEntity.fromModel(child);
@@ -87,9 +88,10 @@ public class BoardService {
                             .forEach(create::addFile);
                 });
 
-        parent.addChild(create);
+        create.addParent(parent);
+        //parent.addChild(create);
 
-        return boardRepository.save(parent).getId();
+        return boardRepository.save(create).getId();
     }
 
     public Board read(Long id){
@@ -126,7 +128,6 @@ public class BoardService {
                 parentId,
                 pageable);
 
-        System.out.println("child.size() = " + child.size());
         Board result = parent.toModel();
         child.forEach(c -> {
             result.addChild(c.toModel());
@@ -143,8 +144,8 @@ public class BoardService {
         List<MultipartFile> files = multipartFiles.orElse(Collections.emptyList());
         List<FileInfoCreateRequest> fileInfos = fileInfoRequest.orElse(Collections.emptyList());
 
-
-        BoardEntity read = boardRepository.findById(id).get();
+        BoardEntity read = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
         read.changeTitle(updateRequest.title());
         read.changeContent(updateRequest.content());
 
@@ -164,13 +165,14 @@ public class BoardService {
                     read.addFile(UploadFileEntity.fromModel(file));
                 });
 
-        boardRepository.save(read);
+        //return boardRepository.save(read).getId();
     }
 
 
     @Transactional
     public Board update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
-        BoardEntity read = boardRepository.findById(id).get();
+        BoardEntity read = boardRepository.findById(id)
+                        .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
 
         read.changeLeftCnt(boardRecommendUpdateRequest.leftRecommend());
         read.changeRightCnt(boardRecommendUpdateRequest.rightRecommend());
@@ -178,13 +180,14 @@ public class BoardService {
     }
 
     public void delete(Long id){
-        boardRepository.deleteById(id);
+         boardRepository.deleteById(id);
     }
 
 
     @Transactional
     public void visit(Long id){
-        BoardEntity read = boardRepository.findById(id).get();
+        BoardEntity read = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
         Long visited = read.getVisited()+1;
         read.changeVisited(visited);
     }

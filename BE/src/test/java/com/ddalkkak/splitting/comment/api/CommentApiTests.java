@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -57,7 +58,7 @@ public class CommentApiTests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(boardCreateRequest, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
 
         CommentCreateRequest createRequest = CommentCreateRequest.builder()
@@ -88,7 +89,7 @@ public class CommentApiTests {
         List<MultipartFile> multipartFiles1 = List.of();
         List<FileInfoCreateRequest> fileInfos1 = List.of();
 
-        Long boardId = boardService.create(boardCreateRequest, multipartFiles1, fileInfos1);
+        Long boardId = boardService.create(boardCreateRequest, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
         CommentCreateRequest createRequest = CommentCreateRequest.builder()
                 .writer("윤주영")
