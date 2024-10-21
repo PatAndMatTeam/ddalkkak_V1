@@ -36,9 +36,6 @@ public class UserApi {
         return "redirect:"+authUrl+"?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
     }
 
-
-
-
     //비밀번호 일치 여부
     @PostMapping("check-password")
     public ResponseEntity<Boolean> verifyPassword(@RequestBody UserPasswordVerifyRequest passwordVerifyRequest){
