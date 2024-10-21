@@ -4,10 +4,7 @@ package com.ddalkkak.splitting.board.api;
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
-import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
-import com.ddalkkak.splitting.board.api.response.BoardDetailedResponse;
-import com.ddalkkak.splitting.board.api.response.CategoryAnalysisBoardAllQueryResponse;
-import com.ddalkkak.splitting.board.api.response.CategoryBoardDetailedResponse;
+import com.ddalkkak.splitting.board.api.response.*;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.service.BoardService;
 import jakarta.validation.Valid;
@@ -40,8 +37,9 @@ public class BoardApiV2 {
 
 
     @GetMapping(path = "/{category}/{categoryBoardId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CategoryBoardDetailedResponse> getCategoryBoard(@PathVariable("category") String category,
-                                                            @PathVariable("categoryBoardId") long parentId){
+    public ResponseEntity<CategoryBoardDetailedResponse> getCategoryBoardDetailed(@PathVariable("category") String category,
+                                                                          @PathVariable("categoryBoardId") long parentId)
+    {
         //1.아티클
         //2.하위 분석글
         CategoryBoardDetailedResponse response = CategoryBoardDetailedResponse.from(boardService.read(parentId));
@@ -49,6 +47,23 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
+    @GetMapping(value = "/{category}/search", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<BoardAllQueryResponse> search(@PathVariable("category") String category,
+                                                        @RequestParam(value = "title") String title,
+                                                        @RequestParam(value = "content") String content,
+                                                        @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
+                                                        @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end) {
+
+        List<BoardAllQueryResponse.BoardQueryResponse> changeInfos = boardService.search(category, title, content, start, end)
+                .stream()
+                .map(BoardAllQueryResponse.BoardQueryResponse::from)
+                .collect(Collectors.toList());
+
+        BoardAllQueryResponse response = BoardAllQueryResponse.builder()
+                .infos(changeInfos)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
+    }
 
     @GetMapping(path ="/{category}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardAllQueryResponse> getCategoryBoardAll(@PathVariable("category") String category,
@@ -159,6 +174,29 @@ public class BoardApiV2 {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
+
+    @GetMapping(path = "/{category}/{categoryBoardId}/search", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CategoryBoardSearchResponse> searchAnalysisBoard(@PathVariable("category") String category,
+                                                                           @PathVariable("categoryBoardId") Long parentId,
+                                                                           @RequestParam("title") String title,
+                                                                           @RequestParam("content") String content,
+                                                                           @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
+                                                                           @RequestParam(value = "end", defaultValue = "10")  @Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer end){
+        //1.아티클
+        //2.하위 분석글
+        List<CategoryBoardSearchResponse.BoardQueryResponse> infos = boardService.search(parentId, category, title, category,start,end)
+                .stream()
+                .map(CategoryBoardSearchResponse.BoardQueryResponse::from)
+                .collect(Collectors.toList());
+
+        CategoryBoardSearchResponse response = CategoryBoardSearchResponse.builder()
+                .infos(infos)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
+    }
+
+
 
 
 

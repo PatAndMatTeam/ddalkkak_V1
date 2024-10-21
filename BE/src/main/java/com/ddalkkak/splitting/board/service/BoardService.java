@@ -192,4 +192,21 @@ public class BoardService {
         read.changeVisited(visited);
     }
 
+    public List<Board> search(String category, String title, String content, int start, int end) {
+        Pageable pageable = PageRequest.of(start, end);
+
+        return boardRepository.search(Category.fromValue(category), title, content ,pageable)
+                .stream()
+                .map(BoardEntity::toModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<Board> search(Long categoryBoardId, String category, String title, String content, int start, int end) {
+        Pageable pageable = PageRequest.of(start, end);
+
+        return boardRepository.search(categoryBoardId, Category.fromValue(category), title, content ,pageable)
+                .stream()
+                .map(BoardEntity::toModel)
+                .collect(Collectors.toList());
+    }
 }

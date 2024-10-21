@@ -11,4 +11,7 @@ public interface BoardCustomRepository {
     BoardEntity findByCategory(final String category, final Long id);
 
     List<BoardEntity> findByCategoryAndParentId(Category category, Long parentId, Pageable pageable);
+
+    List<BoardEntity> search(Category category, String title, String content, Pageable pageable);
+    List<BoardEntity> search(Long categoryBoardId, Category category, String title, String content, Pageable pageable);
 }

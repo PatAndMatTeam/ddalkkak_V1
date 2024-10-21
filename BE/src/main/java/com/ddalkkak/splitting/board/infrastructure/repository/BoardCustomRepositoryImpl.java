@@ -34,6 +34,33 @@ public class BoardCustomRepositoryImpl implements  BoardCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
 
+    @Override
+    public List<BoardEntity> search(Category category, String title, String content, Pageable pageable) {
+        return jpaQueryFactory.selectFrom(board)
+                .where(board.parent.isNull().
+                        and(board.category.eq(category))
+                        .and(board.title.contains(title))
+                        .or(board.content.contains(content)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    @Override
+    public List<BoardEntity> search(Long categoryBoardId, Category category, String title, String content, Pageable pageable) {
+        return jpaQueryFactory.selectFrom(board)
+                .where(board.parent.id.eq(categoryBoardId).
+                        and(board.category.eq(category))
+                        .and(board.title.contains(title))
+                        .or(board.content.contains(content)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    public String toLikePattern(String keyword) {
+        return "%" + keyword + "%";
     }
 }
