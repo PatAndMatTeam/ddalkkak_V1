@@ -302,4 +302,26 @@ public class BoardServiceTests {
         assertEquals(createRequest.getContent(), parent.getChildren().get(0).getContent());
         assertEquals(createRequest.getWriter(), parent.getChildren().get(0).getWriter());
     }
+
+    @DisplayName("카테고리 글의 제목과 내용으로 카테고리 글을 검색할 수 있다.")
+    @Test
+    void searchCategoryBoardWithTitleContent(){
+        //given
+        String category = Category.리그오브레전드.name;
+        String title = "아리";
+
+        //when
+
+        //then
+    }
+
+    @DisplayName("분석 글의 제목과 내용으로 분석글을 검색할 수 있다.")
+    @Test
+    void searchAnalysisBoardWithTitleContent(){
+        //given
+
+        //when
+
+        //then
+    }
 }

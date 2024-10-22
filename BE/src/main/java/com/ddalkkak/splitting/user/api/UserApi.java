@@ -4,14 +4,20 @@ package com.ddalkkak.splitting.user.api;
 import com.ddalkkak.splitting.user.api.request.UserPasswordVerifyRequest;
 import com.ddalkkak.splitting.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
+@Slf4j
 @RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping("/api/user")
 public class UserApi {
 
@@ -27,13 +33,27 @@ public class UserApi {
     //네이버|카카오|구글 로그인
     @GetMapping("/login")
     public String login(){
-        return "redirect:"+authUrl+"?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        return "redirect:" + authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUrl + "&response_type=code";
     }
 
     @GetMapping("/login/callback")
-    public String loginCallBack(@RequestParam(required = false) String code,
+    public void loginCallBack(@RequestParam(required = false) String code,
                                 @RequestParam(required = false) String error){
-        return "redirect:"+authUrl+"?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        //https://kauth.kakao.com/oauth/token
+        log.info("code: {}", code);
+        //http post
+        //https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=clientId&redirect_uri=redirectUrl&code=code
+        RestClient restClient = RestClient.create();
+
+        String result = restClient.post()
+                .uri("https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id="+clientId+"&redirect_uri="+redirectUrl+"&code="+code)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .retrieve()
+                .body(String.class);
+
+        log.info(result);
+
+//        return "redirect:"+authUrl+"?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
     }
 
     //비밀번호 일치 여부

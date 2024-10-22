@@ -1,5 +1,8 @@
 package com.ddalkkak.splitting.common.config;
 
+import com.ddalkkak.splitting.user.service.CustomOAuth2UserService;
+import com.ddalkkak.splitting.user.service.OAuth2SuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -9,36 +12,13 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(
-//               /*         auth -> auth.requestMatchers("/h2-console/**").permitAll()
-//                                .anyRequest().authenticated()*/
-//                        auth -> auth.anyRequest().permitAll()
-//                ).oauth2Login(Customizer.withDefaults())
-//                .csrf(csrf -> csrf.disable())
-//                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-//
-//
-//        http.csrf(x -> x.disable());
-//
-//        // 세션을 Stateless로 변경, 기존의 폼 로그인 방식 비활성화
-//        http.sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.formLogin(x -> {
-//            try {
-//                x.disable().httpBasic(c -> c.disable());
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        return http.build();
-//    }
-
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,7 +26,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())             // CSRF 보호 비활성화
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .oauth2Login(Customizer.withDefaults())   // 기본 OAuth2 로그인 설정
+                //.oauth2Login(Customizer.withDefaults())   // 기본 OAuth2 로그인 설정
+                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler))
+
+
                 .headers(headers -> headers.defaultsDisabled()   // 기본 헤더 설정 비활성화
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())) // X-Frame-Options 설정
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 Stateless로 설정
