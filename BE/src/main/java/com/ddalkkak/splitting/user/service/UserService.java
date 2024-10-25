@@ -2,8 +2,11 @@ package com.ddalkkak.splitting.user.service;
 
 
 import com.ddalkkak.splitting.user.api.request.UserPasswordVerifyRequest;
+import com.ddalkkak.splitting.user.domain.User;
+import com.ddalkkak.splitting.user.dto.OAuth2UserInfo;
 import com.ddalkkak.splitting.user.exception.UserErrorCode;
 import com.ddalkkak.splitting.user.exception.UserException;
+import com.ddalkkak.splitting.user.instrastructure.entity.UserEntity;
 import com.ddalkkak.splitting.user.instrastructure.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +33,14 @@ public class UserService {
             return false;
         }
         return true;
+    }
+
+
+    public User save(OAuth2UserInfo user){
+        User create = User.from(user);
+        return userRepository.save(UserEntity
+                        .fromModel(create)
+                ).toModel();
     }
 
 //    public void kakaoCallback(String code) throws JsonProcessingException {

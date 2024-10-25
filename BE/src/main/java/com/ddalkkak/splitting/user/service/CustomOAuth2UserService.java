@@ -5,26 +5,27 @@ import com.ddalkkak.splitting.user.dto.OAuth2UserInfo;
 import com.ddalkkak.splitting.user.instrastructure.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.Map;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
+        log.info("oauth2");
         Map<String, Object> oAuth2UserAttributes = super.loadUser(userRequest).getAttributes();
 
         String registId = userRequest.getClientRegistration().getRegistrationId();
@@ -36,9 +37,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(registId, oAuth2UserAttributes);
 
-        //User user = saveUser(oAuth2UserInfo);
+        User create = userService.save(oAuth2UserInfo);
 
-        return new PrincipalDetails(new User(),oAuth2UserAttributes, userNameAttritubeName);
+        return new PrincipalDetails(create, oAuth2UserAttributes, userNameAttritubeName);
     }
 
 }

@@ -82,7 +82,11 @@ package com.ddalkkak.splitting.user.instrastructure.entity;
 
 
 
+import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.infrastructure.entity.BaseTimeEntity;
+import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
+import com.ddalkkak.splitting.board.infrastructure.entity.Category;
+import com.ddalkkak.splitting.user.domain.User;
 import com.ddalkkak.splitting.user.dto.RoleUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -116,5 +120,23 @@ public class UserEntity extends BaseTimeEntity {
     private String provider;
 
     private RoleUser role;
+
+    public static UserEntity fromModel(User user){
+        return UserEntity.builder()
+                .userId(user.getUserId())
+                .nickname(user.getName())
+                .provider(user.getProvider())
+                .role(RoleUser.valueOf(user.getRole()))
+                .build();
+    }
+
+    public User toModel(){
+        return User.builder()
+                .userId(this.getUserId())
+                .name(this.nickname)
+                .provider(this.provider)
+                .role(this.role.getValue())
+                .build();
+    }
 
 }
