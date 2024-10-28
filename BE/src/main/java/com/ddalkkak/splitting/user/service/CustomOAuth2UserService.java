@@ -22,7 +22,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserService userService;
 
-    @Transactional
+    //@Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info("oauth2");
@@ -37,6 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(registId, oAuth2UserAttributes);
 
+        log.info("{}", oAuth2UserInfo);
         User create = userService.save(oAuth2UserInfo);
 
         return new PrincipalDetails(create, oAuth2UserAttributes, userNameAttritubeName);

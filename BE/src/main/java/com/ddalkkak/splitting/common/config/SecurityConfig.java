@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())             // CSRF 보호 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
-
+               // .antMatchers("/login/**", "/oauth2/**").permitAll()
+                .securityMatcher("/login/**", "/oauth2/**")
                 .authorizeHttpRequests(
                         auth -> auth
                                 .anyRequest().permitAll())
@@ -43,14 +44,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 Stateless로 설정
 
                 .oauth2Login(oauth -> oauth.loginPage("/api/user/login"))
-                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService)))
-                .oauth2Login(oauth -> oauth.redirectionEndpoint(x -> x.baseUri("/api/user/login/callback")))
-                .oauth2Login(oauth -> oauth.successHandler(oAuth2SuccessHandler))
-                .oauth2Login(oauth -> oauth.failureHandler(oAuth2FailureHandler))
+                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler))
 
+                .oauth2Login(oauth -> oauth.redirectionEndpoint(x -> x.baseUri("/login/oauth2/code/*"))
+                        .successHandler(oAuth2SuccessHandler)
+                        .failureHandler(oAuth2FailureHandler))
 
-                .logout(x -> x.clearAuthentication(true))
-                .logout(x -> x.deleteCookies("JSESSIONID"))
+//                .logout(x -> x.clearAuthentication(true))
+//                .logout(x -> x.deleteCookies("JSESSIONID"))
 
                 //jwt
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -2,6 +2,8 @@ package com.ddalkkak.splitting.user.service;
 
 import com.ddalkkak.splitting.user.domain.User;
 import com.ddalkkak.splitting.user.instrastructure.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 @Slf4j
 @Component
@@ -24,14 +27,30 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.info("TokenAuthenticationFilter");
-        String requestURI = request.getRequestURI();
-        logger.info(requestURI);
+        log.info("TokenAuthenticationFilter");
 
-        if (requestURI.equals("/api/user/login")){
-            filterChain.doFilter(request, response);
-            return;
+        String requestURI = request.getRequestURI();
+        log.info("requestURI: {}", requestURI);
+
+        try{
+            String accessToken = request.getHeader("Authorization");
+            String refreshToken = request.getHeader("Authorization-refresh");
+            log.info("accessToken: {}", accessToken);
+            log.info("refreshToken: {}", refreshToken);
+
+            User user = jwtService.extractUserInfo(accessToken);
+
+            log.info("user: {}", user);
+        }catch (Exception e){
+            log.warn(e.getMessage());
         }
+
+        filterChain.doFilter(request, response);
+
+//        if (requestURI.equals("/api/user/login")){
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
 //           String token = request.getHeader("Authorization");
 //
@@ -39,28 +58,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 //               Authentication authentication = jwtService.getAuthentication(token);
 //               SecurityContextHolder.getContext().setAuthentication(authentication);
 //           }
-
-        String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(jwtService::validateToken)
-                .orElse(null);
-
-        // 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
-        // RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
-        // 일치한다면 AccessToken을 재발급해준다.
-        if (refreshToken != null) {
-            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-            return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
-        }
-
-        // RefreshToken이 없거나 유효하지 않다면, AccessToken을 검사하고 인증을 처리하는 로직 수행
-        // AccessToken이 없거나 유효하지 않다면, 인증 객체가 담기지 않은 상태로 다음 필터로 넘어가기 때문에 403 에러 발생
-        // AccessToken이 유효하다면, 인증 객체가 담긴 상태로 다음 필터로 넘어가기 때문에 인증 성공
-        if (refreshToken == null) {
-            checkAccessTokenAndAuthentication(request, response, filterChain);
-        }
+//
+//        String refreshToken = jwtService.extractRefreshToken(request)
+//                .filter(jwtService::validateToken)
+//                .orElse(null);
+//
+//        // 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
+//        // RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
+//        // 일치한다면 AccessToken을 재발급해준다.
+//        if (refreshToken != null) {
+//            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+//            return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
+//        }
+//
+//        // RefreshToken이 없거나 유효하지 않다면, AccessToken을 검사하고 인증을 처리하는 로직 수행
+//        // AccessToken이 없거나 유효하지 않다면, 인증 객체가 담기지 않은 상태로 다음 필터로 넘어가기 때문에 403 에러 발생
+//        // AccessToken이 유효하다면, 인증 객체가 담긴 상태로 다음 필터로 넘어가기 때문에 인증 성공
+//        if (refreshToken == null) {
+//            checkAccessTokenAndAuthentication(request, response, filterChain);
+//        }
 
 
     }
+
 
 
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
@@ -72,7 +92,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 //                });
 
         jwtService.sendAccessAndRefreshToken(response,
-                jwtService.createAccessToken("test"), "test");
+                jwtService.createAccessToken("test", "test"), "test");
     }
 
     /**

@@ -126,7 +126,7 @@ public class UserEntity extends BaseTimeEntity {
                 .userId(user.getUserId())
                 .nickname(user.getName())
                 .provider(user.getProvider())
-                .role(RoleUser.valueOf(user.getRole()))
+                .role(user.getRole())
                 .build();
     }
 
@@ -135,7 +135,7 @@ public class UserEntity extends BaseTimeEntity {
                 .userId(this.getUserId())
                 .name(this.nickname)
                 .provider(this.provider)
-                .role(this.role.getValue())
+                .role(this.role)
                 .build();
     }
 

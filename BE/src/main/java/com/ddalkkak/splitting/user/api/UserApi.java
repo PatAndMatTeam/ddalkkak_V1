@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
+@CrossOrigin(origins = "*")
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -31,9 +32,14 @@ public class UserApi {
     private String redirectUrl;
 
     //네이버|카카오|구글 로그인
+//    @GetMapping("/login")
+//    public String login(){
+//        return "redirect:" + authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUrl +"&response_type=code";
+//    }
+
     @GetMapping("/login")
     public String login(){
-        return "redirect:" + authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUrl + "&response_type=code";
+        return "redirect:/oauth2/authorization/kakao";
     }
 
     @GetMapping("/login/callback")

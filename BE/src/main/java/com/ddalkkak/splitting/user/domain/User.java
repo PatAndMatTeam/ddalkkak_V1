@@ -1,9 +1,12 @@
 package com.ddalkkak.splitting.user.domain;
 
 import com.ddalkkak.splitting.user.dto.OAuth2UserInfo;
+import com.ddalkkak.splitting.user.dto.RoleUser;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Builder
 @Getter
 public class User {
@@ -12,7 +15,7 @@ public class User {
 
     private String name;
 
-    private String role;
+    private RoleUser role;
 
     private String provider;
 
@@ -22,7 +25,7 @@ public class User {
         return User.builder()
                 .userId(user.email())
                 .name(user.name())
-                .role("ROLE_USER")
+                .role(RoleUser.USER)
                 .provider(user.provider())
                 .build();
     }

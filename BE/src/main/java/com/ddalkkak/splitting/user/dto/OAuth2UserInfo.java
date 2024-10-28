@@ -3,6 +3,8 @@ package com.ddalkkak.splitting.user.dto;
 import com.ddalkkak.splitting.user.instrastructure.entity.UserEntity;
 import jakarta.security.auth.message.AuthException;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 

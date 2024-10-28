@@ -33,7 +33,7 @@ public class JwtService {
 
     private int TOKEN_EXPIRE_TIME = 1000;
     private int REFRESH_TOKEN_EXPIRE_TIME = 1000;
-    private String secretKey = "hansomeYJY";
+    private String secretKey = "YOONJUYOUNGISVERYHANSOMEGUYANDHEISVERYSMARYANDSEXY";
     private static final String AUTHORITIES_KEY = "auth";
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
@@ -46,8 +46,12 @@ public class JwtService {
 
     private static final String BEARER = "Bearer ";
 
-    public String createAccessToken(String userEmail){
-        Claims claims = Jwts.claims().subject(userEmail).build();
+    public String createAccessToken(String userEmail, String name){
+        Claims claims = Jwts.claims()
+                .add("name", name)
+                .add("email", userEmail)
+                .build();
+
         Date now = new Date();
 
         String token = Jwts.builder()
@@ -59,6 +63,24 @@ public class JwtService {
                 .compact();
 
         return token;
+    }
+
+    public com.ddalkkak.splitting.user.domain.User extractUserInfo(String token) {
+        // 토큰을 파싱하여 클레임을 가져옴
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        // 사용자 이름과 이메일 추출
+        String userName = (String) claims.get("name"); // 'name' 클레임에서 사용자 이름
+        String userEmail = (String) claims.get("email"); // 'email' 클레임에서 사용자 이메일
+
+        return com.ddalkkak.splitting.user.domain.User.builder()
+                .userId(userEmail)
+                .name(userName)
+                .build();
     }
 
 
