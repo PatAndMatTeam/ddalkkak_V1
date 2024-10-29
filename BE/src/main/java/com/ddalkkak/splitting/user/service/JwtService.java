@@ -10,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,9 +28,13 @@ import java.util.stream.Collectors;
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class JwtService {
+
+    private final UserService userService;
+
 
     private int TOKEN_EXPIRE_TIME = 1000;
     private int REFRESH_TOKEN_EXPIRE_TIME = 1000;
@@ -109,10 +114,6 @@ public class JwtService {
         Claims claims = Jwts.claims().subject(userEmail)
                 .build();
         Date now = new Date();
-
-        Map map = new HashMap();
-        map.put("email", claims);
-
         String token = Jwts.builder()
                 .subject(REFRESH_TOKEN_SUBJECT)
                 .claims(claims)
@@ -201,21 +202,48 @@ public class JwtService {
      */
     public Optional<String> extractEmail(String accessToken) {
         try {
-            // 토큰 유효성 검사하는 데에 사용할 알고리즘이 있는 JWT verifier builder 반환
-//            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
-//                    .build() // 반환된 빌더로 JWT verifier 생성
-//                    .verify(accessToken) // accessToken을 검증하고 유효하지 않다면 예외 발생
-//                    .getClaim() // claim(Emial) 가져오기
-//                    .asString());
-            return Optional.ofNullable(Jwts.parser()
+            Claims claims = Jwts.parser()
                     .verifyWith((SecretKey) getSignKey())
                     .build()
                     .parseSignedClaims(accessToken)
-                    .getPayload().getSubject());
+                    .getPayload();
+
+            String userEmail = (String) claims.get("email"); // 'email' 클레임에서 사용자 이메일
+
+            return Optional.ofNullable(userEmail);
         } catch (Exception e) {
             log.error("액세스 토큰이 유효하지 않습니다.");
             return Optional.empty();
         }
     }
+
+
+    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+        com.ddalkkak.splitting.user.domain.User user = userService.findByRefreshToken(refreshToken);
+
+        String reIssuedRefreshToken = reIssueRefreshToken(user);
+
+       sendAccessAndRefreshToken(response,
+               createAccessToken(user.getUserId(), user.getName()),
+                reIssuedRefreshToken);
+
+        sendAccessAndRefreshToken(response,
+                createAccessToken("test", "test"), "test");
+    }
+
+    /**
+     * [리프레시 토큰 재발급 & DB에 리프레시 토큰 업데이트 메소드]
+     * jwtService.createRefreshToken()으로 리프레시 토큰 재발급 후
+     * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
+     */
+    private String reIssueRefreshToken(com.ddalkkak.splitting.user.domain.User user) {
+        String userId = user.getUserId();
+
+        String reIssuedRefreshToken = createRefreshToken(userId);
+        userService.update(userId, reIssuedRefreshToken);
+
+        return reIssuedRefreshToken;
+    }
+
 
 }

@@ -19,6 +19,7 @@ public class User {
 
     private String provider;
 
+    private String refreshToken;
 
 
     public static User from(OAuth2UserInfo user){
@@ -27,6 +28,17 @@ public class User {
                 .name(user.name())
                 .role(RoleUser.USER)
                 .provider(user.provider())
+                .build();
+    }
+
+
+    public User updateRefreshToken(String token){
+        return User.builder()
+                .userId(this.userId)
+                .name(this.name)
+                .role(this.role)
+                .provider(this.provider)
+                .refreshToken(token)
                 .build();
     }
 }

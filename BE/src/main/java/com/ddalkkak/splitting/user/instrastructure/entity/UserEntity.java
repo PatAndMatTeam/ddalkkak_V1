@@ -112,7 +112,6 @@ public class UserEntity extends BaseTimeEntity {
 
     private String userPw;
 
-
     private String nickname;
 
     private String ip;
@@ -120,6 +119,8 @@ public class UserEntity extends BaseTimeEntity {
     private String provider;
 
     private RoleUser role;
+
+    private String refreshToken;
 
     public static UserEntity fromModel(User user){
         return UserEntity.builder()
@@ -137,6 +138,10 @@ public class UserEntity extends BaseTimeEntity {
                 .provider(this.provider)
                 .role(this.role)
                 .build();
+    }
+
+    public void changeRefreshToken(String token){
+        this.refreshToken = token;
     }
 
 }
