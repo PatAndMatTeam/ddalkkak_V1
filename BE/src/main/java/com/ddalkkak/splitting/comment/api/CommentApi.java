@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class CommentApi implements CommentApiDocs {
 
     private final CommentService commentService;
+    
+    /**
+     * 댓글 등록 API
+     * */
 
     @PostMapping(value = "/{boardId}/comment", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void>  create(@PathVariable("boardId") long boardId,
@@ -30,8 +34,10 @@ public class CommentApi implements CommentApiDocs {
                 .status(HttpStatus.CREATED)
                 .build();
     }
-
-
+    
+    /**
+     * 댓글 삭제 API
+     * */
     @DeleteMapping(value = "/{boardId}/comment/{commentId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void>  delete(@PathVariable("commentId") Long replyId,
                                         @RequestBody CommentDeleteRequest commentDeleteRequest){

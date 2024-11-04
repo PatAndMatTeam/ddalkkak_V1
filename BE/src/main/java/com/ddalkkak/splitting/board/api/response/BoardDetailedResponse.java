@@ -90,7 +90,11 @@ public record BoardDetailedResponse(
          @Schema(description = "내용", example = "100개 안에 성공한다.")
         String content,
         @Schema(description = "수정시간", example = "2024-09-07T14:58:02.714+00:00")
-        String modifyDate
+        String modifyDate,
+        @Schema(description = "댓글 배정 위치 왼쪽", example = "true|false")
+        boolean isLeftPosition,
+        @Schema(description = "댓글 배정 위치 오른쪽", example = "true|false")
+        boolean isRightPosition
     ) {
         public static CommentResponse from(CommentView commentView){
             return CommentResponse.builder()
@@ -107,6 +111,8 @@ public record BoardDetailedResponse(
                     .writer(comment.getWriter())
                     .content(comment.getContent())
                     .modifyDate(comment.getModifiedDate().toString())
+                    .isLeftPosition(comment.isLeftLocation())
+                    .isRightPosition(comment.isRightLocation())
                     .build();
         }
 

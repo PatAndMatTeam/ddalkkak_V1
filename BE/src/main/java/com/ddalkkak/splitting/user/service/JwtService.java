@@ -1,8 +1,10 @@
 package com.ddalkkak.splitting.user.service;
 
 
-import com.ddalkkak.splitting.user.exception.JwtErroCode;
+import com.ddalkkak.splitting.common.exception.ErrorCode;
+import com.ddalkkak.splitting.user.exception.JwtErrorCode;
 import com.ddalkkak.splitting.user.exception.JwtException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -94,20 +97,37 @@ public class JwtService {
         return new SecretKeySpec(keyBytes, HS256.getJcaName()); // SecretKey 생성
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, HttpServletResponse response) {
         var parser = Jwts.parser()
                 .verifyWith((SecretKey) getSignKey())
                 .build();
         try {
             var result = parser.parseSignedClaims(token);
             result.getPayload().forEach((key1, value1) -> log.info("key : {}, value : {}", key1, value1));
+        } catch (IllegalArgumentException e){
+            log.warn("Illegal access token");
+            throw new JwtException.IllegalTokenException(JwtErrorCode.ILLEGAL_ACCESS_TOKEN, token);
         } catch (SignatureException e) {
-            throw new RuntimeException("JWT Token Invalid Exception");
+            log.warn("Invalid access token");
+            throw new JwtException.ExpiredActiveTokenException(JwtErrorCode.INVALID_ACCESS_TOKEN, token);
         }catch (ExpiredJwtException e){
             log.warn("JWT Token Expired Exception");
-            throw  new JwtException.ExpiredActiveTokenException(JwtErroCode.EXPIRED_ACCESS_TOKEN, token);
+            return false;
         }
         return true;
+    }
+
+    public static void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(Integer.parseInt(errorCode.getCode()));
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String s = objectMapper.writeValueAsString(errorCode);
+
+        /**
+         * 한글 출력을 위해 getWriter() 사용
+         */
+        response.getWriter().write(s);
     }
 
     public String createRefreshToken(String userEmail) {

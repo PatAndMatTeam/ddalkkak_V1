@@ -15,4 +15,5 @@ public class CommentException extends GlobalException {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
         }
     }
+
 }

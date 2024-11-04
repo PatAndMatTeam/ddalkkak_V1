@@ -1,9 +1,13 @@
 package com.ddalkkak.splitting.user.service;
 
+import com.ddalkkak.splitting.common.exception.ErrorCode;
 import com.ddalkkak.splitting.user.domain.User;
+import com.ddalkkak.splitting.user.exception.JwtErrorCode;
 import com.ddalkkak.splitting.user.instrastructure.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.Response;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,11 +19,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.function.BiPredicate;
 
 @Slf4j
 @Component
@@ -29,28 +35,38 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserService userService;
 
-    private static final String[] jwtBypassUrls = {"/api/user/login"};
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    private static final String[] jwtBypassUrls = {"GET /api/user/login/**",
+            "GET /api/user/login/success",
+            "GET /api/user/oauth2/**",
+            "GET /login/**",
+            "GET /api/board/v2/lol/search",
+            "GET /api/board/v2/lol/*"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("TokenAuthenticationFilter");
+        String requestMethod = request.getMethod();
         String requestURI = request.getRequestURI();
-        log.info("requestURI: {}", requestURI);
 
-        if (Arrays.stream(jwtBypassUrls).anyMatch(url -> url.equals(requestURI))) {
+        log.info("RequestMethod: {}, requestURI: {}", requestMethod, requestURI);
+
+        if (shouldBypassFilter(requestMethod, requestURI)) {
             log.info("Bypassing JWT filter for URI: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
 
         String accessToken = request.getHeader("Authorization");
-        if (jwtService.validateToken(accessToken)){
-               Authentication authentication = jwtService.getAuthentication(accessToken);
-               SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        if (jwtService.validateToken(accessToken, response)){
+            Authentication authentication = jwtService.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(jwtService::validateToken)
+                .filter(t -> jwtService.validateToken(t, response))
                 .orElse(null);
 
         if (refreshToken != null){
@@ -63,6 +79,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean shouldBypassFilter(String requestMethod, String requestURI) {
+        return Arrays.stream(jwtBypassUrls)
+                .map(this::parseBypassCondition)
+                .anyMatch(condition -> condition.test(requestMethod, requestURI));
+    }
+
+    private BiPredicate<String, String> parseBypassCondition(String bypassCondition) {
+        String[] parts = bypassCondition.split(" ", 2);
+        String method = parts[0];
+        String uriPattern = parts[1];
+        return (methodInput, uriInput) -> method.equalsIgnoreCase(methodInput) && pathMatcher.match(uriPattern, uriInput);
     }
 
 
@@ -93,7 +122,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessToken(request)
-                .filter(jwtService::validateToken)
+                .filter(t -> jwtService.validateToken(t, response))
                 .flatMap(jwtService::extractEmail)
                 .map(userService::findByEmail)
                 .ifPresent(this::saveAuthentication);

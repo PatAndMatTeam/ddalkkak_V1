@@ -1,12 +1,10 @@
 package com.ddalkkak.splitting.common.config;
 
-import com.ddalkkak.splitting.user.service.CustomOAuth2UserService;
-import com.ddalkkak.splitting.user.service.OAuth2FailureHandler;
-import com.ddalkkak.splitting.user.service.OAuth2SuccessHandler;
-import com.ddalkkak.splitting.user.service.TokenAuthenticationFilter;
+import com.ddalkkak.splitting.user.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,19 +23,24 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 모든 요청 허용, 필요한 경우 주석 처리된 코드로 특정 경로 접근 제어 가능
         http
                 .csrf(csrf -> csrf.disable())             // CSRF 보호 비활성화
+                .cors(cors -> cors.disable()) //cors off
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
                // .antMatchers("/login/**", "/oauth2/**").permitAll()
-                .securityMatcher("/login/**", "/oauth2/**")
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**").permitAll() // 특정 경로 허용
+                        .requestMatchers(HttpMethod.GET, "/api/board/v2/lol/all",
+                                "/api/board/v2/lol/search",
+                                "/api/board/v2/lol/*").permitAll()
+                        .anyRequest().authenticated()) // 나머지 요청은 인증 필요
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
 
                 .headers(headers -> headers.defaultsDisabled()   // 기본 헤더 설정 비활성화
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())) // X-Frame-Options 설정
@@ -56,6 +59,7 @@ public class SecurityConfig {
 
                 //jwt
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,6 +26,8 @@ import java.util.Map;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
+    @Value("${kakao.login.success.client-redirect-uri}")
+    private static String loginSuccessRedirectUrl;
     private final JwtService jwtService;
 
     private static final String URI = "/api/user/login/success";
@@ -49,7 +52,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         setCookie(response, "accessToken", accessToken); // 1시간
         setCookie(response, "refreshToken", refreshToken); // 7일
 
-        response.sendRedirect(URI);
+        //response.sendRedirect(URI);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"message\": \"Authentication successful\"}");
+        response.sendRedirect(loginSuccessRedirectUrl);
     }
 
     private void setCookie(HttpServletResponse response,String tokenName, String token) {

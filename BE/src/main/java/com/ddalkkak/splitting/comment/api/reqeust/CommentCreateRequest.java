@@ -16,6 +16,12 @@ public record CommentCreateRequest(
         @NotBlank(message = "댓글을 입력해주세요")
         String content,
         @Schema(description = "부모 댓글 id", example = "0")
-        Long parentId
+        Long parentId,
+
+        @Schema(description = "댓글 위치는 왼쪽", example = "true|false")
+        boolean isLeftPosition,
+
+        @Schema(description = "댓글 위치는 오른쪽", example = "true|false")
+        boolean isRightPosition
 ) {
 }

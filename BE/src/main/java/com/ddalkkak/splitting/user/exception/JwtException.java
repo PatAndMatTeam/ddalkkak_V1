@@ -11,13 +11,19 @@ public class JwtException extends GlobalException {
 
 
     public static class ExpiredRefreshTokenException extends JwtException {
-        public ExpiredRefreshTokenException(final JwtErroCode errorCode, final Long category) {
+        public ExpiredRefreshTokenException(final JwtErrorCode errorCode, final Long category) {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
         }
     }
 
     public static class ExpiredActiveTokenException extends JwtException {
-        public ExpiredActiveTokenException(final JwtErroCode errorCode, final String token) {
+        public ExpiredActiveTokenException(final JwtErrorCode errorCode, final String token) {
+            super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), token));
+        }
+    }
+
+    public static class IllegalTokenException extends JwtException {
+        public IllegalTokenException(final JwtErrorCode errorCode, final String token) {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), token));
         }
     }

@@ -57,7 +57,7 @@ public class UserService {
     }
 
     public User findByEmail(final String email){
-        return userRepository.findByEmail(email)
+        return userRepository.findByUserId(email)
                 .orElseThrow(() -> new UserException.InvalidPasswordException(UserErrorCode.INVALID_PASSWORD, 1l))
                 .toModel();
     }
