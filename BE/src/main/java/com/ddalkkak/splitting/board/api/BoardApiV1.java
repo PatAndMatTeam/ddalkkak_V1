@@ -1,7 +1,7 @@
 package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.BoardAllQueryResponse;
@@ -90,14 +90,19 @@ public class BoardApiV1 {
     }
 
 
-    @PatchMapping(path="/{id}/recommend")
-    public ResponseEntity<BoardRecommendResponse> recommend(@PathVariable("id") long id,
-                                                            @Valid @RequestBody BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+    @PatchMapping(path="/{id}/vote")
+    public ResponseEntity<BoardRecommendResponse> vote(@PathVariable("id") long id,
+                                                            @Valid @RequestBody BoardVoteUpdateRequest boardVoteUpdateRequest){
         BoardRecommendResponse response =
-                BoardRecommendResponse.from(boardService.update(id, boardRecommendUpdateRequest)) ;
+                BoardRecommendResponse.from(boardService.update(id, boardVoteUpdateRequest)) ;
 
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping(path="/{id}/recommend")
+    public ResponseEntity<Long> recommend(@PathVariable("id") long id){
+        return new ResponseEntity<>(boardService.recommend(id), HttpStatus.ACCEPTED);
     }
 
     @PatchMapping(path="/{id}/visit")

@@ -1,7 +1,7 @@
 package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
@@ -221,9 +221,9 @@ public class BoardApiV1Tests {
 
         Long boardId = boardService.create(createRequest1, Optional.of(multipartFiles1), Optional.of(fileInfos1));
 
-        BoardRecommendUpdateRequest request = BoardRecommendUpdateRequest.builder()
-                .leftRecommend(1)
-                .rightRecommend(2)
+        BoardVoteUpdateRequest request = BoardVoteUpdateRequest.builder()
+                .leftVote(1)
+                .rightVote(2)
                 .build();
 
         //when-then

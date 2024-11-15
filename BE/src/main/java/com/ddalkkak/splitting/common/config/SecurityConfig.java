@@ -2,12 +2,15 @@ package com.ddalkkak.splitting.common.config;
 
 import com.ddalkkak.splitting.user.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,6 +29,13 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
+    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toH2Console());
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 모든 요청 허용, 필요한 경우 주석 처리된 코드로 특정 경로 접근 제어 가능
         http
@@ -38,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**").permitAll() // 특정 경로 허용
                         .requestMatchers(HttpMethod.GET, "/api/board/v2/lol/all",
                                 "/api/board/v2/lol/search",
-                                "/api/board/v2/lol/*").permitAll()
+                                "/api/board/v2/lol/*",
+                                "/api/user/token").permitAll()
                         .anyRequest().authenticated()) // 나머지 요청은 인증 필요
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
 

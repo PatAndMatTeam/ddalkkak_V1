@@ -2,6 +2,8 @@ package com.ddalkkak.splitting.user.api;
 
 
 import com.ddalkkak.splitting.user.api.request.UserPasswordVerifyRequest;
+import com.ddalkkak.splitting.user.dto.OAuth2UserInfo;
+import com.ddalkkak.splitting.user.service.JwtService;
 import com.ddalkkak.splitting.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class UserApi {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
     private String authUrl;
@@ -63,10 +66,18 @@ public class UserApi {
     }
 
     //비밀번호 일치 여부
-    @PostMapping("check-password")
+    @PostMapping("/check-password")
     public ResponseEntity<Boolean> verifyPassword(@RequestBody UserPasswordVerifyRequest passwordVerifyRequest){
         boolean response = userService.verifyPassword(passwordVerifyRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/token")
+    public ResponseEntity<String> createTestAccessToken(){
+        String jwt = jwtService.createAccessToken("test", "test");
+        log.info("token {}", jwt);
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
 }

@@ -2,12 +2,11 @@ package com.ddalkkak.splitting.user.service;
 
 
 import com.ddalkkak.splitting.common.exception.ErrorCode;
+import com.ddalkkak.splitting.user.dto.RoleUser;
 import com.ddalkkak.splitting.user.exception.JwtErrorCode;
 import com.ddalkkak.splitting.user.exception.JwtException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +57,7 @@ public class JwtService {
         Claims claims = Jwts.claims()
                 .add("name", name)
                 .add("email", userEmail)
+                .add("auth", RoleUser.ADMIN.getValue())
                 .build();
 
         Date now = new Date();
@@ -66,7 +66,7 @@ public class JwtService {
                 .subject(ACCESS_TOKEN_SUBJECT)
                 .claims(claims)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME))
+                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME*600)) //10분
                 .signWith(getSignKey())
                 .compact();
 
@@ -101,6 +101,7 @@ public class JwtService {
         var parser = Jwts.parser()
                 .verifyWith((SecretKey) getSignKey())
                 .build();
+
         try {
             var result = parser.parseSignedClaims(token);
             result.getPayload().forEach((key1, value1) -> log.info("key : {}, value : {}", key1, value1));
@@ -115,6 +116,22 @@ public class JwtService {
             return false;
         }
         return true;
+    }
+
+    public boolean validateTokenV1(String token, HttpServletResponse response) {
+        try {
+            Jwts.parser().verifyWith((SecretKey) getSignKey()).build().parseUnsecuredClaims(token);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims string is empty.", e);
+        }
+        return false;
     }
 
     public static void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {

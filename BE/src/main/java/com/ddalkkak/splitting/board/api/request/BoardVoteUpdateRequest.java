@@ -4,10 +4,10 @@ import jakarta.validation.constraints.Min;
 import lombok.Builder;
 
 @Builder
-public record BoardRecommendUpdateRequest(
+public record BoardVoteUpdateRequest(
         @Min(0)
-        long leftRecommend,
+        long leftVote,
         @Min(0)
-        long rightRecommend
+        long rightVote
 ) {
 }

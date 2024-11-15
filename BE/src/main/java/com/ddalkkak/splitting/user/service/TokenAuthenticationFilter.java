@@ -42,7 +42,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "GET /api/user/oauth2/**",
             "GET /login/**",
             "GET /api/board/v2/lol/search",
-            "GET /api/board/v2/lol/*"};
+            "GET /api/board/v2/lol/*",
+            "GET /api/user/token",
+            "GET /favicon.ico",
+            "GET /h2-console/*",
+            "POST /h2-console/*"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -58,8 +62,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = request.getHeader("Authorization");
+        String accessToken = request.getHeader("Authorization").replace("Bearer ", "").trim();
 
+        log.info("accressToken: {}", accessToken);
         if (jwtService.validateToken(accessToken, response)){
             Authentication authentication = jwtService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -74,9 +79,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if(refreshToken == null){
-            checkAccessTokenAndAuthentication(request, response, filterChain);
-        }
+//        if(refreshToken == null){
+//            checkAccessTokenAndAuthentication(request, response, filterChain);
+//        }
 
         filterChain.doFilter(request, response);
     }

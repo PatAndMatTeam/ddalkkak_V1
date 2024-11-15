@@ -1,7 +1,7 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
@@ -258,17 +258,17 @@ public class BoardServiceTests {
 
 
 
-            BoardRecommendUpdateRequest request = BoardRecommendUpdateRequest.builder()
-                    .leftRecommend(2)
-                    .rightRecommend(1)
+            BoardVoteUpdateRequest request = BoardVoteUpdateRequest.builder()
+                    .leftVote(2)
+                    .rightVote(1)
                     .build();
             //when
             boardService.update(createdId,request);
             Board read = boardService.read(createdId);
 
             //then
-            assertEquals(request.leftRecommend(), read.getLeftCnt());
-            assertEquals(request.rightRecommend(), read.getRightCnt());
+            assertEquals(request.leftVote(), read.getLeftCnt());
+            assertEquals(request.rightVote(), read.getRightCnt());
         }
     }
     
