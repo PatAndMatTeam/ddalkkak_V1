@@ -31,7 +31,6 @@ import java.util.function.BiPredicate;
 @Component
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    private final UserRepository userRepository;
     private final JwtService jwtService;
     private final UserService userService;
 
@@ -41,12 +40,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "GET /api/user/login/success",
             "GET /api/user/oauth2/**",
             "GET /login/**",
-            "GET /api/board/v2/lol/search",
-            "GET /api/board/v2/lol/*",
+            "GET /api/board/v2/**",
             "GET /api/user/token",
             "GET /favicon.ico",
-            "GET /h2-console/*",
-            "POST /h2-console/*"};
+            "GET /h2-console/**",
+            "POST /h2-console/**"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

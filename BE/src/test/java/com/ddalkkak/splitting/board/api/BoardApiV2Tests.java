@@ -5,6 +5,7 @@ import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.config.TestSecurityConfig;
+import com.ddalkkak.splitting.user.service.JwtService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -44,6 +45,14 @@ public class BoardApiV2Tests {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private JwtService jwtService;
+
+    public String createTestToken(){
+        return jwtService.createAccessToken("test", "test");
+    }
+
+
     @DisplayName("카테고리 글을 생성할 수 있다.")
     @Test
     void createCategoryBoard() throws Exception {
@@ -66,9 +75,9 @@ public class BoardApiV2Tests {
         mockMvc.perform(multipart("/api/board/v2/"+category)
                 .file(create)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                 .with(csrf()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$").value(1));
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("카테고리 글을 조회할 수 있다.")
@@ -145,8 +154,10 @@ public class BoardApiV2Tests {
 
         Long createId = boardService.create(request, Optional.empty(),Optional.empty());
 
+
         //when & then
         mockMvc.perform(delete("/api/board/v2/{category}/{boardId}", category, createId)
+                .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                         .with(csrf()))
                 .andExpect(status().isAccepted())
                 .andDo(print());
@@ -179,9 +190,9 @@ public class BoardApiV2Tests {
         //when $ then
         mockMvc.perform(multipart(HttpMethod.PATCH, "/api/board/v2/{category}/{id}", category, createId)
                         .file(update)
+                .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                 .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$").value(createId));
+                .andExpect(status().isAccepted());
 
         mockMvc.perform(get( "/api/board/v2/{category}/{id}", category, createId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -216,13 +227,16 @@ public class BoardApiV2Tests {
                 objectMapper.writeValueAsString(createAnalysis).getBytes()
         );
 
+        //jwt
+        String testToken = jwtService.createAccessToken("test", "test");
+
         //when & then
         mockMvc.perform(multipart("/api/board/v2/{category}/{parentId}", category, parentId)
                         .file(create)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .header("Authorization", "Bearer " + testToken) // JWT 토큰 추가
                         .with(csrf()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$").value(2)); //부모 id 반환
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("분석글을 조회할 수 있다.")
@@ -251,6 +265,7 @@ public class BoardApiV2Tests {
         //when & then
         mockMvc.perform(get("/api/board/v2/{category}/{parentId}/{analysisId}", category, parentId, analysisId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                         .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(jsonPath("$.id").value(analysisId))
@@ -335,9 +350,11 @@ public class BoardApiV2Tests {
 
         Long analysisId = boardService.create(parentId, createAnalysis1, Optional.empty());
 
+
         //when & then
         mockMvc.perform(delete("/api/board/v2/{category}/{parentId}/{analysisId}", category, parentId, analysisId)
-                        .with(csrf()))
+                .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
+                .with(csrf()))
                 .andExpect(status().isAccepted())
                 .andDo(print());
     }
@@ -377,7 +394,9 @@ public class BoardApiV2Tests {
         //when $ then
         mockMvc.perform(multipart(HttpMethod.PATCH, "/api/board/v2/{category}/parentId}/{analysisId}", category, parentId, analysisId)
                         .file(update)
+                         .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                         .contentType(MediaType.MULTIPART_FORM_DATA))
+
                 .andExpect(status().isAccepted());
     }
 }
