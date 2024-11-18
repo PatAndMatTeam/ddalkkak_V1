@@ -4,13 +4,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor // 기본 생성자 추가
+@AllArgsConstructor // 모든 필드를 포함한 생성자 추가
 @Builder
 public class BoardCreateRequest {
     @Schema(description = "카테고리  value(politics|soccer|baseball|basketball|etc-sports|lol|starcraft|fps|rpg|mobile)|" +

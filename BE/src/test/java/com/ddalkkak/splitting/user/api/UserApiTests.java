@@ -85,8 +85,14 @@ public class UserApiTests {
                 .body(String.class);
 
         System.out.println("info = " + info);
-        
-        
+    }
 
+    @Test
+    public void test1(){
+        String test = "1731578925102";
+
+        Long time = Long.parseLong(test);
+
+        System.out.println("time = " + time);
     }
 }

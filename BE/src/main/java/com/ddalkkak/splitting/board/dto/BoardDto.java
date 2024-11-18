@@ -1,13 +1,10 @@
 package com.ddalkkak.splitting.board.dto;
 
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
-import com.ddalkkak.splitting.board.infrastructure.entity.UploadFileEntity;
-import com.ddalkkak.splitting.comment.dto.CommentDto;
 import com.ddalkkak.splitting.comment.dto.CommentView;
 import lombok.Builder;
-import lombok.ToString;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +19,8 @@ public record BoardDto(
         String writer,
         Long recommend,
         Long visited,
-        Long leftCnt,
-        Long rightCnt,
+        Long leftVote,
+        Long rightVote,
         List<UploadFileDto> files,
         List<CommentView> comments
 ){
@@ -36,10 +33,10 @@ public record BoardDto(
                 .build();
     }
 
-    public static BoardDto from(BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+    public static BoardDto from(BoardVoteUpdateRequest boardVoteUpdateRequest){
         return BoardDto.builder()
-                .leftCnt(boardRecommendUpdateRequest.leftRecommend())
-                .rightCnt(boardRecommendUpdateRequest.rightRecommend())
+                .leftVote(boardVoteUpdateRequest.leftVote())
+                .rightVote(boardVoteUpdateRequest.rightVote())
                 .build();
     }
 
@@ -51,8 +48,8 @@ public record BoardDto(
                 .category(entity.getCategory().name())
                 .createDate(entity.getCreateDate().toString())
                 .recommend(entity.getRecommend())
-                .leftCnt(entity.getLeftCnt())
-                .rightCnt(entity.getRightCnt())
+                .leftVote(entity.getLeftVote())
+                .rightVote(entity.getRightVote())
                 .visited(entity.getVisited())
                 .writer(entity.getWriter())
                 .files(entity.getFiles().stream()

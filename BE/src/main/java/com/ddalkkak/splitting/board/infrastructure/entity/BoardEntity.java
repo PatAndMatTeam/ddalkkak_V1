@@ -30,10 +30,10 @@ public class BoardEntity extends BaseTimeEntity {
     private Long recommend = 0L;
 
     @Builder.Default
-    private Long leftCnt = 0L;
+    private Long leftVote = 0L;
 
     @Builder.Default
-    private Long rightCnt = 0L;
+    private Long rightVote = 0L;
 
     @Builder.Default
     private Long visited = 0L;
@@ -69,12 +69,12 @@ public class BoardEntity extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void changeLeftCnt(long leftCnt){
-        this.leftCnt = leftCnt;
+    public void changeLeftCnt(long leftVote){
+        this.leftVote = leftVote;
     }
 
-    public void changeRightCnt(long rightCnt){
-        this.rightCnt = rightCnt;
+    public void changeRightCnt(long rightVote){
+        this.rightVote = rightVote;
     }
 
     public void changeVisited(long visited){
@@ -83,9 +83,12 @@ public class BoardEntity extends BaseTimeEntity {
 
     // Helper methods to manage replies
     public void addReply(CommentEntity reply) {
-        this.comments.add(reply);
+        getComments().add(reply);
+        reply.addBoard(this);
     }
-
+    public void increaseRecommend(){
+        this.recommend++;
+    }
     public void removeReply(CommentEntity reply) {
         comments.remove(reply);
     }
@@ -126,8 +129,8 @@ public class BoardEntity extends BaseTimeEntity {
                 .title(this.title)
                 .content(this.content)
                 .recommend(this.recommend)
-                .leftCnt(this.leftCnt)
-                .rightCnt(this.rightCnt)
+                .leftCnt(this.leftVote)
+                .rightCnt(this.rightVote)
                 .visited(this.visited)
                 .category(this.category.toString())
                 .modifiedDate(this.getLastModifiedDate())

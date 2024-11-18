@@ -9,9 +9,11 @@ import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
 import com.ddalkkak.splitting.comment.exception.CommentErrorCode;
 import com.ddalkkak.splitting.comment.exception.CommentException;
 import com.ddalkkak.splitting.config.TestSecurityConfig;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,8 +25,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Import(TestSecurityConfig.class) // 테스트용 보안 구성 클래스 추가
-@ActiveProfiles("test")
+@Transactional
 @SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class CommentServiceTests {
 
     @Autowired
@@ -63,7 +67,7 @@ public class CommentServiceTests {
         assertNotEquals(0L, createdId);
     }
 
-    @DisplayName("비밀번호가 같은 댓글 삭제시 성공한다.")
+    @DisplayName("비밀번호 검증을 통과하면 댓글을 삭제할 수 있다.")
     @Test
     void deleteCommentMatchPassword(){
         BoardCreateRequest boardCreateRequest = BoardCreateRequest.builder()

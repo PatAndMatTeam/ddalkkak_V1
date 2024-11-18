@@ -1,7 +1,7 @@
 package com.ddalkkak.splitting.board.service;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
-import com.ddalkkak.splitting.board.api.request.BoardRecommendUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.domain.Board;
@@ -170,13 +170,22 @@ public class BoardService {
 
 
     @Transactional
-    public Board update(Long id, BoardRecommendUpdateRequest boardRecommendUpdateRequest){
+    public Board update(Long id, BoardVoteUpdateRequest boardVoteUpdateRequest){
         BoardEntity read = boardRepository.findById(id)
                         .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
 
-        read.changeLeftCnt(boardRecommendUpdateRequest.leftRecommend());
-        read.changeRightCnt(boardRecommendUpdateRequest.rightRecommend());
+        read.changeLeftCnt(boardVoteUpdateRequest.leftVote());
+        read.changeRightCnt(boardVoteUpdateRequest.rightVote());
         return boardRepository.save(read).toModel();
+    }
+
+    @Transactional
+    public Long recommend(Long id){
+        BoardEntity read = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
+
+        read.increaseRecommend();
+        return boardRepository.save(read).toModel().getRecommend();
     }
 
     public void delete(Long id){

@@ -7,6 +7,9 @@ import com.ddalkkak.splitting.board.service.BoardService;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentCreateRequest;
 import com.ddalkkak.splitting.comment.api.reqeust.CommentDeleteRequest;
 import com.ddalkkak.splitting.comment.service.CommentService;
+import com.ddalkkak.splitting.config.TestSecurityConfig;
+import com.ddalkkak.splitting.user.service.JwtService;
+import com.ddalkkak.splitting.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +32,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(TestSecurityConfig.class) // 테스트용 보안 구성 클래스 추가
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,6 +49,13 @@ public class CommentApiTests {
     private CommentService commentService;
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    public String createTestToken(){
+        return jwtService.createAccessToken("test", "test");
+    }
 
     @DisplayName("댓글을 작성할 수 있다.")
     @Test
@@ -71,6 +84,7 @@ public class CommentApiTests {
         //when
         ResultActions resultActions = mockMvc.perform(post("/api/board/{boardId}/comment", boardId)
                     .content(objectMapper.writeValueAsString(createRequest))
+                    .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                     .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isCreated());
 
@@ -105,8 +119,9 @@ public class CommentApiTests {
                 .build();
 
         //when-then
-        mockMvc.perform(delete("/api/board/{boardId}/comment/{commendId}",boardId, commentId)
+        mockMvc.perform(delete("/api/board/v2/{boardId}/comment/{commendId}",boardId, commentId)
                         .content(objectMapper.writeValueAsString(deleteRequest))
+                        .header("Authorization", "Bearer " + createTestToken()) // JWT 토큰 추가
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                         .andExpect(status().isAccepted());

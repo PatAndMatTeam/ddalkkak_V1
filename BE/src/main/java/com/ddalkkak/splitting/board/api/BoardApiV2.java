@@ -3,6 +3,7 @@ package com.ddalkkak.splitting.board.api;
 
 import com.ddalkkak.splitting.board.api.request.BoardCreateRequest;
 import com.ddalkkak.splitting.board.api.request.BoardUpdateRequest;
+import com.ddalkkak.splitting.board.api.request.BoardVoteUpdateRequest;
 import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.*;
 import com.ddalkkak.splitting.board.domain.Board;
@@ -29,12 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Validated
 public class BoardApiV2 {
-/*
-/api/board/{롤}/all
-/api/board/롤/{id}/all
-/api/board/롤/{id}/{aId}*/
     private final BoardService boardService;
-
 
     @GetMapping(path = "/{category}/{categoryBoardId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CategoryBoardDetailedResponse> getCategoryBoardDetailed(@PathVariable("category") String category,
@@ -194,6 +190,28 @@ public class BoardApiV2 {
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.FOUND);
+    }
+
+
+    @PatchMapping(path="/{id}/vote")
+    public ResponseEntity<BoardRecommendResponse> vote(@PathVariable("id") long id,
+                                                       @Valid @RequestBody BoardVoteUpdateRequest boardVoteUpdateRequest){
+        BoardRecommendResponse response =
+                BoardRecommendResponse.from(boardService.update(id, boardVoteUpdateRequest)) ;
+
+
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping(path="/{id}/recommend")
+    public ResponseEntity<Long> recommend(@PathVariable("id") long id){
+        return new ResponseEntity<>(boardService.recommend(id), HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping(path="/{id}/visit")
+    public ResponseEntity<BoardRecommendResponse> visit(@PathVariable("id") long id){
+        boardService.visit(id);
+        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
 

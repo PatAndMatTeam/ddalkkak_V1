@@ -22,6 +22,9 @@ public class CommentManager {
 
     public Long create(Long boardId, CommentCreateRequest commentCreateRequest) {
         Comment create = Comment.from(boardId, commentCreateRequest);
+
+
+
         return commentRepository.save(CommentEntity
                 .fromModel(create)).getId();
     }
