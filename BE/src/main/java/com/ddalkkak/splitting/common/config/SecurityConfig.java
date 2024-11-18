@@ -17,13 +17,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final CustomOAuth2UserService oAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final OAuth2FailureHandler oAuth2FailureHandler;
-
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
-    private final JwtExceptionFilter jwtExceptionFilter;
+//
+//    private final CustomOAuth2UserService oAuth2UserService;
+//    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+//    private final OAuth2FailureHandler oAuth2FailureHandler;
+//
+//    private final TokenAuthenticationFilter tokenAuthenticationFilter;
+//    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,32 +33,35 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable()) //cors off
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
-               // .antMatchers("/login/**", "/oauth2/**").permitAll()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**").permitAll() // 특정 경로 허용
-                        .requestMatchers(HttpMethod.GET, "/api/board/v2/lol/all",
-                                "/api/board/v2/lol/search",
-                                "/api/board/v2/lol/*").permitAll()
-                        .anyRequest().authenticated()) // 나머지 요청은 인증 필요
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
+               // .antMatchers("/login/**", "/oauth2/**").permitAll
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/h2-console/","/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**","/*").permitAll() // 특정 경로 허용
+//                        .requestMatchers(HttpMethod.GET, "/h2-console",
+//                                "/api/board/v2/lol/all",
+//                                "/api/board/v2/lol/search",
+//                                "/api/board/v2/lol/*").permitAll()
+//                        //.anyRequest().authenticated()
+//                ) // 나머지 요청은 인증 필요
+                //.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
 
                 .headers(headers -> headers.defaultsDisabled()   // 기본 헤더 설정 비활성화
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())) // X-Frame-Options 설정
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 Stateless로 설정
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션을 Stateless로 설정
 
-                .oauth2Login(oauth -> oauth.loginPage("/api/user/login"))
-                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler))
-
-                .oauth2Login(oauth -> oauth.redirectionEndpoint(x -> x.baseUri("/login/oauth2/code/*"))
-                        .successHandler(oAuth2SuccessHandler)
-                        .failureHandler(oAuth2FailureHandler))
+                //.oauth2Login(oauth -> oauth.loginPage("/api/user/login"))
+//                .oauth2Login(oauth -> oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
+//                        .successHandler(oAuth2SuccessHandler))
+//
+//                .oauth2Login(oauth -> oauth.redirectionEndpoint(x -> x.baseUri("/login/oauth2/code/*"))
+//                        .successHandler(oAuth2SuccessHandler)
+//                        .failureHandler(oAuth2FailureHandler));
 
 //                .logout(x -> x.clearAuthentication(true))
 //                .logout(x -> x.deleteCookies("JSESSIONID"))
 
                 //jwt
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                //.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

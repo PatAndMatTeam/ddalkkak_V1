@@ -28,6 +28,7 @@ public class UserApiTests {
     @Test
     void test() throws JsonProcessingException {
         //https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=clientId&redirect_uri=redirectUrl&code=code
+
         RestClient restClient = RestClient.create();
 
         String result = restClient.post()
