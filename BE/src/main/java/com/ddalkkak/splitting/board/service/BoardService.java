@@ -174,8 +174,8 @@ public class BoardService {
         BoardEntity read = boardRepository.findById(id)
                         .orElseThrow(() -> new BoardException.BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND, id));
 
-        read.changeLeftCnt(boardVoteUpdateRequest.leftVote());
-        read.changeRightCnt(boardVoteUpdateRequest.rightVote());
+        read.changeLeftVote(boardVoteUpdateRequest.leftVote());
+        read.changeRightVote(boardVoteUpdateRequest.rightVote());
         return boardRepository.save(read).toModel();
     }
 

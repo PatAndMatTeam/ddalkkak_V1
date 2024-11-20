@@ -18,7 +18,7 @@ import org.springframework.web.client.RestClient;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class UserApiTests {
+public class AccountApiTests {
 
     final String clientId = "4b7adc32013accf7909b512bd1f252ac";
     final String redirectUrl = "http://localhost:8082/login/callback";

@@ -1,10 +1,7 @@
 package com.ddalkkak.splitting.user.dto;
 
-import com.ddalkkak.splitting.user.instrastructure.entity.UserEntity;
-import jakarta.security.auth.message.AuthException;
+import com.ddalkkak.splitting.user.instrastructure.entity.AccountEntity;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Map;
 
@@ -56,8 +53,8 @@ public record OAuth2UserInfo(
                 .build();
     }
 
-    public UserEntity toEntity() {
-        return UserEntity.builder()
+    public AccountEntity toEntity() {
+        return AccountEntity.builder()
                 .nickname(name)
                 .userId(email)
                 .provider(provider)

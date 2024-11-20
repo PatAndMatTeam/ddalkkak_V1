@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8084
 
 spring:
   application:
@@ -24,26 +24,26 @@ spring:
       settings:
         web-allow-others: true
 #
-#  security:
-#    oauth2:
-#      client:
-#        provider:
-#          kakao:
-#            authorization-uri: https://kauth.kakao.com/oauth/authorize
-#            token-uri: https://kauth.kakao.com/oauth/token
-#            user-info-uri: https://kapi.kakao.com/v2/user/me
-#            user-name-attribute: id
-#        registration:
-#          kakao:
-#            client-id: 4b7adc32013accf7909b512bd1f252ac
-#            client-secret: rfm4eja7oEH6h0GyR4GqQOpE5j8zIdoM
-#            client-authentication-method: client_secret_post
-#            redirect-uri: http://localhost:8082/login/oauth2/code/kakao
-#            authorization-grant-type: authorization_code
-#            client-name: kakao
-#            scope:
-#              - profile_nickname
-#              - account_email
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+        registration:
+          kakao:
+            client-id: 4b7adc32013accf7909b512bd1f252ac
+            client-secret: rfm4eja7oEH6h0GyR4GqQOpE5j8zIdoM
+            client-authentication-method: client_secret_post
+            redirect-uri: http://localhost:8082/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-name: kakao
+            scope:
+              - profile_nickname
+              - account_email
 
 kakao:
   login:

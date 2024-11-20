@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @Getter
-public class User {
+public class Account {
 
     private String userId;
 
@@ -22,8 +22,8 @@ public class User {
     private String refreshToken;
 
 
-    public static User from(OAuth2UserInfo user){
-        return User.builder()
+    public static Account from(OAuth2UserInfo user){
+        return Account.builder()
                 .userId(user.email())
                 .name(user.name())
                 .role(RoleUser.USER)
@@ -32,8 +32,8 @@ public class User {
     }
 
 
-    public User updateRefreshToken(String token){
-        return User.builder()
+    public Account updateRefreshToken(String token){
+        return Account.builder()
                 .userId(this.userId)
                 .name(this.name)
                 .role(this.role)

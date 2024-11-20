@@ -1,12 +1,6 @@
 package com.ddalkkak.splitting.user.service;
 
-import com.ddalkkak.splitting.common.exception.ErrorCode;
-import com.ddalkkak.splitting.user.domain.User;
-import com.ddalkkak.splitting.user.exception.JwtErrorCode;
-import com.ddalkkak.splitting.user.instrastructure.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.Response;
+import com.ddalkkak.splitting.user.domain.Account;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -44,7 +38,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "GET /api/user/token",
             "GET /favicon.ico",
             "GET /h2-console/**",
-            "POST /h2-console/**"};
+            "POST /h2-console/**",
+            "PATCH /api/board/v2/*/vote",
+            "PATCH /api/board/v2/*/visit",
+            "PATCH /api/board/v2/*/recommend",};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -73,7 +70,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 .orElse(null);
 
         if (refreshToken != null){
-            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+            jwtService.validateToken(refreshToken, response);
             return;
         }
 
@@ -99,17 +96,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
 
-    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        User read = userService.findByRefreshToken(refreshToken);
-        String reIssuedRefreshToken = reIssueRefreshToken(read);
-
-        jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(read.getUserId(),
-                read.getName()),reIssuedRefreshToken);
-
-
-        jwtService.sendAccessAndRefreshToken(response,
-                jwtService.createAccessToken("test", "test"), "test");
-    }
+//    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+//
+//        jwtService.validateToken(refreshToken, response);
+//        Account read = userService.findByRefreshToken(refreshToken);
+//
+//
+//        String reIssuedRefreshToken = reIssueRefreshToken(read);
+//
+//        jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(read.getUserId(),
+//                read.getName()),reIssuedRefreshToken);
+//
+//
+//        jwtService.sendAccessAndRefreshToken(response,
+//                jwtService.createAccessToken("test", "test"), "test");
+//    }
 
 
 
@@ -148,14 +149,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * SecurityContextHolder.getContext()로 SecurityContext를 꺼낸 후,
      * setAuthentication()을 이용하여 위에서 만든 Authentication 객체에 대한 인증 허가 처리
      */
-    public void saveAuthentication(User user) {
+    public void saveAuthentication(Account account) {
         String password = "test";
 
-
-        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUserId())
+        UserDetails userDetailsUser = User.builder()
+                .username(account.getUserId())
                 .password(password)
-                .roles(user.getRole().name())
+                .roles(account.getRole().name())
                 .build();
 
         Authentication authentication =
@@ -170,8 +170,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * jwtService.createRefreshToken()으로 리프레시 토큰 재발급 후
      * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
      */
-    private String reIssueRefreshToken(com.ddalkkak.splitting.user.domain.User user) {
-        String userId = user.getUserId();
+    private String reIssueRefreshToken(Account account) {
+        String userId = account.getUserId();
 
         String reIssuedRefreshToken = jwtService.createRefreshToken(userId);
         userService.update(userId, reIssuedRefreshToken);

@@ -2,6 +2,7 @@ package com.ddalkkak.splitting.user.service;
 
 
 import com.ddalkkak.splitting.common.exception.ErrorCode;
+import com.ddalkkak.splitting.user.domain.Account;
 import com.ddalkkak.splitting.user.dto.RoleUser;
 import com.ddalkkak.splitting.user.exception.JwtErrorCode;
 import com.ddalkkak.splitting.user.exception.JwtException;
@@ -53,6 +54,14 @@ public class JwtService {
 
     private static final String BEARER = "Bearer ";
 
+
+    public String refreshAccressToken(String token){
+        validateToken(token);
+
+        Account find = userService.find(token);
+        return createAccessToken(find.getUserId(), find.getName());
+    }
+
     public String createAccessToken(String userEmail, String name){
         Claims claims = Jwts.claims()
                 .add("name", name)
@@ -66,14 +75,14 @@ public class JwtService {
                 .subject(ACCESS_TOKEN_SUBJECT)
                 .claims(claims)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME*600)) //10분
+                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME*3600)) //1시간
                 .signWith(getSignKey())
                 .compact();
 
         return token;
     }
 
-    public com.ddalkkak.splitting.user.domain.User extractUserInfo(String token) {
+    public Account extractUserInfo(String token) {
         // 토큰을 파싱하여 클레임을 가져옴
         Claims claims = Jwts.parser()
                 .verifyWith((SecretKey) getSignKey())
@@ -85,7 +94,7 @@ public class JwtService {
         String userName = (String) claims.get("name"); // 'name' 클레임에서 사용자 이름
         String userEmail = (String) claims.get("email"); // 'email' 클레임에서 사용자 이메일
 
-        return com.ddalkkak.splitting.user.domain.User.builder()
+        return Account.builder()
                 .userId(userEmail)
                 .name(userName)
                 .build();
@@ -98,6 +107,27 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, HttpServletResponse response) {
+        var parser = Jwts.parser()
+                .verifyWith((SecretKey) getSignKey())
+                .build();
+
+        try {
+            var result = parser.parseSignedClaims(token);
+            result.getPayload().forEach((key1, value1) -> log.info("key : {}, value : {}", key1, value1));
+        } catch (IllegalArgumentException e){
+            log.warn("Illegal access token");
+            throw new JwtException.IllegalTokenException(JwtErrorCode.ILLEGAL_ACCESS_TOKEN, token);
+        } catch (SignatureException e) {
+            log.warn("Invalid access token");
+            throw new JwtException.ExpiredActiveTokenException(JwtErrorCode.INVALID_ACCESS_TOKEN, token);
+        }catch (ExpiredJwtException e){
+            log.warn("JWT Token Expired Exception");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateToken(String token) {
         var parser = Jwts.parser()
                 .verifyWith((SecretKey) getSignKey())
                 .build();
@@ -155,12 +185,13 @@ public class JwtService {
                 .subject(REFRESH_TOKEN_SUBJECT)
                 .claims(claims)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME))
+                .expiration(new Date(now.getTime() + TOKEN_EXPIRE_TIME*10800)) //3시간
                 .signWith(getSignKey())
                 .compact();
 
+
         return token;
-        //tokenService.saveOrUpdate(authentication.getName(), refreshToken, accessToken); // redis에 저장
+       // tokenService.saveOrUpdate(authentication.getName(), refreshToken, accessToken); // redis에 저장
     }
 
     public Authentication getAuthentication(String token) {
@@ -256,12 +287,12 @@ public class JwtService {
 
 
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        com.ddalkkak.splitting.user.domain.User user = userService.findByRefreshToken(refreshToken);
+        Account account = userService.findByRefreshToken(refreshToken);
 
-        String reIssuedRefreshToken = reIssueRefreshToken(user);
+        String reIssuedRefreshToken = reIssueRefreshToken(account);
 
        sendAccessAndRefreshToken(response,
-               createAccessToken(user.getUserId(), user.getName()),
+               createAccessToken(account.getUserId(), account.getName()),
                 reIssuedRefreshToken);
 
         sendAccessAndRefreshToken(response,
@@ -273,8 +304,8 @@ public class JwtService {
      * jwtService.createRefreshToken()으로 리프레시 토큰 재발급 후
      * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
      */
-    private String reIssueRefreshToken(com.ddalkkak.splitting.user.domain.User user) {
-        String userId = user.getUserId();
+    private String reIssueRefreshToken(Account account) {
+        String userId = account.getUserId();
 
         String reIssuedRefreshToken = createRefreshToken(userId);
         userService.update(userId, reIssuedRefreshToken);

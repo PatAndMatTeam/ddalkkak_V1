@@ -82,11 +82,8 @@ package com.ddalkkak.splitting.user.instrastructure.entity;
 
 
 
-import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.infrastructure.entity.BaseTimeEntity;
-import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
-import com.ddalkkak.splitting.board.infrastructure.entity.Category;
-import com.ddalkkak.splitting.user.domain.User;
+import com.ddalkkak.splitting.user.domain.Account;
 import com.ddalkkak.splitting.user.dto.RoleUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -94,16 +91,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name="USERS")
+@Table(name="ACCOUNT")
 @Entity
-public class UserEntity extends BaseTimeEntity {
+public class AccountEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -122,17 +116,17 @@ public class UserEntity extends BaseTimeEntity {
 
     private String refreshToken;
 
-    public static UserEntity fromModel(User user){
-        return UserEntity.builder()
-                .userId(user.getUserId())
-                .nickname(user.getName())
-                .provider(user.getProvider())
-                .role(user.getRole())
+    public static AccountEntity fromModel(Account account){
+        return AccountEntity.builder()
+                .userId(account.getUserId())
+                .nickname(account.getName())
+                .provider(account.getProvider())
+                .role(account.getRole())
                 .build();
     }
 
-    public User toModel(){
-        return User.builder()
+    public Account toModel(){
+        return Account.builder()
                 .userId(this.getUserId())
                 .name(this.nickname)
                 .provider(this.provider)

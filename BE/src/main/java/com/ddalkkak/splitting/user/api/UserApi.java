@@ -1,7 +1,9 @@
 package com.ddalkkak.splitting.user.api;
 
 
+import com.ddalkkak.splitting.user.api.request.TokenRequest;
 import com.ddalkkak.splitting.user.api.request.UserPasswordVerifyRequest;
+import com.ddalkkak.splitting.user.api.response.TokenResponse;
 import com.ddalkkak.splitting.user.dto.OAuth2UserInfo;
 import com.ddalkkak.splitting.user.service.JwtService;
 import com.ddalkkak.splitting.user.service.UserService;
@@ -78,6 +80,17 @@ public class UserApi {
         String jwt = jwtService.createAccessToken("test", "test");
         log.info("token {}", jwt);
         return new ResponseEntity<>(jwt, HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody TokenRequest tokenRequest){
+            String refreshToken = tokenRequest.getRefreshToken();
+
+        String token = jwtService.refreshAccressToken(refreshToken);
+        TokenResponse response = TokenResponse.builder()
+                .accessToken(token)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

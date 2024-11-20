@@ -69,11 +69,11 @@ public class BoardEntity extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void changeLeftCnt(long leftVote){
+    public void changeLeftVote(long leftVote){
         this.leftVote = leftVote;
     }
 
-    public void changeRightCnt(long rightVote){
+    public void changeRightVote(long rightVote){
         this.rightVote = rightVote;
     }
 

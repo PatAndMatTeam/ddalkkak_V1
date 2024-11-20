@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @RequiredArgsConstructor
 @Configuration
@@ -36,11 +39,28 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");  // 허용할 출처
+        configuration.addAllowedMethod("GET");  // 허용할 HTTP 메소드
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("PATCH");
+        configuration.addAllowedHeader("*");  // 모든 헤더 허용
+        configuration.setAllowCredentials(true);  // 자격 증명 허용
+        configuration.setMaxAge(3600L);  // CORS 응답 캐시 시간 설정 (1시간)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 적용
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 모든 요청 허용, 필요한 경우 주석 처리된 코드로 특정 경로 접근 제어 가능
         http
                 .csrf(csrf -> csrf.disable())             // CSRF 보호 비활성화
-                .cors(cors -> cors.disable()) //cors off
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) //cors off
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
                // .antMatchers("/login/**", "/oauth2/**").permitAll()
@@ -48,10 +68,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**").permitAll() // 특정 경로 허용
                         .requestMatchers(HttpMethod.GET, "/api/board/v2/lol/all",
                                 "/api/board/v2/lol/search",
-                                "/api/board/v2/lol/*",
+                                "/api/board/v2/lol/**",
                                 "/api/user/token").permitAll()
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/api/board/v2/*/vote",
+                                "/api/board/v2/**",
+                                "/api/board/v2/*/recommend").permitAll()
                         .anyRequest().authenticated()) // 나머지 요청은 인증 필요
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
+                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtExceptionFilter))
 
                 .headers(headers -> headers.defaultsDisabled()   // 기본 헤더 설정 비활성화
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())) // X-Frame-Options 설정
