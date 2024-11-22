@@ -62,6 +62,7 @@ public class CommentServiceTests {
         //when
         Long createdId = commentService.create(boardId, commentCreateRequest);
 
+        System.out.println("createdId = " + createdId);
         //then
         assertNotNull(createdId);
         assertNotEquals(0L, createdId);
@@ -89,7 +90,6 @@ public class CommentServiceTests {
                 .build();
 
         Long createdId = commentService.create(boardId, originComment);
-
 
         //given
         CommentDeleteRequest request= CommentDeleteRequest.builder()

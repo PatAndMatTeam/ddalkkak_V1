@@ -4,6 +4,7 @@ package com.ddalkkak.splitting.board.infrastructure.repository;
 import com.ddalkkak.splitting.board.infrastructure.entity.BoardEntity;
 import com.ddalkkak.splitting.board.infrastructure.entity.Category;
 import com.ddalkkak.splitting.common.config.QueryDslConfig;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Import(QueryDslConfig.class)
 @DataJpaTest
+@Transactional
 public class BoardRepositoryTests {
 
     @Autowired

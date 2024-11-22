@@ -39,8 +39,11 @@ public class CommentEntity extends BaseTimeEntity {
     @JoinColumn(name = "board_id") // 연관 관계의 주인 역할을 수행
     private BoardEntity board;
 
-    public void addBoard(BoardEntity board){
+    public void setBoard(BoardEntity board) {
         this.board = board;
+        if (!board.getComments().contains(this)) {
+            board.addComment(this); // 댓글 리스트에도 추가
+        }
     }
 
     public Comment toModel(){

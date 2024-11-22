@@ -82,9 +82,9 @@ public class BoardEntity extends BaseTimeEntity {
     }
 
     // Helper methods to manage replies
-    public void addReply(CommentEntity reply) {
-        getComments().add(reply);
-        reply.addBoard(this);
+    public void addComment(CommentEntity comment) {
+        getComments().add(comment);
+        comment.setBoard(this);
     }
     public void increaseRecommend(){
         this.recommend++;

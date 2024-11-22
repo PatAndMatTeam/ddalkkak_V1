@@ -30,9 +30,12 @@ public class CommentService {
         BoardEntity board = boardRepository.findById(boardId).get();
 
         Comment create = Comment.from(boardId, commentCreateRequest);
-        board.addReply(CommentEntity.fromModel(create));
 
-        return boardRepository.save(board).getId();
+        CommentEntity entity = CommentEntity.fromModel(create);
+        entity.setBoard(board);
+
+
+        return commentRepository.save(entity).getId();
 
     }
 
