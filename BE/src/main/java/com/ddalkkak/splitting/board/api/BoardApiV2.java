@@ -43,6 +43,10 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
+    /**
+     * 카테고리 글 검색 API
+     * */
+    
     @GetMapping(value = "/{category}/search", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardAllQueryResponse> search(@PathVariable("category") String category,
                                                         @RequestParam(value = "title") String title,
@@ -171,6 +175,9 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
+    /**
+     * 분석글 검색 API
+     * */
     @GetMapping(path = "/{category}/{categoryBoardId}/search", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CategoryBoardSearchResponse> searchAnalysisBoard(@PathVariable("category") String category,
                                                                            @PathVariable("categoryBoardId") Long parentId,

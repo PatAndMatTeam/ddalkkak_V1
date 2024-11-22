@@ -132,7 +132,7 @@ public class BoardEntity extends BaseTimeEntity {
                 .leftCnt(this.leftVote)
                 .rightCnt(this.rightVote)
                 .visited(this.visited)
-                .category(this.category.toString())
+                .category(this.category.name)
                 .modifiedDate(this.getLastModifiedDate())
                 .writer(this.writer)
                 .files(this.files == null ? null : this.files.stream().map(UploadFileEntity::toModel).collect(Collectors.toList()))
