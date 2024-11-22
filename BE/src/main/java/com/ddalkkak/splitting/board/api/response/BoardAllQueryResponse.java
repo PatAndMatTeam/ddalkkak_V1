@@ -24,6 +24,10 @@ public record BoardAllQueryResponse(
             String modifyDate,
             @Schema(description = "카테고리", example = "롤|정치|축구")
             String category,
+            @Schema(description = "왼쪽 투표 수", example = "13")
+            Long leftVote,
+            @Schema(description = "오른쪽 투표 수", example = "13")
+            Long rightVote,
             @Schema(description = "추천수", example = "13")
             Long recommend,
             @Schema(description = "방문수", example = "13")
@@ -53,6 +57,8 @@ public record BoardAllQueryResponse(
                     .title(board.getTitle())
                     .writer(board.getWriter())
                     .category(board.getCategory())
+                    .leftVote(board.getLeftCnt())
+                    .rightVote(board.getRightCnt())
                     .recommend(board.getRecommend())
                     .visited(board.getVisited())
                     .modifyDate(board.getModifiedDate().toString())

@@ -24,10 +24,10 @@ public record CategoryBoardDetailedResponse (
     String category,
     @Schema(description = "글 추천 수", example = "123")
     Long recommend,
-    @Schema(description = "왼쪽 추천 수", example = "315")
-    Long leftRecommend,
-    @Schema(description = "오른쪽 추천 수", example = "200")
-    Long rightRecommend,
+    @Schema(description = "왼쪽 투표 수", example = "315")
+    Long leftVote,
+    @Schema(description = "오른쪽 투표 수", example = "200")
+    Long rightVote,
     @Schema(description = "글 방문수", example = "200")
     Long visited,
     @Schema(description = "댓글")
@@ -46,6 +46,8 @@ public record CategoryBoardDetailedResponse (
                 .content(board.getContent())
                 .writer(board.getWriter())
                 .category(board.getCategory())
+                .leftVote(board.getLeftCnt())
+                .rightVote(board.getRightCnt())
                 .recommend(board.getRecommend())
                 .visited(board.getVisited())
                 .createDate(board.getModifiedDate().toString())
