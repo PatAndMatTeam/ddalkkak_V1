@@ -194,8 +194,16 @@ public class BoardApiV2 {
 
 
     @PatchMapping(path="/{id}/vote")
-    public ResponseEntity<BoardRecommendResponse> vote(@PathVariable("id") long id,
+        public ResponseEntity<BoardRecommendResponse> vote(@RequestHeader(value = "X-Forwarded-For", required = false) String xForwardedFor,
+                                                           @RequestHeader(value = "Proxy-Client-IP", required = false) String proxyClientIp,
+                                                           @RequestHeader(value = "WL-Proxy-Client-IP", required = false) String wlProxyClientIp,
+                                                       @PathVariable("id") long id,
                                                        @Valid @RequestBody BoardVoteUpdateRequest boardVoteUpdateRequest){
+
+        log.info("client ip: {}", xForwardedFor);
+        log.info("client ip: {}", proxyClientIp);
+        log.info("client ip: {}", wlProxyClientIp);
+
         BoardRecommendResponse response =
                 BoardRecommendResponse.from(boardService.update(id, boardVoteUpdateRequest)) ;
 
