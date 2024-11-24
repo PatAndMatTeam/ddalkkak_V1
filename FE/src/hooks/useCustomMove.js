@@ -26,32 +26,42 @@ const useCustomMove = () =>{
 
     const page = getNum(queryParams.get('page'),1)  //페이값 없으면 1 있으면 page값
     const size = getNum(queryParams.get('size'),10)  // 없으면 10 size있으면 size값
+    const title = queryParams.get('title')  // 없으면 10 size있으면 size값
 /*    console.log('page:', page); // 콘솔 로그 추가
     console.log('size:', size); // 콘솔 로그 추가*/
 
     //page=3&size=10
     const queryDefault = createSearchParams({page,size}).toString() //page=3&size=10 이런식으로 만들어준다.
+    const atitle = createSearchParams({title}).toString() //page=3&size=10 이런식으로 만들어준다.
 
-    const moveToList =(pageParam) => {
-        let queryStr = ""
+    const moveToList =(category) => {
+/*        let queryStr = ""
         if(pageParam) {
             const pageNum = getNum(pageParam.page, 1)
             const sizeNum = getNum(pageParam.size, 10)
             console.log("있음")
-             queryStr = createSearchParams({page:pageNum, size: sizeNum}).toString()
+             //queryStr = createSearchParams({page:pageNum, size: sizeNum}).toString()
+             queryStr = createSearchParams().toString()
         }else {
             queryStr = queryDefault
         }
         console.log('Navigating to list with query:', queryStr); // 콘솔 로그 추가
 
-        setRefresh(!refresh)
+        setRefresh(!refresh)*/
 
-        navigate({pathname:'../list',search:queryStr})
+        navigate({pathname:'../list'})
     }
+
 
    /* 메뉴bar에서 카테고리 이동 */
     const moveToCategory = (category) => {
         navigate({pathname:`../${category}`})
+    }
+
+
+    /* 메뉴bar에서 카테고리 이동 */
+    const moveToMain = () => {
+        navigate({pathname:`../`})
     }
 
 
@@ -60,32 +70,32 @@ const useCustomMove = () =>{
         navigate({pathname:`../modify/${num}`,
             search:queryDefault})
     }
-
-
-
     const moveToRead = (category,num) => {
         navigate({pathname:`../${category}/read/${num}`})
     }
-
+    //List에서 글쓰기
     const moveToAdd = (category) => {
         navigate({pathname:`../${category}/add`})
     }
-
-    //tno로 안받고 num으로 받는이유 다음에 어떤 게시판을 만들때
-    //다 같이 쓸수있게
-    const moveToAnlyRead = (num) => {
-        navigate({pathname:`../read/anly/${num}`,
-            search:queryDefault})
+    const moveToAnlyAdd = (category,num,title) => {
+        navigate({pathname:`../${category}/read/${num}/add`,
+            search: `?title=${encodeURIComponent(title)}` });
+    }
+    const moveToAnlyRead = (category,tno,anlyId) => {
+        navigate({pathname:`../${category}/read/${tno}/${anlyId}`})
     }
 
 
+    const moveToSignup = () => {
+        navigate({pathname:`../signup`});
+    };
 
-//이 구문은 객체를 반환합니다.
-// 반환되는 객체는 moveTolist라는 프로퍼티를 가지고 있으며, 그 값은 moveTolist 함수입니다.
-// 즉, 이 코드는 { moveTolist: moveTolist }와 같습니다.
-    //만약 useCustomMove에서 다른 함수나 값을 함께 반환하고 싶다면 객체를 반환하는 것이 더 적합합니다.
-    // 단순히 하나의 함수만 반환하고 사용할 계획이라면 함수 자체를 반환하는 것이 더 간단하고 직관적입니다.
-    return {moveToList,moveToModify,moveToRead,moveToAnlyRead,page,size , refresh ,moveToCategory ,moveToAdd}
+    const moveToLogin = () => {
+        navigate({pathname:`../login`});
+    };
+
+    return {moveToMain,moveToList, moveToModify, moveToRead, moveToAnlyAdd, moveToAnlyRead,
+        page,size , refresh ,moveToCategory ,moveToAdd,moveToLogin,moveToSignup}
 }
 
 

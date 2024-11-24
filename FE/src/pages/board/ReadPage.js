@@ -6,7 +6,7 @@ import ListComponent from "../../components/board/ListComponent";
 
 const ReadPage = () => {
 
-    const {tno} = useParams()
+    const {tno,category} = useParams()
 
     return (
         <ListLayout>
@@ -14,7 +14,7 @@ const ReadPage = () => {
                 <div className="text-3xl font-extrabold">
 
                 </div>
-                <ReadComponent tno = {tno} />
+                <ReadComponent tno = {tno} category = {category} />
             </div>
         </ListLayout>
 

@@ -4,9 +4,8 @@ import {Navigate} from "react-router-dom";
 const Loading = <div>Loading....</div>
 const BoardList = lazy(()=> import("../pages/board/ListPage"))
 const BoardRead = lazy( ()=> import("../pages/board/ReadPage"))
-const BoardAdd = lazy( ()=> import("../pages/board/AddPage"))
 const BoardModify = lazy(() => import("../pages/board/ModifyPage"))
-const AnlyRead = lazy(() => import("../pages/analysis/AnlyReadPage"))
+const AnlyRead = lazy(() => import("../pages/analysis/AnlyAddPage"))
 
 
 const boardRouter = () => {
@@ -22,10 +21,6 @@ const boardRouter = () => {
         {
             path:'read/:tno',
             element:<Suspense fallback={Loading}><BoardRead/></Suspense>
-        },
-        {
-            path:'add',
-            element:<Suspense fallback={Loading}><BoardAdd/></Suspense>
         },
         {
             path: "modify/:tno",

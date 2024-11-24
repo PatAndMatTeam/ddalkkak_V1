@@ -1,82 +1,80 @@
-import React, {useEffect, useState} from 'react';
-import useCustomMove from "../../hooks/useCustomMove";
-import {getOne} from "../../api/todoApi";
+import React, { useEffect, useState } from 'react';
+import { getAnlyOne ,incrementRecommend} from '../../api/todoApi';
+import AnalysisComments from './AnalysisComments';
 
-const initState = {
-    tno:0,
-    title:'',
-    writer:'',
-    dueDate:'',
-    complete: false
-}
-//읽을 페이지
-function AnalysisReadComponent({tno}) {
+function AnalysisReadComponent({ category, tno, anlyId }) {
+    const [analyDetailData, setAnalyDetailData] = useState(null);  // 게시글 데이터를 저장할 상태
+    const [comments, setComments] = useState([]);  // 댓글을 저장할 상태
 
-    //기본값을 주고시작하는게 좋지 그리고 데이터 들어오면 useEffect로 처리
-    //비동기로 바뀐다는건 상태처리
-    //리엑트의 컴포넌트는 상태가 변경되면 자동으로 렌더링 된다는 사실을 기억하셔야 되고
-    //리엑트 컴포넌트는 이 useState는 원래 함수형 컴포넌트가 상태를 유지할수 없었자나요
-    //근데 이제 함수형 컴포넌트가 상태를 유지할 때 쓰는거죠 이때 이제 useEffect랑 같이 결합해서 쓴다는거죠
+    const fetchData = () => {
+        getAnlyOne({ category, tno, anlyId }).then(data => {
+            setAnalyDetailData(data);  // 서버에서 받은 데이터를 상태에 저장
+            setComments(data.comments || []);  // 댓글 데이터 설정
+        });
+    };
 
-    //   기존todo값 ,저장할todo값(바뀐값)   ( 초기값)
-    const [todo, setTodo] = useState(initState);
-
-//hooks으로 한줄로 빼버리면 편하다 이런거 할때는 커스텀 훅으로 빼주는게 좋다
-    const {moveToList,moveToModify} = useCustomMove()
-
-
-    //tno을 가져와서 번호가 안바뀌면 데이터가 바뀌었더라도 이 함수를 호출하지 않는거지 그래서 여러번 호출을 막는다
-    //비동기 호출을 막는다
-    //즉 tno을 가져와서 이값이 바뀐값으면 호출
     useEffect(() => {
-        getOne(tno).then(data => {
-            console.log("A"+ data)
+        fetchData();
+    }, [category, tno]);
 
-            setTodo(data)
-        })
+    const handleRecommend = () => {
+        incrementRecommend({ anlyId  })
+            .then(() => {
+                fetchData(); // 추천수 증가 후 데이터 다시 로드
+            })
+            .catch((error) => {
+                console.error("Failed to increment recommendation:", error);
+                alert("추천에 실패했습니다. 다시 시도해 주세요.");
+            });
+    };
 
-    }, [tno]);
 
-
+    if (!analyDetailData) {
+        return <p>Loading...</p>;  // 데이터가 로드되기 전에는 로딩 메시지 표시
+    }
 
     return (
-        <div className= "border-2 border-sky-200 mt-10 m-2 p-4">
-            {makeDiv('Tno',todo.tno)}
-            {makeDiv('Writer',todo.writer)}
-            {makeDiv('Title',todo.title)}
-            {makeDiv('Due Date',todo.dueDate)}
-            {makeDiv('Complete',todo.complete ? 'Completed' : 'Not Yet')}
+        <div className="p-4 bg-white shadow-md rounded-md max-w-4xl mx-auto">
+            {/* 게시글 제목 */}
+            <h1 className="text-3xl font-bold mb-2 text-green-600" style={{ fontFamily: 'Arial, sans-serif' }}>
+                {analyDetailData.title}
+            </h1>
 
-            {/* buttons .... start */}
-            <div className="flex justify-end p-4">
+            {/* 구분선 */}
+            <hr className="border-t-2 border-green-600 mb-4" />
 
-                <button type="button"
-                        className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500"
-                        onClick={() => moveToList()}
-                >
-                    List
-                </button>
+            {/* 작성자 및 작성일 정보 */}
+            <div className="flex justify-between items-center mb-2 text-gray-600 text-sm">
+                <span>작성자: {analyDetailData.writer}</span>
 
-                <button type="button"
-                        className="rounded p-4 m-2 text-xl w-32 text-white bg-red-500"
-                        onClick={() => moveToModify(todo.tno)}
-                >
-                    Modify
-                </button>
-
+                {/* 작성일, 조회수, 추천수, 댓글수 */}
+                <div className="flex space-x-4 items-center text-gray-500">
+                    <span>{new Date(analyDetailData.createDate).toLocaleDateString()}</span>
+                    <span>조회 {analyDetailData.visited}</span>
+                    <span>추천 {analyDetailData.recommend}</span>
+                    <span>댓글 {comments.length}</span>
+                </div>
             </div>
+
+            {/* 게시글 내용 */}
+            <div className="mb-4">
+                <p dangerouslySetInnerHTML={{ __html: analyDetailData.content }}></p>
+            </div>
+
+            {/* 추천 버튼 */}
+            <div className="flex justify-center mt-4">
+                <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    onClick={handleRecommend}
+                >
+                    <i className="fas fa-thumbs-up mr-2"></i> 추천하기
+                </button>
+            </div>
+
+            {/* 댓글 섹션 */}
+            <AnalysisComments comments={comments} anlyId={anlyId} refreshComments={fetchData} />
         </div>
     );
 }
-
-const makeDiv = (title, value) =>
-    <div className='flex justify-center'>
-        <div className='relative mb-4 flex w-full flex-wrap items-stretch'>
-            <div className="w-1/5 p-6 text-right font-bold">{title}</div>
-            <div className="w-4/5 p-6 rounded-r border border-solid shadow-md">
-                {value}
-            </div>
-        </div>
-    </div>
 
 export default AnalysisReadComponent;

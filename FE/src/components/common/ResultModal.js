@@ -1,33 +1,42 @@
 import React from 'react';
 
-const ResultModal = ( {title,content, callbackFn} ) => {
-    return (             //전체화면을 만든거                                                          //투명도
-        <div className={'fixed top-0 left-0 z-[1055] flex h-full w-full justify-center bg-black bg-opacity-50'}
+const ResultModal = ({ title, content, callbackFn }) => {
+    return (
+        <div
+            className="fixed inset-0 z-[1055] flex items-center justify-center bg-black bg-opacity-40"
             onClick={() => {
-            if(callbackFn) {
-                callbackFn()
-            }
-        }}>
+                if (callbackFn) {
+                    callbackFn();
+                }
+            }}
+        >
             <div
-                className="absolute bg-white shadow dark:bg-gray-700 opacity-100 w-1/4 rounded  mt-10 mb-10 px-6 min-w-[600px]">
-                <div className="justify-center bg-warning-400 mt-6 mb-6 text-2xl border-b-4 border-gray-500">
-                    {title}
+                className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 text-center"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* 아이콘과 제목 */}
+                <div className="flex items-center justify-center mb-4">
+                    <div className="text-green-500 text-4xl mr-2">✔️</div>
+                    <h2 className="text-xl font-semibold">{title}</h2>
                 </div>
-                <div className="text-4xl  border-orange-400 border-b-4 pt-4 pb-4">
-                    {content}
-                </div>
-                <div className="justify-end flex ">
-                    <button
-                        className="rounded bg-blue-500 mt-4 mb-4 px-6 pt-4 pb-4 text-lg text-white"
-                        onClick={() => {
-                            if(callbackFn) {
-                                callbackFn()
-                            }
-                        }}>Close Modal</button>
-                </div>
+
+                {/* 내용 */}
+                <p className="text-gray-700 mb-6">{content}</p>
+
+                {/* 버튼 */}
+                <button
+                    className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-lg"
+                    onClick={() => {
+                        if (callbackFn) {
+                            callbackFn();
+                        }
+                    }}
+                >
+                    확인
+                </button>
             </div>
         </div>
     );
-}
+};
 
 export default ResultModal;

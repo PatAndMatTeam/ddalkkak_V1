@@ -5,21 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="350e8177-b526-4f65-bf27-02193467010a" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/../BE/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/todoApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/todoApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/analysis/AnalysisBoardComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/analysis/AnalysisBoardComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/analysis/AnalysisReadComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/analysis/AnalysisReadComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/board/AddComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/AddComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/board/ListComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ListComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/board/ReadComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/ReadComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/BasicMenu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/common/ResultModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/common/ResultModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menus/CategoryMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/CategoryMenu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menus/LoginBarMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menus/LoginBarMenu.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hooks/useCustomMove.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useCustomMove.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/layouts/BasicLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/BasicLayout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/layouts/ListLayout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/ListLayout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/MainPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/MainPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/board/AddPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/AddPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/analysis/AnlyReadPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/analysis/AnlyReadPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/board/AddPage.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/board/ListPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ListPage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/board/ReadPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/board/ReadPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/AnlyRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/AnlyRouter.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/router/boardRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/boardRouter.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/router/root.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/root.js" afterDir="false" />
     </list>
@@ -48,8 +57,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -70,7 +79,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/sucess/ddalkkak_V1/FE&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hwan9/ddalkkak_V1/FE/public&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -87,9 +96,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\hwan9\ddalkkak_V1\FE\public" />
       <recent name="C:\gala\avsb\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hwan9\ddalkkak_V1\FE\public" />
       <recent name="D:\sucess\ddalkkak_V1\FE\upload" />
     </key>
   </component>
@@ -111,8 +122,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
       </set>
     </attachedChunks>
   </component>
@@ -141,6 +152,26 @@
       <workItem from="1727168705270" duration="182000" />
       <workItem from="1727268386125" duration="7070000" />
       <workItem from="1727358936744" duration="2484000" />
+      <workItem from="1727938453350" duration="1763000" />
+      <workItem from="1727952264654" duration="402000" />
+      <workItem from="1727952673468" duration="604000" />
+      <workItem from="1728302340039" duration="989000" />
+      <workItem from="1728399567984" duration="751000" />
+      <workItem from="1728400346909" duration="6519000" />
+      <workItem from="1728444342487" duration="18758000" />
+      <workItem from="1728910948496" duration="2000" />
+      <workItem from="1728911075128" duration="10568000" />
+      <workItem from="1729509288659" duration="3967000" />
+      <workItem from="1729767779436" duration="10554000" />
+      <workItem from="1729848452438" duration="3867000" />
+      <workItem from="1729932409824" duration="10972000" />
+      <workItem from="1730210961429" duration="7094000" />
+      <workItem from="1730298553931" duration="4352000" />
+      <workItem from="1730457978662" duration="5127000" />
+      <workItem from="1730716986215" duration="704000" />
+      <workItem from="1731137070967" duration="4797000" />
+      <workItem from="1731226853239" duration="1221000" />
+      <workItem from="1732329588056" duration="5494000" />
     </task>
     <servers />
   </component>

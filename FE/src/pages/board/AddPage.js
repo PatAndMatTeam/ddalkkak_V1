@@ -1,16 +1,19 @@
 import React from 'react';
 import AddComponent from "../../components/board/AddComponent";
-import ReadComponent from "../../components/board/ReadComponent";
 import ListLayout from "../../layouts/ListLayout";
+import {useParams} from "react-router-dom";
 
-function AddPage(props) {
+
+const AddPage = () => {
+    const {category} = useParams()
+
     return (
         <ListLayout>
             <div className="p-4 w-full bg-white ">
                 <div className="text-3xl font-extrabold">
 
                 </div>
-                <AddComponent />
+                <AddComponent category = {category} />
             </div>
         </ListLayout>
     );
