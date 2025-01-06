@@ -1,19 +1,21 @@
 import React from 'react';
-import ListComponent from "../../components/board/ListComponent";
 import { useParams } from "react-router-dom";
+import { getKoreanCategory } from "../../hooks/categoryUtils";
+import ListComponent from "../../components/board/ListComponent";
 import ListLayout from "../../layouts/ListLayout";
 import useCustomMove from "../../hooks/useCustomMove";
-const ListPage = () => {
 
+const ListPage = () => {
     const {category} = useParams()
     const { moveToAdd } = useCustomMove();
-
+    // 유틸리티 함수로 한글 카테고리명 가져오기
+    const koreanCategory = getKoreanCategory(category);
     return (
         <ListLayout>
-            <div className="p-6 max-w-7xl mx-auto bg-gray-50 shadow-lg rounded-lg">
+            <div className="p-6 max-w-7xl mx-auto bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-4xl font-bold text-gray-800">
-                        {category}
+                        {koreanCategory}
                     </h1>
                     <button
                         className="bg-green-500 hover:bg-green-600 text-white font-semibold px-5 py-3 rounded-lg shadow-md transition duration-300"

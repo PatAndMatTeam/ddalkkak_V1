@@ -1,149 +1,173 @@
-import React, {useEffect, useState} from 'react';
-import {getOne} from "../../api/todoApi";
+import React, { useState, useEffect } from 'react';
+import { getOne, postVote } from "../../api/todoApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import AnalysisBoardComponent from "../analysis/AnalysisBoardComponent";
+import CommentsSection from "../analysis/CommentsSection";
+import { Tab, Tabs } from '@mui/material';
+import './BoardStyles.css';
 
-const initState = {
-    tno:0,
-    title:'',
-    writer:'',
-    dueDate:'',
-    complete: false
-}
-                        //읽을 페이지
-function ReadComponent({postId }) {
+function ReadComponent({ tno, category }) {
+    const [serverData, setServerData] = useState(null);
+    const { page, size, refresh } = useCustomMove();
+    const [activeTab, setActiveTab] = useState(0);
+    const [votes, setVotes] = useState({ vote1: 0, vote2: 0 }); // 투표수를 로컬에서 관리
+    const [selectedVote, setSelectedVote] = useState(null); // 사용자가 선택한 항목 (왼쪽/오른쪽)
+    const [error, setError] = useState(null); // 에러 메시지
 
-    //기본값을 주고시작하는게 좋지 그리고 데이터 들어오면 useEffect로 처리
-    //비동기로 바뀐다는건 상태처리
-    //리엑트의 컴포넌트는 상태가 변경되면 자동으로 렌더링 된다는 사실을 기억하셔야 되고
-    //리엑트 컴포넌트는 이 useState는 원래 함수형 컴포넌트가 상태를 유지할수 없었자나요
-    //근데 이제 함수형 컴포넌트가 상태를 유지할 때 쓰는거죠 이때 이제 useEffect랑 같이 결합해서 쓴다는거죠
-
-    //   기존todo값 ,저장할todo값(바뀐값)   ( 초기값)
-    const [todo, setTodo] = useState(initState);
-    const [postData, setPostData] = useState(null);
-
-    //hooks으로 한줄로 빼버리면 편하다 이런거 할때는 커스텀 훅으로 빼주는게 좋다
-    const {moveToList,moveToModify} = useCustomMove()
-
-
-/*
     useEffect(() => {
-        // 해당 게시물의 세부 정보를 가져오는 API 호출
-        getOne(postId).then(data => {
-            setPostData(data);
+        // 서버에서 데이터 가져오기
+        getOne(tno, category).then(data => {
+            console.log("Fetched data:", data);
+            setServerData(data);
+
+            // 초기 투표 데이터 설정
+            setVotes({ vote1: data.leftVote, vote2: data.rightVote });
+        }).catch(err => {
+            console.error("데이터 로드 중 오류:", err);
         });
-    }, [postId]);
+    }, [tno, category, page, size, refresh]);
 
-    if (!postData) {
+    const totalVotes = votes.vote1 + votes.vote2;
+    const vote1Percentage = totalVotes === 0 ? 50 : Math.round((votes.vote1 / totalVotes) * 100);
+    const vote2Percentage = totalVotes === 0 ? 50 : Math.round((votes.vote2 / totalVotes) * 100);
+
+    // 투표 핸들러
+    const handleVote = async () => {
+        if (selectedVote) {
+            try {
+                console.log("Selected vote:", selectedVote);
+
+                // 새로운 투표 데이터 계산
+                const newVotes = {
+                    leftVote: votes.vote1 + (selectedVote === 'vote1' ? 1 : 0),
+                    rightVote: votes.vote2 + (selectedVote === 'vote2' ? 1 : 0),
+                };
+
+                console.log("New vote data to be sent:", newVotes);
+
+                // 서버로 데이터 전송
+                const response = await postVote(tno, newVotes);
+
+                if (response.status === 200) {
+                    console.log("Vote submitted successfully!");
+                    // 페이지 새로고침
+                    window.location.reload();
+                }
+            } catch (err) {
+                console.error("Vote submission error:", err);
+                setError(err.response?.data?.message || "투표 중 오류가 발생했습니다.");
+            }
+        }
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setActiveTab(newValue);
+    };
+
+    if (!serverData) {
         return <div>Loading...</div>;
-    }*/
+    }
 
-/*    useEffect(() => {
-        // 해당 게시물의 세부 정보를 가져오는 API 호출
-        getOne(postId).then(data => {
-            setPostData(data);
-        });
-    }, [postId]);
+    const base64Image0 = serverData.files && serverData.files[0]
+        ? `data:image/jpeg;base64,${serverData.files[0].data}`
+        : "/placeholder.jpg";
 
-    if (!postData) {
-        return <div>Loading...</div>;
-    }*/
-
+    const base64Image1 = serverData.files && serverData.files[1]
+        ? `data:image/jpeg;base64,${serverData.files[1].data}`
+        : "/placeholder.jpg";
 
     return (
-        <div className="flex justify-between mt-10 p-6">
-            {/* 왼쪽: 게시물 내용 */}
-            <div className="w-3/4 p-4">
+        <div className="read-container">
+            <div className="read-content">
+                <h1 className="read-title">{serverData.title || "제목 없음"}</h1>
 
-
-                {/* 게시물 제목 */}
-                <h1 className="text-3xl font-bold mb-4">{/*  {postData.title}*/} </h1>
-
-
-                <div className="flex justify-center items-center space-x-4">
-                    {/* 왼쪽 팀 */}
-                    <div className="flex items-center bg-red-500 text-white  w-1/3 h-20 rounded-lg">
-                        <img
-                            src="https://i.namu.wiki/i/a6qqiwy-VyqwqSZmumu15J9Njn79fWY85wkWZ79ZzhbY_GZMLRy6EoxKlEpZus4xuXc6llrbug0_WOonmJgh1Q.svg"
-                            alt="사우샘프턴 로고"
-                            className="w-100 h-16"
-                        />
-                        <div className="ml-2 text-center">
-                            <div className="font-bold">사우샘프턴</div>
-                            <div>38,030</div>
-                        </div>
+                {/* 투표 UI */}
+                <div
+                    className={`vote-item ${selectedVote === 'vote1' ? 'selected' : ''}`}
+                    onClick={() => {
+                        console.log("Left item clicked!");
+                        setSelectedVote('vote1');
+                    }}
+                >
+                    <div className="vote-icon">
+                        <img src={base64Image0} alt="Team 1" />
                     </div>
-
-                    {/* 가운데 VS */}
-                    <div className="flex items-center justify-center text-gray-700 font-bold">
-                        <span className="text-2xl">VS</span>
-                    </div>
-
-                    {/* 오른쪽 팀 */}
-                    <div className="flex items-center bg-red-600 text-white w-1/3 h-20  rounded-lg">
-                        <img
-                            src="https://i.namu.wiki/i/Pv9NYWGfEhphXAKEef1jRvyPlp_d1DJ2ZeQVY5zSo7b8rfHh7RzVGgggNHPthCd5zITHV9m4d9ZjZhOK4I6Mbw.svg"
-                            alt="맨유 로고"
-                            className="w-100 h-16"
-                        />
-                        <div className="ml-2 text-center">
-                            <div className="font-bold">맨유</div>
-                            <div>41,202</div>
+                    <div className="vote-bar-container">
+                        <div
+                            className="vote-bar"
+                            style={{
+                                width: `${vote1Percentage}%`,
+                                backgroundColor: '#4caf50',
+                            }}
+                        >
+                            <span>{serverData.files[0]?.fileTitle}</span>
                         </div>
                     </div>
                 </div>
 
-
-
-
-                {/* 설명 */}
-                <div className="mb-6">
-                    <h2 className="text-xl font-semibold mb-2">설명</h2>
-                    <p className="text-gray-700">{/*{postData.description}*/}</p>
+                <div
+                    className={`vote-item ${selectedVote === 'vote2' ? 'selected' : ''}`}
+                    onClick={() => {
+                        console.log("Right item clicked!");
+                        setSelectedVote('vote2');
+                    }}
+                >
+                    <div className="vote-icon">
+                        <img src={base64Image1} alt="Team 2" />
+                    </div>
+                    <div className="vote-bar-container">
+                        <div
+                            className="vote-bar"
+                            style={{
+                                width: `${vote2Percentage}%`,
+                                backgroundColor: '#f44336',
+                            }}
+                        >
+                            <span>{serverData.files[1]?.fileTitle}</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* 분석글 */}
-                <div className="mb-6">
-                    <h2 className="text-xl font-semibold mb-2">분석</h2>
-                    {/* <p className="text-gray-700">{postData.analysis}</p>*/}
-                    {/*<AnalysisBoardComponent analysisList={postData.analysisList} />*/}
-                    <AnalysisBoardComponent />
-
-                </div>
-            </div>
-
-            {/* 오른쪽: 실시간 댓글창 */}
-            <div className="w-1/4 p-4 bg-gray-100 rounded-lg shadow-lg">
-                <h2 className="text-xl font-semibold mb-4">실시간 댓글</h2>
-                <div className="h-96 overflow-y-auto">
-                    댓글을 보여줄 곳
-                    {/*  {postData.comments && postData.comments.length > 0 ? (
-                        postData.comments.map((comment, index) => (
-                            <div key={index} className="mb-2">
-                                <div className="font-bold">{comment.writer}</div>
-                                <div className="text-gray-600">{comment.text}</div>
-                            </div>
-                        ))
-                    ) : (
-                        <div>댓글이 없습니다.</div>
-                    )}*/}
-                </div>
-
-                댓글 입력창
-                <div className="mt-4">
-                    <textarea
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                        placeholder="댓글을 입력하세요..."
-                    />
-                    <button className="w-full mt-2 bg-blue-500 text-white p-2 rounded-lg">
-                        댓글 달기
+                {/* 투표 버튼 */}
+                <div className="vote-button-container">
+                    <button
+                        className="vote-button"
+                        onClick={handleVote}
+                        disabled={!selectedVote}
+                    >
+                        투표하기
                     </button>
                 </div>
+                {error && <div className="error-message">{error}</div>}
+
+                {/* 탭 */}
+                <div className="tab-section">
+                    <Tabs value={activeTab} onChange={handleTabChange}>
+                        <Tab label="실시간 채팅" />
+                        <Tab label="분석글" />
+                    </Tabs>
+                    {activeTab === 0 && <CommentsSection
+                        tno={tno}
+                        category={category}
+                        teamNames={{
+                            team1: serverData.files[0]?.fileTitle || "Team 1",
+                            team2: serverData.files[1]?.fileTitle || "Team 2"
+                        }}
+                    />}
+                    {activeTab === 1 && (
+                        <div className="tab-content">
+                            <AnalysisBoardComponent
+                                category={category}
+                                tno={tno}
+                                title={serverData.title}
+                            />
+                        </div>
+                    )}
+                </div>
+
             </div>
         </div>
     );
 }
-
 
 export default ReadComponent;

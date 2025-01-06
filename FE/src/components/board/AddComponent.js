@@ -2,48 +2,65 @@ import React, { useState } from 'react';
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
 import { postAdd } from "../../api/todoApi";
+import { getKoreanCategory } from "../../hooks/categoryUtils";
+import '../analysis/FormStyles.css'; // 스타일 파일 추가
 
-const initState = {
-    category: '정치',  // 카테고리 기본값 '스포츠'
-    title: '',
-    content: '',
-    writer: 'LJH',
-    //dueDate: ''
-}
+function AddComponent({category}) {
+    const koreanCategory = getKoreanCategory(category);
+    const initState = {
+        category: category,
+        title: '',
+        content: '',
+        writer: 'LJH',
+    };
 
-function AddComponent(props) {
     const [board, setBoard] = useState({ ...initState });
+    const [fileInfo, setFileInfo] = useState([]);  // 파일 정보는 배열로 관리
     const [result, setResult] = useState(null);
-
-    // 이미지 파일과 크기를 저장할 배열
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState([]);  // 이미지 파일 배열
     const [imageA, setImageA] = useState(null);
     const [imageB, setImageB] = useState(null);
+    const [fileTitleA, setFileTitleA] = useState(''); // A 이름 상태 추가
+    const [fileTitleB, setFileTitleB] = useState(''); // B 이름 상태 추가
 
-    const { moveToList } = useCustomMove();
+    const { moveToCategory } = useCustomMove(); // 리스트로 이동하는 함수
 
+    // 게시글 입력 값 처리
     const handleChangeTodo = (e) => {
-        board[e.target.name] = e.target.value;
-        setBoard({ ...board });
-    }
+        setBoard(prevBoard => ({
+            ...prevBoard,
+            [e.target.name]: e.target.value
+        }));
+    };
 
+    // 글 등록 요청 처리
     const handleClickAdd = () => {
-        // 게시글 데이터와 함께 파일 배열을 전송
-        postAdd(board, files).then(data => {
-            setBoard({ ...initState });
-            setFiles([]);  // 파일 배열 초기화
-            setImageA(null);
-            setImageB(null);
-        });
-    }
+
+        // postAdd 호출 (board, files, fileInfo 전달)
+        postAdd(board, files, fileInfo)
+            .then(response => {
+                if (response.status === 201) {
+                    console.log('Data received:', response.data);
+                    setBoard({ ...initState });  // 폼 초기화
+                    setFiles([]);  // 파일 초기화
+                    setImageA(null);
+                    setImageB(null);
+                    setFileInfo([]);  // fileInfo 초기화
+                    setResult(response.status);  // 결과 상태 설정
+                }
+            })
+            .catch(error => {
+                console.error("Error adding post", error);
+            });
+    };
 
     const closeModal = () => {
-        setResult(null);
-        moveToList();
-    }
+        setResult(null);  // 모달 닫기
+        moveToCategory(category);  // 리스트 화면으로 이동
+    };
 
-    // 이미지 업로드 핸들러: 파일과 크기를 files 배열에 추가
-    const handleImageUpload = (event, setImage, fileKey) => {
+    // 이미지 업로드 처리 및 메타 정보 저장
+    const handleImageUpload = (event, setImage, fileKey, fileTitle) => {
         const file = event.target.files[0];
         const img = new Image();
         const objectUrl = URL.createObjectURL(file);
@@ -51,119 +68,146 @@ function AddComponent(props) {
         img.src = objectUrl;
         img.onload = () => {
             const newFile = {
-                key: fileKey,  // 파일을 구분하기 위한 키 값 (A or B)
+                key: fileKey,
                 file: file,
+                fileTitle: fileTitle,  // A 또는 B 이름을 fileTitle로 설정
                 width: img.width,
                 height: img.height
             };
 
-            // 해당 key에 해당하는 파일을 업데이트하거나 새로 추가
+            const newFileInfo = {
+                key: fileKey,
+                fileTitle: fileTitle,  // A 또는 B 이름을 fileTitle로 설정
+                width: img.width,
+                height: img.height
+            };
+
             setFiles(prevFiles => {
                 const updatedFiles = prevFiles.filter(f => f.key !== fileKey);
-                return [...updatedFiles, newFile];
+                return [...updatedFiles, newFile];  // 파일 배열 업데이트
             });
 
-            setImage(file); // 미리보기를 위해 이미지 파일 저장
+            setFileInfo(prevFileInfo => {
+                const updatedFileInfo = prevFileInfo.filter(f => f.key !== fileKey);
+                return [...updatedFileInfo, newFileInfo];  // 파일 정보 배열 업데이트
+            });
+
+            setImage(file);  // 이미지 상태 업데이트
             URL.revokeObjectURL(objectUrl);  // 메모리 해제
         };
     };
 
     return (
-        <div className="border-2 border-sky-200 mt-10 m-2 p-6 shadow-lg rounded-lg bg-white">
-            <div className="flex justify-center mb-6">
-                <div className="w-full max-w-md">
-                    {/* 카테고리 표시 */}
-                    <div className="mb-4 flex items-center">
-                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">카테고리</label>
-                        <input
-                            className="w-2/3 p-3 rounded border border-gray-300 shadow-sm bg-gray-100 text-gray-500"
-                            name="category"
-                            type="text"
-                            value={board.category}
-                            disabled
-                        />
-                    </div>
-
-                    {/* 제목 입력 */}
-                    <div className="mb-4 flex items-center">
-                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">제목</label>
-                        <input
-                            className="w-2/3 p-3 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            name="title"
-                            type="text"
-                            value={board.title}
-                            onChange={handleChangeTodo}
-                        />
-                    </div>
-
-                    {/* 설명 입력 */}
-                    <div className="mb-4 flex items-center">
-                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">설명</label>
-                        <input
-                            className="w-2/3 p-3 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            name="content"
-                            type="text"
-                            value={board.content}
-                            onChange={handleChangeTodo}
-                        />
-                    </div>
-
-                    {/* A 이미지 업로드 */}
-                    <div className="mb-4 flex items-center">
-                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">A의 메인 이미지</label>
-                        <input
-                            className="w-2/3"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(e, setImageA, 'A')}
-                        />
-                    </div>
-                    {imageA && (
-                        <img
-                            src={URL.createObjectURL(imageA)}
-                            alt="A의 메인 사진"
-                            className="mt-2 w-full h-64 object-cover rounded shadow-md"
-                        />
-                    )}
-
-                    {/* B 이미지 업로드 */}
-                    <div className="mb-4 flex items-center">
-                        <label className="block text-gray-700 font-bold w-1/3 text-right mr-4">B의 메인 이미지</label>
-                        <input
-                            className="w-2/3"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(e, setImageB, 'B')}
-                        />
-                    </div>
-                    {imageB && (
-                        <img
-                            src={URL.createObjectURL(imageB)}
-                            alt="B의 메인 사진"
-                            className="mt-2 w-full h-64 object-cover rounded shadow-md"
-                        />
-                    )}
-
-                    {/* 추가 버튼 */}
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-                            onClick={handleClickAdd}
-                        >
-                            ADD
-                        </button>
-                    </div>
+        <div className="form-container">
+            <h1 className="form-header">글 작성</h1>
+            <div className="form-content">
+                <div className="form-group">
+                    <label className="form-label">카테고리</label>
+                    <input
+                        className="form-input"
+                        name="category"
+                        type="text"
+                        value= {koreanCategory}
+                        disabled
+                    />
                 </div>
-            </div>
 
-            {result ? (
+                {/* 제목 입력 */}
+                <div className="form-group">
+                    <label className="form-label">제목</label>
+                    <input
+                        type="text"
+                        className="form-input"
+                        name="title"
+                        placeholder="제목을 입력하세요"
+                        value={board.title}
+                        onChange={handleChangeTodo}
+                    />
+                </div>
+
+                {/* 설명 입력 */}
+                <div className="form-group">
+                    <label className="form-label">설명</label>
+                    <input
+                        className="form-input"
+                        placeholder="설명을 입력하세요"
+                        name="content"
+                        type="text"
+                        value={board.content}
+                        onChange={handleChangeTodo}
+                    />
+                </div>
+
+                {/* A 이름 입력 */}
+                <div className="form-group">
+                    <label className="form-label">A 이름</label>
+                    <input
+                        className="form-input"
+                        placeholder="A 이름을 입력하세요"
+                        type="text"
+                        value={fileTitleA}  // A 이름 상태값
+                        onChange={(e) => setFileTitleA(e.target.value)}  // A 이름 업데이트
+                    />
+                </div>
+
+                {/* A 이미지 업로드 */}
+                <div className="form-group">
+                    <label className="form-label">A의 메인 이미지</label>
+                    <input
+                        type="file"
+                        className="form-input"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, setImageA, 'A', fileTitleA)}  // A 이름을 fileTitle로 전달
+                    />
+                </div>
+                {imageA && (
+                    <img
+                        src={URL.createObjectURL(imageA)}
+                        alt="A의 메인 사진"
+                        className="uploaded-image"
+                    />
+                )}
+
+                {/* B 이름 입력 */}
+                <div className="form-group">
+                    <label className="form-label">B 이름</label>
+                    <input
+                        className="form-input"
+                        placeholder="B 이름을 입력하세요"
+                        type="text"
+                        value={fileTitleB}  // B 이름 상태값
+                        onChange={(e) => setFileTitleB(e.target.value)}  // B 이름 업데이트
+                    />
+                </div>
+
+                {/* B 이미지 업로드 */}
+                <div className="form-group">
+                    <label className="form-label">B의 메인 이미지</label>
+                    <input
+                        type="file"
+                        className="form-input"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, setImageB, 'B', fileTitleB)}  // B 이름을 fileTitle로 전달
+                    />
+                </div>
+                {imageB && (
+                    <img
+                        src={URL.createObjectURL(imageB)}
+                        alt="B의 메인 사진"
+                        className="uploaded-image"
+                    />
+                )}
+                <button type="button" className="submit-button" onClick={handleClickAdd}>
+                    등록
+                </button>
+            </div>
+            {result && (
                 <ResultModal
-                    title={'Add Result'}
-                    content={`New ${result} Added`}
+                    title={koreanCategory}
+                    content={`새 글이 등록되었습니다.`}
                     callbackFn={closeModal}
                 />
-            ) : null}
+            )}
         </div>
     );
 }
