@@ -8,6 +8,7 @@ import com.ddalkkak.splitting.board.api.request.FileInfoCreateRequest;
 import com.ddalkkak.splitting.board.api.response.*;
 import com.ddalkkak.splitting.board.domain.Board;
 import com.ddalkkak.splitting.board.service.BoardService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +66,10 @@ public class BoardApiV2 {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
-
+    
+    /**
+     * 카테고리 글 전체 조회
+     * */
     @GetMapping(path ="/{category}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardAllQueryResponse> getCategoryBoardAll(@PathVariable("category") String category,
                                                            @RequestParam(value = "start", defaultValue = "0")@Min(value = 0, message = "start 값은 0보다 크거나 같아야 합니다.") Integer start,
@@ -80,6 +85,9 @@ public class BoardApiV2 {
     }
 
 
+    /**
+     * 카테고리 글 생성
+     * */
     @PostMapping(path = "/{category}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Long> createCategoryBoard(
                                     @PathVariable("category") String category,
@@ -92,6 +100,9 @@ public class BoardApiV2 {
         return new ResponseEntity<>(createId, HttpStatus.CREATED);
     }
 
+    /**
+     * 카테고리 글 삭제
+     * */
 
     @DeleteMapping(path = "/{category}/{categoryBoardId}")
     public ResponseEntity<Void> deleteCategoryBoard(@PathVariable("categoryBoardId") Long id){
@@ -103,6 +114,9 @@ public class BoardApiV2 {
                 .build();
     }
 
+    /**
+     * 카테고리 글 수정
+     * */
     @PatchMapping(value = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Long> updateCategoryBoard(@PathVariable("categoryBoardId") long id,
                                               @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
@@ -116,7 +130,9 @@ public class BoardApiV2 {
     }
 
 
-    //  /api/board/롤/{id}/
+    /**
+     * 카테고리 분석 글 생성
+     * */
     @PostMapping(path = "/{category}/{categoryBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Long> createAnalysisBoard(@PathVariable("categoryBoardId") Long parentId,
                                        @Valid @RequestPart(value="board") BoardCreateRequest boardCreateRequest,
@@ -127,7 +143,10 @@ public class BoardApiV2 {
         return new ResponseEntity<>(createId, HttpStatus.CREATED);
     }
 
-
+    /**
+     * 카테고리 분석 글 상세보기
+     * */
+    
     @GetMapping(path = "/{category}/{categoryBoardId}/{analysisBoardId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<BoardDetailedResponse> getAnalysisBoard(@PathVariable("categoryBoardId") long parentId,
                                                                   @PathVariable("analysisBoardId") long childId){
@@ -137,6 +156,9 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
+    /**
+     * 카테고리 분석 글 삭제
+     * */
     @DeleteMapping(path = "/{category}/{categoryBoardId}/{analysisBoardId}")
     public ResponseEntity<Void> deleteAnalysisBoard(@PathVariable("analysisBoardId") Long id){
 
@@ -147,6 +169,9 @@ public class BoardApiV2 {
                 .build();
     }
 
+    /**
+     * 카테고리 분석 글 수정
+     * */
     @PatchMapping(value = "/{category}/{categoryBoardId}/{analysisBoardId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updateAnalysisBoard(@PathVariable("analysisBoardId") long id,
                                               @RequestPart(value="board") BoardUpdateRequest boardUpdateRequest,
@@ -159,6 +184,9 @@ public class BoardApiV2 {
                 .build();
     }
 
+    /**
+     * 카테고리 분석 전체 조회
+     * */
 
     @GetMapping(path = "/{category}/{categoryBoardId}/all", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CategoryAnalysisBoardAllQueryResponse> getAnalysisBoardAll(@PathVariable("category") String category,
@@ -176,7 +204,7 @@ public class BoardApiV2 {
     }
 
     /**
-     * 분석글 검색 API
+     * 카테고리 분석글 검색 API
      * */
     @GetMapping(path = "/{category}/{categoryBoardId}/search", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CategoryBoardSearchResponse> searchAnalysisBoard(@PathVariable("category") String category,
@@ -199,6 +227,9 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
+    /**
+     * 투표 API
+     * */
 
     @PatchMapping(path="/{id}/vote")
         public ResponseEntity<BoardRecommendResponse> vote(@RequestHeader(value = "X-Forwarded-For", required = false) String xForwardedFor,
@@ -218,19 +249,23 @@ public class BoardApiV2 {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+    /**
+     * 추천 API
+     * */
+    
     @PatchMapping(path="/{id}/recommend")
     public ResponseEntity<Long> recommend(@PathVariable("id") long id){
         return new ResponseEntity<>(boardService.recommend(id), HttpStatus.ACCEPTED);
     }
 
+    /**
+     * 조회 수 증가 API
+     * */
+    
     @PatchMapping(path="/{id}/visit")
     public ResponseEntity<BoardRecommendResponse> visit(@PathVariable("id") long id){
         boardService.visit(id);
         return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
-
-
-
-
 
 }
