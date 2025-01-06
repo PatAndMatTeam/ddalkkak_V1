@@ -27,4 +27,6 @@ public class JwtException extends GlobalException {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), token));
         }
     }
+
+
 }

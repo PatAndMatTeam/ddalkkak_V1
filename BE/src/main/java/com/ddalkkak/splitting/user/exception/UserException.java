@@ -15,4 +15,17 @@ public class UserException extends GlobalException {
             super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
         }
     }
+
+    public static class NotExistAccessTokenException extends UserException {
+        public NotExistAccessTokenException(final UserErrorCode errorCode, final Long category) {
+            super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
+        }
+    }
+
+    public static class NotExistRefreshTokenException extends UserException {
+        public NotExistRefreshTokenException(final UserErrorCode errorCode, final Long category) {
+            super(errorCode.getStatus(), new ErrorCode<>(errorCode.getCode(), errorCode.getMessage(), category));
+        }
+    }
+
 }

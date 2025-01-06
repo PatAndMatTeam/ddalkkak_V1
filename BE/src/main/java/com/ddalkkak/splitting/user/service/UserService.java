@@ -37,15 +37,15 @@ public class UserService {
         user.changeRefreshToken(refreshToken);
     }
 
-    public Account find(String refreshToken){
-        return userRepository.findByRefreshToken(refreshToken)
-                .get()
+    public Account find(String accessToken){
+        return userRepository.findByRefreshToken(accessToken)
+                .orElseThrow(() -> new UserException.NotExistAccessTokenException(UserErrorCode.NOTFOUND_ACCESS_TOKEN, 1l))
                 .toModel();
     }
 
     public Account findByRefreshToken(final String refreshToken){
         return userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new UserException.InvalidPasswordException(UserErrorCode.INVALID_PASSWORD, 1l))
+                .orElseThrow(() -> new UserException.NotExistRefreshTokenException(UserErrorCode.NOTFOUND_REFRESH_TOKEN, 1l))
                 .toModel();
     }
 
