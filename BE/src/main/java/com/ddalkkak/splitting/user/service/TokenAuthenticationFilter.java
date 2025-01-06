@@ -30,7 +30,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private static final String[] jwtBypassUrls = {"GET /api/user/login/**",
+    private static final String[] jwtBypassUrls = {
+            "GET /api/user/login/**",
             "GET /api/user/login/success",
             "GET /api/user/oauth2/**",
             "GET /login/**",
@@ -38,7 +39,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "GET /api/user/token",
             "GET /favicon.ico",
             "GET /h2-console/**",
+
             "POST /h2-console/**",
+
             "PATCH /api/board/v2/*/vote",
             "PATCH /api/board/v2/*/visit",
             "PATCH /api/board/v2/*/recommend",};
@@ -60,17 +63,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = request.getHeader("Authorization").replace("Bearer ", "").trim();
 
         log.info("accressToken: {}", accessToken);
-        if (jwtService.validateToken(accessToken, response)){
+        if (jwtService.validateToken(accessToken)){
             Authentication authentication = jwtService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(t -> jwtService.validateToken(t, response))
+                .filter(t -> jwtService.validateToken(t))
                 .orElse(null);
 
         if (refreshToken != null){
-            jwtService.validateToken(refreshToken, response);
+            jwtService.validateToken(refreshToken);
             return;
         }
 
@@ -126,7 +129,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessToken(request)
-                .filter(t -> jwtService.validateToken(t, response))
+                .filter(t -> jwtService.validateToken(t))
                 .flatMap(jwtService::extractEmail)
                 .map(userService::findByEmail)
                 .ifPresent(this::saveAuthentication);

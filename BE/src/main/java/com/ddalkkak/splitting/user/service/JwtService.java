@@ -38,7 +38,6 @@ public class JwtService {
 
     private final UserService userService;
 
-
     private int TOKEN_EXPIRE_TIME = 1000;
     private int REFRESH_TOKEN_EXPIRE_TIME = 1000;
     private String secretKey = "YOONJUYOUNGISVERYHANSOMEGUYANDHEISVERYSMARYANDSEXY";
@@ -57,7 +56,6 @@ public class JwtService {
 
     public String refreshAccressToken(String token){
         validateToken(token);
-
         Account find = userService.find(token);
         return createAccessToken(find.getUserId(), find.getName());
     }
@@ -106,7 +104,7 @@ public class JwtService {
         return new SecretKeySpec(keyBytes, HS256.getJcaName()); // SecretKey 생성
     }
 
-    public boolean validateToken(String token, HttpServletResponse response) {
+    public boolean validateToken(String token) {
         var parser = Jwts.parser()
                 .verifyWith((SecretKey) getSignKey())
                 .build();
@@ -127,26 +125,26 @@ public class JwtService {
         return true;
     }
 
-    private boolean validateToken(String token) {
-        var parser = Jwts.parser()
-                .verifyWith((SecretKey) getSignKey())
-                .build();
-
-        try {
-            var result = parser.parseSignedClaims(token);
-            result.getPayload().forEach((key1, value1) -> log.info("key : {}, value : {}", key1, value1));
-        } catch (IllegalArgumentException e){
-            log.warn("Illegal access token");
-            throw new JwtException.IllegalTokenException(JwtErrorCode.ILLEGAL_ACCESS_TOKEN, token);
-        } catch (SignatureException e) {
-            log.warn("Invalid access token");
-            throw new JwtException.ExpiredActiveTokenException(JwtErrorCode.INVALID_ACCESS_TOKEN, token);
-        }catch (ExpiredJwtException e){
-            log.warn("JWT Token Expired Exception");
-            return false;
-        }
-        return true;
-    }
+//    private boolean validateToken(String token) {
+//        var parser = Jwts.parser()
+//                .verifyWith((SecretKey) getSignKey())
+//                .build();
+//
+//        try {
+//            var result = parser.parseSignedClaims(token);
+//            result.getPayload().forEach((key1, value1) -> log.info("key : {}, value : {}", key1, value1));
+//        } catch (IllegalArgumentException e){
+//            log.warn("Illegal access token");
+//            throw new JwtException.IllegalTokenException(JwtErrorCode.ILLEGAL_ACCESS_TOKEN, token);
+//        } catch (SignatureException e) {
+//            log.warn("Invalid access token");
+//            throw new JwtException.ExpiredActiveTokenException(JwtErrorCode.INVALID_ACCESS_TOKEN, token);
+//        }catch (ExpiredJwtException e){
+//            log.warn("JWT Token Expired Exception");
+//            return false;
+//        }
+//        return true;
+//    }
 
     public boolean validateTokenV1(String token, HttpServletResponse response) {
         try {

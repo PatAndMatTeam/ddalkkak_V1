@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -66,7 +67,8 @@ public class SecurityConfig {
                // .antMatchers("/login/**", "/oauth2/**").permitAll()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/login/**", "/api/user/login/success/**","/api/user/oauth2/**", "/login/**").permitAll() // 특정 경로 허용
-                        .requestMatchers(HttpMethod.GET, "/api/board/v2/lol/all",
+                        .requestMatchers(HttpMethod.GET,
+                                //"/api/board/v2/lol/all",
                                 "/api/board/v2/lol/search",
                                 "/api/board/v2/lol/**",
                                 "/api/user/token").permitAll()

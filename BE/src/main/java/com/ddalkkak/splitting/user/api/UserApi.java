@@ -84,9 +84,10 @@ public class UserApi {
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody TokenRequest tokenRequest){
-            String refreshToken = tokenRequest.getRefreshToken();
+        String refreshToken = tokenRequest.getRefreshToken();
 
         String token = jwtService.refreshAccressToken(refreshToken);
+
         TokenResponse response = TokenResponse.builder()
                 .accessToken(token)
                 .build();
