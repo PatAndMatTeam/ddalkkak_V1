@@ -1,0 +1,148 @@
+import { Topic } from "@/lib/types/topic";
+
+export const topics: Topic[] = [
+    {
+        id: 1,
+        slug: "iphone-vs-galaxy",
+        category: "game",
+        title: "아이폰 vs 갤럭시",
+        description: "일상 사용성과 만족도를 기준으로 고른다면 어느 쪽이 더 좋을까?",
+        writer: "관리자",
+        createdAt: "2026-04-23",
+        viewCount: 1240,
+        optionA: {
+            id: "A",
+            title: "아이폰",
+            image: "https://placehold.co/600x400?text=iPhone",
+            voteCount: 182,
+        },
+        optionB: {
+            id: "B",
+            title: "갤럭시",
+            image: "https://placehold.co/600x400?text=Galaxy",
+            voteCount: 165,
+        },
+        discussions: [
+            {
+                id: 1,
+                writer: "민수",
+                content: "연동성 때문에 아이폰이 편하다고 생각함.",
+                side: "A",
+                createdAt: "2026-04-23 10:10",
+            },
+            {
+                id: 2,
+                writer: "지훈",
+                content: "자유도 생각하면 갤럭시가 낫지.",
+                side: "B",
+                createdAt: "2026-04-23 10:22",
+            },
+        ],
+        analyses: [
+            {
+                id: 1,
+                title: "왜 아이폰 선호가 꾸준한가",
+                writer: "에디터A",
+                summary: "생태계와 UX 일관성 관점에서 보는 분석",
+                content: "아이폰은 기기 간 연동성과 일관된 사용자 경험에서 강점을 보인다.",
+                createdAt: "2026-04-23",
+            },
+        ],
+    },
+    {
+        id: 2,
+        slug: "mint-choco-vs-no",
+        category: "culture",
+        title: "민초 vs 반민초",
+        description: "디저트 취향의 영원한 난제. 민트초코는 음식인가 치약인가?",
+        writer: "관리자",
+        createdAt: "2026-04-22",
+        viewCount: 980,
+        optionA: {
+            id: "A",
+            title: "민초 찬성",
+            image: "https://placehold.co/600x400?text=Mint",
+            voteCount: 144,
+        },
+        optionB: {
+            id: "B",
+            title: "반민초",
+            image: "https://placehold.co/600x400?text=No+Mint",
+            voteCount: 201,
+        },
+        discussions: [
+            {
+                id: 1,
+                writer: "유나",
+                content: "민트초코 좋아하면 입안이 깔끔해서 좋음.",
+                side: "A",
+                createdAt: "2026-04-22 11:00",
+            },
+            {
+                id: 2,
+                writer: "도윤",
+                content: "아무리 생각해도 치약 맛이야.",
+                side: "B",
+                createdAt: "2026-04-22 11:05",
+            },
+        ],
+        analyses: [
+            {
+                id: 1,
+                title: "민트초코 호불호가 극단적인 이유",
+                writer: "에디터B",
+                summary: "향 자극과 기억 연상 효과를 중심으로",
+                content: "민트 향은 음식 경험보다 생활 향과 연결되는 경우가 많다.",
+                createdAt: "2026-04-22",
+            },
+        ],
+    },
+    {
+        id: 3,
+        slug: "remote-vs-office",
+        category: "hobby",
+        title: "재택근무 vs 출근근무",
+        description: "업무 효율과 삶의 균형 중 어떤 방식이 더 만족스러울까?",
+        writer: "관리자",
+        createdAt: "2026-04-21",
+        viewCount: 1530,
+        optionA: {
+            id: "A",
+            title: "재택근무",
+            image: "https://placehold.co/600x400?text=Remote",
+            voteCount: 232,
+        },
+        optionB: {
+            id: "B",
+            title: "출근근무",
+            image: "https://placehold.co/600x400?text=Office",
+            voteCount: 121,
+        },
+        discussions: [
+            {
+                id: 1,
+                writer: "현우",
+                content: "출퇴근 없는 삶은 한 번 맛보면 못 돌아감.",
+                side: "A",
+                createdAt: "2026-04-21 09:40",
+            },
+            {
+                id: 2,
+                writer: "서연",
+                content: "팀 협업은 결국 얼굴 보고 해야 빨라.",
+                side: "B",
+                createdAt: "2026-04-21 10:10",
+            },
+        ],
+        analyses: [
+            {
+                id: 1,
+                title: "재택 선호가 높아지는 이유",
+                writer: "에디터C",
+                summary: "시간 절약과 집중 환경 측면 분석",
+                content: "재택은 출퇴근 시간 절감과 개인 집중 환경 확보 측면에서 유리하다.",
+                createdAt: "2026-04-21",
+            },
+        ],
+    },
+];
