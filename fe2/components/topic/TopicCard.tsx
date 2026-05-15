@@ -7,7 +7,7 @@ type TopicCardProps = {
 };
 
 export default function TopicCard({ topic }: TopicCardProps) {
-    const totalVotes = topic.optionA.voteCount + topic.optionB.voteCount;
+    const totalVotes = topic.totalVotes ?? topic.optionA.voteCount + topic.optionB.voteCount;
     const categoryLabel = categoryMap[topic.category] ?? topic.category;
 
     return (
@@ -22,20 +22,20 @@ export default function TopicCard({ topic }: TopicCardProps) {
             }}
         >
             <div style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
-        <span
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                width: "fit-content",
-                padding: "6px 10px",
-                borderRadius: "999px",
-                backgroundColor: "#f3f4f6",
-                fontSize: "13px",
-                fontWeight: 700,
-            }}
-        >
-          {categoryLabel}
-        </span>
+                <span
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        width: "fit-content",
+                        padding: "6px 10px",
+                        borderRadius: "999px",
+                        backgroundColor: "#f3f4f6",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                    }}
+                >
+                    {categoryLabel}
+                </span>
 
                 <span
                     style={{
@@ -44,8 +44,8 @@ export default function TopicCard({ topic }: TopicCardProps) {
                         fontWeight: 600,
                     }}
                 >
-          조회 {topic.viewCount}
-        </span>
+                    조회 {topic.viewCount}
+                </span>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -87,8 +87,8 @@ export default function TopicCard({ topic }: TopicCardProps) {
                         {topic.optionA.title}
                     </strong>
                     <span className="muted-text" style={{ fontSize: "13px" }}>
-            {topic.optionA.voteCount}표
-          </span>
+                        {topic.optionA.voteCount}표
+                    </span>
                 </div>
 
                 <div
@@ -113,8 +113,8 @@ export default function TopicCard({ topic }: TopicCardProps) {
                         {topic.optionB.title}
                     </strong>
                     <span className="muted-text" style={{ fontSize: "13px" }}>
-            {topic.optionB.voteCount}표
-          </span>
+                        {topic.optionB.voteCount}표
+                    </span>
                 </div>
             </div>
 

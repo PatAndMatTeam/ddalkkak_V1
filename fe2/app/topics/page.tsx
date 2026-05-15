@@ -1,9 +1,28 @@
 import SectionTitle from "@/components/common/SectionTitle";
 import EmptyState from "@/components/common/EmptyState";
 import TopicList from "@/components/topic/TopicList";
-import { topics } from "@/lib/mock/topics";
+import { getBaseUrl } from "@/lib/utils/server-url";
+import { Topic } from "@/lib/types/topic";
 
-export default function TopicsPage() {
+async function getTopics() {
+    const baseUrl = await getBaseUrl();
+
+    const response = await fetch(`${baseUrl}/api/topics?sort=latest&page=1&size=20`, {
+        cache: "no-store",
+    });
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json();
+
+    return data.topics as Topic[];
+}
+
+export default async function TopicsPage() {
+    const topics = await getTopics();
+
     return (
         <div className="page-container section-gap">
             <SectionTitle

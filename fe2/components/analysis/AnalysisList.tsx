@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Topic } from "@/lib/types/topic";
+import { AnalysisPost, Topic } from "@/lib/types/topic";
 
 type AnalysisListProps = {
     topic: Topic;
+    analyses: AnalysisPost[];
 };
 
-export default function AnalysisList({ topic }: AnalysisListProps) {
+export default function AnalysisList({ topic, analyses }: AnalysisListProps) {
     return (
         <div className="section-gap">
-            {topic.analyses.map((analysis) => (
+            {analyses.map((analysis) => (
                 <Link
                     key={analysis.id}
                     href={`/topics/${topic.slug}/analysis/${analysis.id}`}
@@ -27,23 +28,23 @@ export default function AnalysisList({ topic }: AnalysisListProps) {
                             flexWrap: "wrap",
                         }}
                     >
-            <span
-                style={{
-                    display: "inline-flex",
-                    width: "fit-content",
-                    padding: "6px 10px",
-                    borderRadius: "999px",
-                    backgroundColor: "#f3f4f6",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                }}
-            >
-              분석글
-            </span>
+                        <span
+                            style={{
+                                display: "inline-flex",
+                                width: "fit-content",
+                                padding: "6px 10px",
+                                borderRadius: "999px",
+                                backgroundColor: "#f3f4f6",
+                                fontSize: "13px",
+                                fontWeight: 700,
+                            }}
+                        >
+                            분석글
+                        </span>
 
                         <span className="muted-text" style={{ fontSize: "14px" }}>
-              {analysis.createdAt}
-            </span>
+                            {new Date(analysis.createdAt).toLocaleDateString("ko-KR")}
+                        </span>
                     </div>
 
                     <h2

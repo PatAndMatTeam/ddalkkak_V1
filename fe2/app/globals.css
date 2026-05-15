@@ -84,3 +84,58 @@ button {
     padding: 20px 16px 48px;
   }
 }
+.analysis-content-view {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 24px;
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.analysis-content-view p {
+  margin: 10px 0;
+}
+
+.analysis-content-view h1,
+.analysis-content-view h2,
+.analysis-content-view h3 {
+  line-height: 1.35;
+  margin: 28px 0 12px;
+  color: #111827;
+}
+
+.analysis-content-view h2 {
+  font-size: 28px;
+}
+
+.analysis-content-view h3 {
+  font-size: 22px;
+}
+
+.analysis-content-view ul,
+.analysis-content-view ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.analysis-content-view img {
+  display: block;
+  max-width: 100%;
+  max-height: 560px;
+  object-fit: contain;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  margin: 20px auto;
+}
+
+.analysis-content-view a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.analysis-content-view blockquote {
+  border-left: 4px solid #111827;
+  background: #f9fafb;
+  margin: 18px 0;
+  padding: 14px 16px;
+  color: #374151;
+}

@@ -25,19 +25,19 @@ export default function TopicDetail({ topic }: TopicDetailProps) {
                         flexWrap: "wrap",
                     }}
                 >
-          <span
-              style={{
-                  display: "inline-flex",
-                  width: "fit-content",
-                  padding: "6px 10px",
-                  borderRadius: "999px",
-                  backgroundColor: "#f3f4f6",
-                  fontSize: "13px",
-                  fontWeight: 700,
-              }}
-          >
-            {categoryLabel}
-          </span>
+                    <span
+                        style={{
+                            display: "inline-flex",
+                            width: "fit-content",
+                            padding: "6px 10px",
+                            borderRadius: "999px",
+                            backgroundColor: "#f3f4f6",
+                            fontSize: "13px",
+                            fontWeight: 700,
+                        }}
+                    >
+                        {categoryLabel}
+                    </span>
 
                     <div
                         style={{
@@ -51,7 +51,7 @@ export default function TopicDetail({ topic }: TopicDetailProps) {
                     >
                         <span>작성자 {topic.writer}</span>
                         <span>조회 {topic.viewCount}</span>
-                        <span>{topic.createdAt}</span>
+                        <span>{new Date(topic.createdAt).toLocaleDateString("ko-KR")}</span>
                     </div>
                 </div>
 

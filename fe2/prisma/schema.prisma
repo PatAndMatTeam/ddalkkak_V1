@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum TopicSide {
+  A
+  B
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  name      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topics Topic[]
+
+  @@map("categories")
+}
+
+model Topic {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  categoryId  Int
+  title       String
+  description String
+  writer      String   @default("익명")
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  options  TopicOption[]
+  votes    Vote[]
+  comments Comment[]
+  analyses Analysis[]
+
+  @@index([categoryId])
+  @@index([createdAt])
+  @@map("topics")
+}
+
+model TopicOption {
+  id        Int       @id @default(autoincrement())
+  topicId   Int
+  side      TopicSide
+  title     String
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([topicId, side])
+  @@index([topicId])
+  @@map("topic_options")
+}
+
+model Vote {
+  id        Int       @id @default(autoincrement())
+  topicId   Int
+  side      TopicSide
+  voterKey  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([topicId, voterKey])
+  @@index([topicId])
+  @@index([voterKey])
+  @@map("votes")
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  topicId   Int
+  writer    String    @default("익명")
+  content   String
+  side      TopicSide?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+  @@index([createdAt])
+  @@map("comments")
+}
+
+model Analysis {vvvvvvvvvvv
+  id        Int      @id @default(autoincrement())
+  topicId   Int
+  title     String
+  writer    String   @default("관리자")
+  summary   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+  @@index([createdAt])
+  @@map("analyses")
+}

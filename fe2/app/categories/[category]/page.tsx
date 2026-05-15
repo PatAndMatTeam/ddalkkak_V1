@@ -1,8 +1,9 @@
 import SectionTitle from "@/components/common/SectionTitle";
 import EmptyState from "@/components/common/EmptyState";
 import TopicList from "@/components/topic/TopicList";
-import { topics } from "@/lib/mock/topics";
 import { categoryMap } from "@/lib/utils/category";
+import { getBaseUrl } from "@/lib/utils/server-url";
+import { Topic } from "@/lib/types/topic";
 
 type CategoryPageProps = {
     params: Promise<{
@@ -10,10 +11,29 @@ type CategoryPageProps = {
     }>;
 };
 
+async function getCategoryTopics(category: string) {
+    const baseUrl = await getBaseUrl();
+
+    const response = await fetch(
+        `${baseUrl}/api/topics?category=${category}&page=1&size=20`,
+        {
+            cache: "no-store",
+        },
+    );
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json();
+
+    return data.topics as Topic[];
+}
+
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const { category } = await params;
 
-    const filteredTopics = topics.filter((topic) => topic.category === category);
+    const topics = await getCategoryTopics(category);
     const categoryLabel = categoryMap[category] ?? category;
 
     return (
@@ -23,8 +43,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 description={`${categoryLabel} 관련 VS 주제들을 모아봤어.`}
             />
 
-            {filteredTopics.length > 0 ? (
-                <TopicList topics={filteredTopics} />
+            {topics.length > 0 ? (
+                <TopicList topics={topics} />
             ) : (
                 <EmptyState
                     title="이 카테고리에는 아직 주제가 없어"

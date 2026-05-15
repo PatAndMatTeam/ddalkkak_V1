@@ -1,6 +1,7 @@
 import AnalysisDetail from "@/components/analysis/AnalysisDetail";
 import EmptyState from "@/components/common/EmptyState";
-import { topics } from "@/lib/mock/topics";
+import { getBaseUrl } from "@/lib/utils/server-url";
+import { AnalysisPost, Topic } from "@/lib/types/topic";
 
 type TopicAnalysisDetailPageProps = {
     params: Promise<{
@@ -9,12 +10,44 @@ type TopicAnalysisDetailPageProps = {
     }>;
 };
 
+async function getTopic(slug: string) {
+    const baseUrl = await getBaseUrl();
+
+    const response = await fetch(`${baseUrl}/api/topics/slug/${slug}`, {
+        cache: "no-store",
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const data = await response.json();
+
+    return data.topic as Topic;
+}
+
+async function getAnalysis(topicId: number, analysisId: string) {
+    const baseUrl = await getBaseUrl();
+
+    const response = await fetch(`${baseUrl}/api/topics/${topicId}/analyses/${analysisId}`, {
+        cache: "no-store",
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const data = await response.json();
+
+    return data.analysis as AnalysisPost;
+}
+
 export default async function TopicAnalysisDetailPage({
                                                           params,
                                                       }: TopicAnalysisDetailPageProps) {
     const { slug, id } = await params;
 
-    const topic = topics.find((item) => item.slug === slug);
+    const topic = await getTopic(slug);
 
     if (!topic) {
         return (
@@ -27,7 +60,7 @@ export default async function TopicAnalysisDetailPage({
         );
     }
 
-    const analysis = topic.analyses.find((item) => item.id === Number(id));
+    const analysis = await getAnalysis(topic.id, id);
 
     if (!analysis) {
         return (
